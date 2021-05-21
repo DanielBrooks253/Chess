@@ -2,9 +2,11 @@ class Pieces:
     def __init__(self, start_pos, piece_name, color='white'):
         self.pos=start_pos
         self.piece_name=piece_name
+        self.color = color.lower()
+
         self.has_moved=False
         self.captured=False
-        self.color = color.lower()
+        self.promoted=False
 
 ###### English Chess ######
 
@@ -69,10 +71,13 @@ class Foot_Solider(Pieces):
         3) Captures diagonally
     '''
     def Get_Moves(self):
-        if self.color =='black':
-            return {(self.pos[0], self.pos[1]+1)}
+        if self.promoted:
+            return Counselor.Get_Moves(self)
         else:
-            return {(self.pos[0], self.pos[1]-1)}
+            if self.color =='black':
+                return {(self.pos[0], self.pos[1]+1)}
+            else:
+                return {(self.pos[0], self.pos[1]-1)}
 
 class Counselor(Pieces):
     '''
@@ -342,10 +347,13 @@ class GinSho(Pieces):
     '''
 
     def Get_Moves(self):
-        if self.color=='black':
-            return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1,0], [1,-1,1,-1,1])])
+        if self.promoted:
+            return KinSho.Get_Moves(self)
         else:
-            return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1,0], [1,-1,1,-1,-1])])
+            if self.color=='black':
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1,0], [1,-1,1,-1,1])])
+            else:
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1,0], [1,-1,1,-1,-1])])
 
 class KeiMa(Pieces):
     '''
@@ -357,10 +365,13 @@ class KeiMa(Pieces):
     '''
 
     def Get_Moves(self):
-        if self.color=='black':
-            return set([(self.pos[0]+x, self.pos[y]) for x,y in zip([1,-1], [2,2])])
+        if self.promoted:
+            return KinSho.Get_Moves(self)
         else:
-            return set([(self.pos[0]+x, self.pos[y]) for x,y in zip([1,-1], [-2,-2])])
+            if self.color=='black':
+                return set([(self.pos[0]+x, self.pos[y]) for x,y in zip([1,-1], [2,2])])
+            else:
+                return set([(self.pos[0]+x, self.pos[y]) for x,y in zip([1,-1], [-2,-2])])
 
 class Kyosha(Pieces):
     '''
@@ -371,10 +382,13 @@ class Kyosha(Pieces):
     '''
 
     def Get_Moves(self):
-        if self.color=='black':
-            return set([(self.pos[0]+x, self.pox[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(1,8))])
+        if self.promoted:
+            return KinSho.Get_Moves(self)
         else:
-            return set([(self.pos[0]+x, self.pox[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(-7,0))])
+            if self.color=='black':
+                return set([(self.pos[0]+x, self.pox[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(1,8))])
+            else:
+                return set([(self.pos[0]+x, self.pox[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(-7,0))])
 
 class Fuhyo(Pieces):
     '''
@@ -385,7 +399,10 @@ class Fuhyo(Pieces):
     '''
 
     def Get_Moves(self):
-        if self.color =='black':
-            return {(self.pos[0], self.pos[1]+1)}
+        if self.promoted:
+            return KinSho.Get_Moves(self)
         else:
-            return {(self.pos[0], self.pos[1]-1)}
+            if self.color =='black':
+                return {(self.pos[0], self.pos[1]+1)}
+            else:
+                return {(self.pos[0], self.pos[1]-1)}        
