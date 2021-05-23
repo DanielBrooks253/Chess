@@ -197,14 +197,9 @@ class Bers(Pieces):
     '''
 
     def Get_Moves(self):
-       return set([((self.pos[0]+x), (self.pos[1]+y)) for x,y in list(zip([1,2,3,4,5,6,7], [0,0,0,0,0,0,0])) + \
-                                                                 list(zip([-1,-2,-3,-4,-5,-6,-7], [0,0,0,0,0,0,0])) + \
-                                                                 list(zip([0,0,0,0,0,0,0], [1,2,3,4,5,6,7])) + \
-                                                                 list(zip([0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7])) + \
-                                                                 list(zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1]))]) 
+       return Rook.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
 
 ###### Sittuyin (Burmese Chess) ######
-# Myin (Knight) has the same movement as the modern day Knight
 
 class MinGyi(Pieces):
     '''
@@ -281,7 +276,7 @@ class Chuh(Pieces):
     def Get_Moves(self):
         return Rook.Get_Moves(self)
 
-class Ma(Pieces):
+class Ma(Pieces): # Xiangqi and Janggi Chess (Knight)
     '''
         Has the movement of the modern day knight
 
@@ -358,13 +353,34 @@ class PingTsuh(Pieces):
                 return {(self.pos[0], self.pos[1]-1)}
 
 ###### Janggi (Korean Chess) ######
-# Koung (King) has the same movement as the modern day King
-    # Must stay within the fortress
-# Sa (Queen) has the same movement as the modern day King
-    # Must stay within the fortress
-# Ma (Knight) has the same movement as the modern day Knight
-    # Cannot jump over a piece
-# Tcha (Rook) has the same movement as the modern say Rook
+
+class Tcha(Pieces):
+    '''
+        Has the same movement as the modern day rook
+    '''
+
+    def Get_Moves(self):
+        return Rook.Get_Moves(self)
+
+class Koung(Pieces):
+    '''
+        Has the movement of the modern day king
+
+        1) Must stay within fortress
+    '''
+
+    def Get_Moves(self):
+        return King.Get_Moves(self)
+
+class Sa(Pieces):
+    '''
+        Has the movement of the modern day king
+
+        1) Must stay within the fortress
+    '''
+
+    def Get_Moves(self):
+        return King.Get_Moves(self)
 
 class Syang(Pieces):
     '''
@@ -406,17 +422,51 @@ class Hpo(Pieces):
     '''
 
     def Get_Moves(self):
-        return set([((self.pos[0]+x), (self.pos[1]+y)) for x,y in list(zip([1,2,3,4,5,6,7], [0,0,0,0,0,0,0])) + \
-                                                                  list(zip([-1,-2,-3,-4,-5,-6,-7], [0,0,0,0,0,0,0])) + \
-                                                                  list(zip([0,0,0,0,0,0,0], [1,2,3,4,5,6,7])) + \
-                                                                  list(zip([0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7]))])
+        return Rook.Get_Moves(self)
 
 ###### Shogi (Japanese Chess) ######
-# OSho (King) has the same movement as the modern day King
-# Hisha (Rook) has the same movement as the modern day Rook
-    # Promotes to being able to move one space diagonally
-# Kaku (Bishop) has the same movement as the modern day Bishop
-    # Promotes to being able to move one space Orthogonally
+
+class Kaku(Pieces):
+    '''
+        Has the movement of the modern day bishop
+
+        1) When promoted, can move one space orthogonally
+    '''
+
+    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+        self.promoted=promoted
+        super().__init__(start_pos, piece_name, color)
+
+    def Get_Moves(self):
+        if self.promoted:
+            return Bishop.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,-1,0,0], [0,0,1,-1])])
+        else:
+            return Bishop.Get_Moves(self)
+
+class OSho(Pieces):
+    '''
+        Has the same movement as the modern day king
+    '''
+
+    def Get_Moves(self):
+        return King.Get_Moves(self)
+
+class Hisha(Pieces):
+    '''
+        Has the same movement as the modern day rook
+
+        1) When promoted, can move one space diagonally
+    '''
+
+    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+        self.promoted=promoted
+        super().__init__(start_pos, piece_name, color)
+
+    def Get_Moves(self):
+        if self.promoted:
+            return Rook.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
+        else:
+            return Rook.Get_Moves(self)
 
 class KinSho(Pieces):
     '''
