@@ -61,11 +61,33 @@ class Rook(Pieces):
 
 ###### Shatranj (Persian Chess) ######
 
-# King has the same movement as the modern day King; Cannot Castle!!!
-# Chariot has the same movement as the modern day Rook
-# Horse has the same movement as the modern day Knight
+class Shah(Pieces):
+    '''
+        Has the same movements as the modern day king
 
-class Foot_Solider(Pieces):
+        1) Cannot Castle
+    '''
+
+    def Get_Moves(self):
+        return King.Get_Moves(self)
+
+class Rukh(Pieces):
+    '''
+        Has the same movement as the modern day rook
+    '''
+
+    def Get_Moves(self):
+        return Rook.Get_Moves(self)
+
+class Asp(Pieces):
+    '''
+        Has the same movement as the modern day knight
+    '''
+
+    def Get_Moves(self):
+        return Knight.Get_Moves(self)
+
+class Pujada(Pieces):
     '''
         Similar to modern day pawn.
 
@@ -80,14 +102,14 @@ class Foot_Solider(Pieces):
 
     def Get_Moves(self):
         if self.promoted:
-            return Counselor.Get_Moves(self)
+            return Farzin.Get_Moves(self)
         else:
             if self.color =='black':
                 return {(self.pos[0], self.pos[1]+1)}
             else:
                 return {(self.pos[0], self.pos[1]-1)}
 
-class Counselor(Pieces):
+class Farzin(Pieces):
     '''
         Place of the modern day Queen
 
@@ -97,7 +119,7 @@ class Counselor(Pieces):
     def Get_Moves(self):
         return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
 
-class Elephant(Pieces):
+class Pil(Pieces):
     '''
         In place of the modern day bishop
 
@@ -110,10 +132,39 @@ class Elephant(Pieces):
 
 ###### Shatar (Mongolian Chess) ######
 
-# Noyon (King) has the same movement as the modern day King; Cannot Castle!!!
-# Tereg (Rook) has the same movement as the modern day Rook
-# Teme (Bishop) has the same movement as the modern day Bishop
-# Mori (Knight) has the same movement as the modern day Knight
+class Noyon(Pieces):
+    '''
+        Has the same movements as the modern day king
+
+        1) Cannot Castle
+    '''
+
+    def Get_Moves(self):
+        return King.Get_Moves(self)
+
+class Tereg(Pieces):
+    '''
+        Has the same movement as the modern day rook
+    '''
+
+    def Get_Moves(self):
+        return Rook.Get_Moves(self)
+
+class Teme(Pieces):
+    '''
+        Has the same movement as teh modern dau bishop
+    '''
+
+    def Get_Moves(self):
+        return Bishop.Get_Moves(self)
+
+class Mori(Pieces):
+    '''
+        Has the same movement as the modern day knight
+    '''
+
+    def Get_Moves(self):
+        return Knight.Get_Moves(self)
 
 class Fu(Pieces):
     '''
@@ -153,10 +204,33 @@ class Bers(Pieces):
                                                                  list(zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1]))]) 
 
 ###### Sittuyin (Burmese Chess) ######
-
-# Min-gyi (King) has the same movement as the modern day King; Cannot Castle!!!
-# Yahhta (Rook) has the same movement as the modern day Rook
 # Myin (Knight) has the same movement as the modern day Knight
+
+class MinGyi(Pieces):
+    '''
+        Has the movement of the modern day king
+
+        1) Cannot Castle
+    '''
+
+    def Get_Moves(self):
+        return King.Get_Moves(self)
+
+class Yahhta(Pieces):
+    '''
+        Has the movement of the modern day rook
+    '''
+
+    def Get_Moves(self):
+        return Rook.Get_Moves(self)
+
+class Myin(Pieces):
+    '''
+        Has the movement of the modern day knight
+    '''
+
+    def Get_Moves(self):
+        return Knight.Get_Moves(self)
 
 class Ne(Pieces):
     '''
@@ -198,9 +272,24 @@ class Sin(Pieces):
             return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1,0], [1,-1,1,-1,1])])
 
 ###### Xiangqi (Chinese Chess) ######
-# Chuh (Rook) has the same movement as the modern day Rook
-# Ma (Knight) Has the same movement as the modern day Knight
-    # Cannot jump over pieces
+
+class Chuh(Pieces):
+    '''
+        Has the same movement as the modern day rooks
+    '''
+
+    def Get_Moves(self):
+        return Rook.Get_Moves(self)
+
+class Ma(Pieces):
+    '''
+        Has the movement of the modern day knight
+
+        1) Cannot jump over pieces
+    '''
+
+    def Get_Moves(self):
+        return Knight.Get_Moves(self)
 
 class JiangShuai(Pieces):
     '''
@@ -212,7 +301,7 @@ class JiangShuai(Pieces):
     '''
 
     def Get_Moves(self):
-        return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,-1,0,0], [0,0,1,-1])])
+        return King.Get_Moves(self)
 
 class Shi(Pieces):
     '''
@@ -244,10 +333,7 @@ class Pao(Pieces):
     '''
 
     def Get_Moves(self):
-        return set([((self.pos[0]+x), (self.pos[1]+y)) for x,y in list(zip([1,2,3,4,5,6,7], [0,0,0,0,0,0,0])) + \
-                                                                  list(zip([-1,-2,-3,-4,-5,-6,-7], [0,0,0,0,0,0,0])) + \
-                                                                  list(zip([0,0,0,0,0,0,0], [1,2,3,4,5,6,7])) + \
-                                                                  list(zip([0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7]))])
+        return Rook.Get_Moves(self)
 
 class PingTsuh(Pieces):
     '''
