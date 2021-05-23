@@ -6,7 +6,10 @@ class Pieces:
 
         self.has_moved=False
         self.captured=False
-        self.promoted=False
+        self.giving_check=False
+
+    def check_check(self):
+        pass
 
 ###### English Chess ######
 
@@ -70,6 +73,11 @@ class Foot_Solider(Pieces):
         2) If promoted (movign to the end of the board); it will always promote to a counselor
         3) Captures diagonally
     '''
+
+    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+        self.promoted = promoted
+        super().__init__(start_pos, piece_name, color)
+
     def Get_Moves(self):
         if self.promoted:
             return Counselor.Get_Moves(self)
@@ -346,6 +354,10 @@ class GinSho(Pieces):
         2) Promotes to a gold general
     '''
 
+    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+        self.promoted=promoted
+        super().__init__(start_pos, piece_name, color)
+
     def Get_Moves(self):
         if self.promoted:
             return KinSho.Get_Moves(self)
@@ -364,6 +376,10 @@ class KeiMa(Pieces):
         30 Promotes to a gold general
     '''
 
+    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+        self.promoted=promoted
+        super.__init__(start_pos, piece_name, color)
+
     def Get_Moves(self):
         if self.promoted:
             return KinSho.Get_Moves(self)
@@ -380,15 +396,18 @@ class Kyosha(Pieces):
         1) Can move as many spaces as it wants straight forward
         2) Promotes to a gold general
     '''
+    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+        self.promoted=promoted
+        super.__init__(start_pos, piece_name, color)
 
     def Get_Moves(self):
         if self.promoted:
             return KinSho.Get_Moves(self)
         else:
             if self.color=='black':
-                return set([(self.pos[0]+x, self.pox[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(1,8))])
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(1,8))])
             else:
-                return set([(self.pos[0]+x, self.pox[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(-7,0))])
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(-7,0))])
 
 class Fuhyo(Pieces):
     '''
@@ -397,6 +416,10 @@ class Fuhyo(Pieces):
         1) Move one space forward
         2) Promotes to gold general
     '''
+
+    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+        self.promoted=promoted
+        super().__init__(start_pos, piece_name, color)
 
     def Get_Moves(self):
         if self.promoted:
