@@ -15,7 +15,7 @@ class Pieces:
 
 class Knight(Pieces):
     def Get_Moves(self):
-        return set([((self.pos[0]+x), (self.pos[1]+y)) for x,y in zip([-2,-2,-1,1,2,2,1,-1], [-1,1,2,2,1,-2,-2,-2])])
+        return set([((self.pos[0]+x), (self.pos[1]+y)) for x,y in zip([2,2,1,1,-2,-2,-1,-1], [1,-1,2,-2,1,-1,2,-2])])
 
 class King(Pieces):
     def Get_Moves(self):
@@ -92,7 +92,7 @@ class Pujada(Pieces):
         Similar to modern day pawn.
 
         1) Can only move one space forward; regardless of the turn
-        2) If promoted (movign to the end of the board); it will always promote to a counselor
+        2) If promoted (moving to the end of the board); it will always promote to a counselor
         3) Captures diagonally
     '''
 
@@ -152,7 +152,7 @@ class Tereg(Pieces):
 
 class Teme(Pieces):
     '''
-        Has the same movement as teh modern dau bishop
+        Has the same movement as teh modern day bishop
     '''
 
     def Get_Moves(self):
@@ -262,9 +262,9 @@ class Sin(Pieces):
     def Get_Moves(self):
 
         if self.color =='black':
-            return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1,0], [1,-1,1,-1,-1])])
-        else:
             return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1,0], [1,-1,1,-1,1])])
+        else:
+            return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1,0], [1,-1,1,-1,-1])])
 
 ###### Xiangqi (Chinese Chess) ######
 
@@ -274,7 +274,7 @@ class Chuh(Pieces):
     '''
 
     def Get_Moves(self):
-        return Rook.Get_Moves(self)
+        return Rook.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,8,-8], [9,-9,0,0])])
 
 class Ma(Pieces): # Xiangqi and Janggi Chess (Knight)
     '''
@@ -296,7 +296,7 @@ class JiangShuai(Pieces):
     '''
 
     def Get_Moves(self):
-        return King.Get_Moves(self)
+        return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,1,-1], [1,-1,0,0])])
 
 class Shi(Pieces):
     '''
@@ -328,7 +328,7 @@ class Pao(Pieces):
     '''
 
     def Get_Moves(self):
-        return Rook.Get_Moves(self)
+        return Rook.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,8,-8], [9,-9,0,0])])
 
 class PingTsuh(Pieces):
     '''
@@ -343,16 +343,17 @@ class PingTsuh(Pieces):
 
         if self.color=='black':
             if cross_river:
-                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,0,0], [0,1,-1])])
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,-1,0], [0,0,1])])
             else:
                 return {(self.pos[0], self.pos[1]+1)}
         else:
             if cross_river:
-                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([-1,0,0], [0,1,-1])])
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([-1,1,0], [0,0,-1])])
             else:
                 return {(self.pos[0], self.pos[1]-1)}
 
 ###### Janggi (Korean Chess) ######
+# Ma (Horse) Moves exactly like the chinese counter part
 
 class Tcha(Pieces):
     '''
@@ -360,7 +361,7 @@ class Tcha(Pieces):
     '''
 
     def Get_Moves(self):
-        return Rook.Get_Moves(self)
+        return Rook.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,8,-8], [9,-9,0,0])])
 
 class Koung(Pieces):
     '''
@@ -391,7 +392,7 @@ class Syang(Pieces):
     '''
 
     def Get_Moves(self):
-        return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([3,3,-3-3], [2,-2,2,-2])])
+        return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([2,2,-2,-2,3,-3,3,-3], [3,-3,3,-3,2,2,-2,-2])])
 
 class PyengTjol(Pieces):
     '''
@@ -422,7 +423,7 @@ class Hpo(Pieces):
     '''
 
     def Get_Moves(self):
-        return Rook.Get_Moves(self)
+        return Rook.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,8,-8], [9,-9,0,0])])
 
 ###### Shogi (Japanese Chess) ######
 
@@ -439,9 +440,9 @@ class Kaku(Pieces):
 
     def Get_Moves(self):
         if self.promoted:
-            return Bishop.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,-1,0,0], [0,0,1,-1])])
+            return Bishop.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,-1,0,0, 8,8,-8,-8], [0,0,1,-1,8,-8,8,-8])])
         else:
-            return Bishop.Get_Moves(self)
+            return Bishop.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([8,-8,8,-8], [8,8,-8,-8])])
 
 class OSho(Pieces):
     '''
@@ -464,15 +465,15 @@ class Hisha(Pieces):
 
     def Get_Moves(self):
         if self.promoted:
-            return Rook.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
+            return Rook.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,1,-1,-1,0,0,8,-8], [1,-1,1,-1,8,-8,0,0])])
         else:
-            return Rook.Get_Moves(self)
+            return Rook.Get_Moves(self) | set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,8,-8], [8,-8,0,0])])
 
 class KinSho(Pieces):
     '''
         Gold General
 
-        1) Can move one space orthogonally and 1 space diagonally up to teh right or left
+        1) Can move one space orthogonally and 1 space diagonally up to the right or left
         2) Cannot be promoted
     '''
     
@@ -509,21 +510,21 @@ class KeiMa(Pieces):
 
         1) Can move two spaces forward and one space diagonally
         2) Can only move forward
-        30 Promotes to a gold general
+        3) Promotes to a gold general
     '''
 
     def __init__(self, start_pos, piece_name, color='white', promoted=False):
         self.promoted=promoted
-        super.__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_name, color)
 
     def Get_Moves(self):
         if self.promoted:
             return KinSho.Get_Moves(self)
         else:
             if self.color=='black':
-                return set([(self.pos[0]+x, self.pos[y]) for x,y in zip([1,-1], [2,2])])
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,-1], [2,2])])
             else:
-                return set([(self.pos[0]+x, self.pos[y]) for x,y in zip([1,-1], [-2,-2])])
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([1,-1], [-2,-2])])
 
 class Kyosha(Pieces):
     '''
@@ -534,16 +535,16 @@ class Kyosha(Pieces):
     '''
     def __init__(self, start_pos, piece_name, color='white', promoted=False):
         self.promoted=promoted
-        super.__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_name, color)
 
     def Get_Moves(self):
         if self.promoted:
             return KinSho.Get_Moves(self)
         else:
             if self.color=='black':
-                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(1,8))])
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,0,0,0,0,0,0], range(1,9))])
             else:
-                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,0,0,0,0,0], range(-7,0))])
+                return set([(self.pos[0]+x, self.pos[1]+y) for x,y in zip([0,0,0,0,0,0,0,0], range(-8,0))])
 
 class Fuhyo(Pieces):
     '''
