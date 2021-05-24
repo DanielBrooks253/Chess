@@ -274,7 +274,7 @@ class Chuh(Pieces):
     '''
 
     def Get_Moves(self):
-        return Rook.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,8,-8], [9,-9,0,0])])
+        return Rook.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,9,-9], [8,-8,0,0])])
 
 class Ma(Pieces): # Xiangqi and Janggi Chess (Knight)
     '''
@@ -328,7 +328,7 @@ class Pao(Pieces):
     '''
 
     def Get_Moves(self):
-        return Rook.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,8,-8], [9,-9,0,0])])
+        return Rook.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,9,-9], [8,-8,0,0])])
 
 class PingTsuh(Pieces):
     '''
@@ -339,15 +339,19 @@ class PingTsuh(Pieces):
         3) Once piece crosses the river; piece can move left and right
     '''
 
-    def Get_Moves(self, cross_river=False):
+    def __init__(self, start_pos, piece_name, color='white', cross_river=False):
+        self.cross_river = cross_river
+        super().__init__(start_pos, piece_name, color)
+
+    def Get_Moves(self):
 
         if self.color=='black':
-            if cross_river:
+            if self.cross_river:
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,-1,0], [0,0,1])])
             else:
                 return {(self.pos[0]+1, self.pos[1])}
         else:
-            if cross_river:
+            if self.cross_river:
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([-1,1,0], [0,0,-1])])
             else:
                 return {(self.pos[0]-1, self.pos[1])}
@@ -361,7 +365,7 @@ class Tcha(Pieces):
     '''
 
     def Get_Moves(self):
-        return Rook.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,8,-8], [9,-9,0,0])])
+        return Rook.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,9,-9], [8,-8,0,0])])
 
 class Koung(Pieces):
     '''
@@ -402,15 +406,20 @@ class PyengTjol(Pieces):
         2) Captures on movement paths
         3) If the pawn is in the fortress, the pawn can move diagonally
     '''
+
+    def __init__(self, start_pos, piece_name, color='white', in_fortress=False):
+        self.in_fortress = in_fortress
+        super().__init__(start_pos, piece_name, color)
+
     def Get_Moves(self, in_fortress=False):
         if self.color=='black':
-            if in_fortress:
+            if self.in_fortress:
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,1,-1,1,-1], [1,0,0,1,1])])
             else:
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,1,-1], [1,0,0])])
 
         else:
-            if in_fortress:
+            if self.in_fortress:
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,1,-1,1,-1], [-1,0,0,-1,-1])])
             else:
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,1,-1], [-1,0,0])])
@@ -423,7 +432,7 @@ class Hpo(Pieces):
     '''
 
     def Get_Moves(self):
-        return Rook.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,8,-8], [9,-9,0,0])])
+        return Rook.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,9,-9], [8,-8,0,0])])
 
 ###### Shogi (Japanese Chess) ######
 
@@ -440,7 +449,7 @@ class Kaku(Pieces):
 
     def Get_Moves(self):
         if self.promoted:
-            return Bishop.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,-1,0,0, 8,8,-8,-8], [0,0,1,-1,8,-8,8,-8])])
+            return Bishop.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,-1,0,0,8,8,-8,-8], [0,0,1,-1,8,-8,8,-8])])
         else:
             return Bishop.Get_Moves(self) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([8,-8,8,-8], [8,8,-8,-8])])
 
@@ -524,7 +533,7 @@ class KeiMa(Pieces):
             if self.color=='black':
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,-1], [2,2])])
             else:
-                return set([(self.pos[0]+y, self.pos[1]+y) for x,y in zip([1,-1], [-2,-2])])
+                return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,-1], [-2,-2])])
 
 class Kyosha(Pieces):
     '''
