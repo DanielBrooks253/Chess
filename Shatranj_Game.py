@@ -1,55 +1,55 @@
 import numpy as np
-import Pieces
+from Pieces import *
 
 board = np.chararray((8,8), itemsize=3)
 board[:] = ""
 
 # Pujada (Pawns)
-wp0 = Pieces.Pujada((6,0), piece_name='wp0', color='white')
-wp1 = Pieces.Pujada((6,1), piece_name='wp1', color='white')
-wp2 = Pieces.Pujada((6,2), piece_name='wp2', color='white')
-wp3 = Pieces.Pujada((6,3), piece_name='wp3', color='white')
-wp4 = Pieces.Pujada((6,4), piece_name='wp4', color='white')
-wp5 = Pieces.Pujada((6,5), piece_name='wp5', color='white')
-wp6 = Pieces.Pujada((6,6), piece_name='wp6', color='white')
-wp7 = Pieces.Pujada((6,7), piece_name='wp7', color='white')
+wp0 = Pujada((6,0), piece_name='wp0', color='white')
+wp1 = Pujada((6,1), piece_name='wp1', color='white')
+wp2 = Pujada((6,2), piece_name='wp2', color='white')
+wp3 = Pujada((6,3), piece_name='wp3', color='white')
+wp4 = Pujada((6,4), piece_name='wp4', color='white')
+wp5 = Pujada((6,5), piece_name='wp5', color='white')
+wp6 = Pujada((6,6), piece_name='wp6', color='white')
+wp7 = Pujada((6,7), piece_name='wp7', color='white')
 
-bp0 = Pieces.Pujada((1,0), piece_name='bp0', color='black')
-bp1 = Pieces.Pujada((1,1), piece_name='bp1', color='black')
-bp2 = Pieces.Pujada((1,2), piece_name='bp2', color='black')
-bp3 = Pieces.Pujada((1,3), piece_name='bp3', color='black')
-bp4 = Pieces.Pujada((1,4), piece_name='bp4', color='black')
-bp5 = Pieces.Pujada((1,5), piece_name='bp5', color='black')
-bp6 = Pieces.Pujada((1,6), piece_name='bp6', color='black')
-bp7 = Pieces.Pujada((1,7), piece_name='bp7', color='black')
+bp0 = Pujada((1,0), piece_name='bp0', color='black')
+bp1 = Pujada((1,1), piece_name='bp1', color='black')
+bp2 = Pujada((1,2), piece_name='bp2', color='black')
+bp3 = Pujada((1,3), piece_name='bp3', color='black')
+bp4 = Pujada((1,4), piece_name='bp4', color='black')
+bp5 = Pujada((1,5), piece_name='bp5', color='black')
+bp6 = Pujada((1,6), piece_name='bp6', color='black')
+bp7 = Pujada((1,7), piece_name='bp7', color='black')
 
 # Rukh (Rooks)
-wr0 = Pieces.Rukh((7,0), piece_name='wr0', color='white')
-wr1 = Pieces.Rukh((7,7), piece_name='wr1', color='white')
+wr0 = Rukh((7,0), piece_name='wr0', color='white')
+wr1 = Rukh((7,7), piece_name='wr1', color='white')
 
-br0 = Pieces.Rukh((0,0), piece_name='br0', color='black')
-br1 = Pieces.Rukh((0,7), piece_name='br1', color='black')
+br0 = Rukh((0,0), piece_name='br0', color='black')
+br1 = Rukh((0,7), piece_name='br1', color='black')
 
 # Asp (Horses)
-wa0 = Pieces.Asp((7,1), piece_name='wa0', color='white')
-wa1 = Pieces.Asp((7,6), piece_name='wa2', color='white')
+wa0 = Asp((7,1), piece_name='wa0', color='white')
+wa1 = Asp((7,6), piece_name='wa2', color='white')
 
-ba0 = Pieces.Asp((0,1), piece_name='ba0', color='black')
-ba1 = Pieces.Asp((0,6), piece_name='ba2', color='black')
+ba0 = Asp((0,1), piece_name='ba0', color='black')
+ba1 = Asp((0,6), piece_name='ba2', color='black')
 
 # Pil (Elephants)
-we0 = Pieces.Pil((7,2), piece_name='we0', color='white')
-we1 = Pieces.Pil((7,5), piece_name='we2', color='white')
+we0 = Pil((7,2), piece_name='we0', color='white')
+we1 = Pil((7,5), piece_name='we2', color='white')
 
-be0 = Pieces.Pil((0,2), piece_name='be0', color='black')
-be1 = Pieces.Pil((0,5), piece_name='be2', color='black')
+be0 = Pil((0,2), piece_name='be0', color='black')
+be1 = Pil((0,5), piece_name='be2', color='black')
 
 # Shah (King) and Farzin (Queen)
-wS = Pieces.Shah((7,3), piece_name='wK ', color='white')
-wF = Pieces.Farzin((7,4), piece_name='wF ', color='white')
+wS = Shah((7,3), piece_name='wK ', color='white')
+wF = Farzin((7,4), piece_name='wF ', color='white')
 
-bS = Pieces.Shah((0,3), piece_name='bS ', color='black')
-bF = Pieces.Farzin((0,4), piece_name='bF ', color='black')
+bS = Shah((0,3), piece_name='bS ', color='black')
+bF = Farzin((0,4), piece_name='bF ', color='black')
 
 ##### Show Board #####
 board[wp0.pos[0], wp0.pos[1]] = wp0.piece_name
