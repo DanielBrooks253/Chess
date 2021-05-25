@@ -1,4 +1,16 @@
 ###### Shatranj (Persian Chess) ######
+class Pieces:
+    def __init__(self, start_pos, piece_name, color='white'):
+        self.pos=start_pos
+        self.piece_name=piece_name
+        self.color = color.lower()
+
+        self.has_moved=False
+        self.captured=False
+        self.giving_check=False
+
+    def check_check(self):
+        pass
 
 class Shah(Pieces):
     '''
@@ -20,6 +32,17 @@ class Rukh(Pieces):
                                                                   list(zip([-1,-2,-3,-4,-5,-6,-7], [0,0,0,0,0,0,0])) + \
                                                                   list(zip([0,0,0,0,0,0,0], [1,2,3,4,5,6,7])) + \
                                                                   list(zip([0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7]))])
+    
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+        all_moves = Rukh.Get_Moves(self)
+        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+
+        rm_same_color = on_board - same_color_locs
+        
+        if len(rm_same_color) == 0:
+            return None
+        else:
+            return rm_same_color
 
 
 class Asp(Pieces):
@@ -28,7 +51,18 @@ class Asp(Pieces):
     '''
 
     def Get_Moves(self):
-        return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
+        return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([2,2,1,1,-2,-2,-1,-1], [1,-1,2,-2,1,-1,2,-2])])
+
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+        all_moves = Asp.Get_Moves(self)
+        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+
+        rm_same_color = on_board - same_color_locs
+        
+        if len(rm_same_color) == 0:
+            return None
+        else:
+            return rm_same_color
         
 class Pujada(Pieces):
     '''
@@ -52,6 +86,17 @@ class Pujada(Pieces):
             else:
                 return {(self.pos[0]-1, self.pos[1])}
 
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+        all_moves = Pujada.Get_Moves(self)
+        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+
+        rm_same_color = on_board - same_color_locs
+        
+        if len(rm_same_color) == 0:
+            return None
+        else:
+            return rm_same_color
+
 class Farzin(Pieces):
     '''
         Place of the modern day Queen
@@ -61,6 +106,17 @@ class Farzin(Pieces):
 
     def Get_Moves(self):
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
+    
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+        all_moves = Farzin.Get_Moves(self)
+        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+
+        rm_same_color = on_board - same_color_locs
+        
+        if len(rm_same_color) == 0:
+            return None
+        else:
+            return rm_same_color
 
 class Pil(Pieces):
     '''
@@ -71,4 +127,15 @@ class Pil(Pieces):
     '''
 
     def Get_Moves(self):
-        return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([2,2,-2,-2], [2,-2,2,-2])])   
+        return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([2,2,-2,-2], [2,-2,2,-2])]) 
+
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+        all_moves = Pil.Get_Moves(self)
+        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+
+        rm_same_color = on_board - same_color_locs
+        
+        if len(rm_same_color) == 0:
+            return None
+        else:
+            return rm_same_color  

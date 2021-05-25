@@ -5,6 +5,9 @@ class Board:
         self.black_piece_loc = black_loc # All black piece locations (Generally)
         self.white_piece_loc = white_loc # All white piece locations (Generally)
 
+        self.black_moves = set()
+        self.white_moves = set()
+
         #self.black_piece_dict = dict() # Key location, value piece name
         #self.white_piece_dict = dict() # Key location, value piece name
 
@@ -12,7 +15,7 @@ class Board:
         self.x_dim=x_dim
 
     def update_locs(self, color, old_move, new_move, is_captured=False):
-        if is_captured:
+        if is_captured: # Remove piece from opposing color and update sets
             if color == 'white':
                 self.black_piece_loc -= {new_move}
 
@@ -27,7 +30,7 @@ class Board:
                 add_new_move = rm_old_move | {new_move}
 
                 self.black_piece_loc = add_new_move
-        else:
+        else: # Update sets
             if color =='white':
                 rm_old_move = self.white_piece_loc - {old_move}
                 add_new_move = rm_old_move | {new_move}
