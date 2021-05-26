@@ -18,9 +18,23 @@ class Shah(Pieces):
 
         1) Cannot Castle
     '''
+    def __init__(self, start_pos, piece_name, color='white'):
+        self.in_check = False
+        super().__init__(start_pos, piece_name, color)
 
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
+
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+        all_moves = Shah.Get_Moves(self)
+        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+
+        rm_same_color = on_board - same_color_locs
+        
+        if len(rm_same_color) == 0:
+            return None
+        else:
+            return rm_same_color
 
 class Rukh(Pieces):
     '''
