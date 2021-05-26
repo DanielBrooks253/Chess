@@ -60,6 +60,11 @@ class Rukh(Pieces):
     def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs):
         combine_locs = same_color_locs | opp_color_locs
 
+        same_color_up = False
+        same_color_down = False
+        same_color_left = False
+        same_color_right = False
+
         closest_up = list(filter(lambda x: x[1] == self.pos[1] and x[0] < self.pos[0], combine_locs))
         closest_down = list(filter(lambda x: x[1] == self.pos[1] and x[0] > self.pos[0], combine_locs))
         closest_left = list(filter(lambda x: x[0] == self.pos[0] and x[1] < self.pos[1], combine_locs))
@@ -70,43 +75,12 @@ class Rukh(Pieces):
         closest_left = {None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]}
         closest_right = {None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[0]}
 
-        if len(closest_up & same_color_locs) != 0:
-            closest_up_color = self.color
-        elif len(closest_up & same_color_locs) == 0 and self.color == 'white':
-            closest_up_color = 'black'
-        elif len(closest_up & same_color_locs) == 0 and self.color == 'black':
-            closest_up_color = 'white'
-        else:
-            closest_up_color = None
+        if len(closest_up & same_color_locs) != 0: same_color_up = True
+        if len(closest_down & same_color_locs) != 0: same_color_down = True
+        if len(closest_left & same_color_locs) != 0: same_color_left = True
+        if len(closest_right & same_color_locs) != 0: same_color_right = True
 
-        if len(closest_right & same_color_locs) != 0:
-            closest_right_color = self.color
-        elif len(closest_right & same_color_locs) == 0 and self.color == 'white':
-            closest_right_color = 'black'
-        elif len(closest_right & same_color_locs) == 0 and self.color == 'black':
-            closest_right_color = 'white'
-        else:
-            closest_right_color = None
-
-        if len(closest_left & same_color_locs) != 0:
-            closest_left_color = self.color
-        elif len(closest_left & same_color_locs) == 0 and self.color == 'white':
-            closest_left_color = 'black'
-        elif len(closest_left & same_color_locs) == 0 and self.color == 'black':
-            closest_left_color = 'white'
-        else:
-            closest_left_color = None
-
-        if len(closest_down & same_color_locs) != 0:
-            closest_down_color = self.color
-        elif len(closest_down & same_color_locs) == 0 and self.color == 'white':
-            closest_down_color = 'black'
-        elif len(closest_down & same_color_locs) == 0 and self.color == 'black':
-            closest_down_color = 'white'
-        else:
-            closest_down_color = None
-
-        return (closest_up_color, closest_left_color, closest_right_color, closest_down_color)
+        return (same_color_up, same_color_down, same_color_right, same_color_left)
 
 class Asp(Pieces):
     '''
