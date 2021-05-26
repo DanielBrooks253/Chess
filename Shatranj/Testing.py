@@ -62,10 +62,9 @@ board.print_board(wp0,wp1,wp2,wp3,wp4,wp5,wp6,wp7,
                    bp0,bp1,bp2,bp3,bp4,bp5,bp6,bp7,
                    br0,br1,ba0,ba1,be0,be1,bS,bF)
 
-print(be0.Available_Moves(board.y_dim, board.x_dim, board.white_piece_loc))
+print(br0.Get_Orthogonal_Pieces(board.black_piece_loc, board.white_piece_loc))
 # print(board.white_piece_loc)
 
 # board.update_locs('white', (6,4), (0,0), is_captured=True)
 # print(board.white_piece_loc)
 # print(board.black_piece_loc)
-
