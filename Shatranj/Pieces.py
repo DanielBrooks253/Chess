@@ -46,7 +46,7 @@ class Rukh(Pieces):
     
     def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
         all_moves = Rukh.Get_Moves(self)
-        orth_moves_beyond_pieces = Rukh.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs)
+        orth_moves_beyond_pieces = Rukh.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
 
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -58,7 +58,14 @@ class Rukh(Pieces):
         else:
             return rm_over_pieces
 
-    def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs):
+    def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim):
+        '''
+        Rooks cannot jump over other pieces, therefore the moves the rook can make is limited
+        by the closest piece in each direction orthogonally.
+
+        This function finds the closest orthogonal pieces (If there are any) and creates a set of
+        unavailable moves accordingly
+        '''
         combine_locs = same_color_locs | opp_color_locs
 
         same_color_up = False
@@ -89,9 +96,9 @@ class Rukh(Pieces):
             up_no = set()
 
         if same_color_down and closest_down is not None:
-            down_no = set(zip(range((closest_down[0]+1), 8), [closest_down[1]] * ((7 - closest_down[0]) + closest_down[0])))
+            down_no = set(zip(range((closest_down[0]+1), y_dim), [closest_down[1]] * (((y_dim-1) - closest_down[0]) + closest_down[0])))
         elif not same_color_down and closest_down is not None:
-            down_no = set(zip(range(closest_down[0], 8), [closest_down[1]] * ((8 - closest_down[0]) + closest_down[0])))
+            down_no = set(zip(range(closest_down[0], y_dim), [closest_down[1]] * ((y_dim - closest_down[0]) + closest_down[0])))
         else:
             down_no = set()
 
@@ -103,9 +110,9 @@ class Rukh(Pieces):
             left_no = set()
 
         if same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * ((7-closest_right[1]) + closest_right[1]), range((closest_right[1]+1), 8)))
+            right_no = set(zip([closest_right[0]] * (((x_dim-1)-closest_right[1]) + closest_right[1]), range((closest_right[1]+1), x_dim)))
         elif not same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * ((8-closest_right[1]) + closest_right[1]), range(closest_right[1], 8)))
+            right_no = set(zip([closest_right[0]] * ((x_dim-closest_right[1]) + closest_right[1]), range(closest_right[1], x_dim)))
         else:
             right_no = set()
 
