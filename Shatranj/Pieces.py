@@ -46,16 +46,17 @@ class Rukh(Pieces):
     
     def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
         all_moves = Rukh.Get_Moves(self)
+        orth_moves_beyond_pieces = Rukh.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs)
+
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
-        
-        Rukh.Get_Orthogonal_Pieces(self, rm_same_color, opp_color_locs)
+        rm_over_pieces = rm_same_color - orth_moves_beyond_pieces
 
-        # if len(rm_same_color) == 0:
-        #     return None
-        # else:
-        #     return rm_same_color
+        if len(rm_over_pieces) == 0:
+            return None
+        else:
+            return rm_over_pieces
 
     def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs):
         combine_locs = same_color_locs | opp_color_locs
@@ -70,17 +71,45 @@ class Rukh(Pieces):
         closest_left = list(filter(lambda x: x[0] == self.pos[0] and x[1] < self.pos[1], combine_locs))
         closest_right = list(filter(lambda x: x[0] == self.pos[0] and x[1] > self.pos[1], combine_locs))
 
-        closest_up = {None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]}
-        closest_down = {None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]}
-        closest_left = {None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]}
-        closest_right = {None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[0]}
+        closest_up = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
+        closest_down = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]
+        closest_left = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]
+        closest_right = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[0]
 
-        if len(closest_up & same_color_locs) != 0: same_color_up = True
-        if len(closest_down & same_color_locs) != 0: same_color_down = True
-        if len(closest_left & same_color_locs) != 0: same_color_left = True
-        if len(closest_right & same_color_locs) != 0: same_color_right = True
+        if len({closest_up} & same_color_locs) != 0: same_color_up = True
+        if len({closest_down} & same_color_locs) != 0: same_color_down = True
+        if len({closest_left} & same_color_locs) != 0: same_color_left = True
+        if len({closest_right} & same_color_locs) != 0: same_color_right = True
 
-        return (same_color_up, same_color_down, same_color_right, same_color_left)
+        if same_color_up and closest_up is not None:
+            up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*closest_up[0]))
+        elif not same_color_up and closest_up is not None:
+            up_no = set(zip(range(closest_up[0], -1, -1), [closest_up[1]]*closest_up[0]))
+        else:
+            up_no = set()
+
+        if same_color_down and closest_down is not None:
+            down_no = set(zip(range((closest_down[0]+1), 8), [closest_down[1]] * ((7 - closest_down[0]) + closest_down[0])))
+        elif not same_color_down and closest_down is not None:
+            down_no = set(zip(range(closest_down[0], 8), [closest_down[1]] * ((8 - closest_down[0]) + closest_down[0])))
+        else:
+            down_no = set()
+
+        if same_color_left and closest_left is not None:
+            left_no = set(zip([closest_left[0]] * closest_left[1], range((closest_left[1]-1), -1, -1)))
+        elif not same_color_left and closest_left is not None:
+            left_no = set(zip([closest_left[0]] * closest_left[1], range(closest_left[1], -1, -1)))
+        else:
+            left_no = set()
+
+        if same_color_right and closest_right is not None:
+            right_no = set(zip([closest_right[0]] * ((7-closest_right[1]) + closest_right[1]), range((closest_right[1]+1), 8)))
+        elif not same_color_right and closest_right is not None:
+            right_no = set(zip([closest_right[0]] * ((8-closest_right[1]) + closest_right[1]), range(closest_right[1], 8)))
+        else:
+            right_no = set()
+
+        return up_no|down_no|left_no|right_no
 
 class Asp(Pieces):
     '''
