@@ -42,7 +42,7 @@ be0 = Pil((0,2), piece_name='be0', color='black')
 be1 = Pil((0,5), piece_name='be1', color='black')
 
 # Shah (King) and Farzin (Queen)
-wS = Shah((7,3), piece_name='wK ', color='white')
+wS = Shah((7,3), piece_name='wS ', color='white')
 wF = Farzin((7,4), piece_name='wF ', color='white')
 
 bS = Shah((0,3), piece_name='bS ', color='black')
@@ -62,10 +62,10 @@ board.print_board(wp0,wp1,wp2,wp3,wp4,wp5,wp6,wp7,
                    bp0,bp1,bp2,bp3,bp4,bp5,bp6,bp7,
                    br0,br1,ba0,ba1,be0,be1,bS,bF)
 
-print(be0.Available_Moves(board.y_dim, board.x_dim, board.white_piece_loc))
-# print(board.white_piece_loc)
+
+print(wa1.Available_Moves(board.y_dim, board.x_dim, 
+                          board.white_piece_loc, board.black_piece_loc))
 
 # board.update_locs('white', (6,4), (0,0), is_captured=True)
 # print(board.white_piece_loc)
 # print(board.black_piece_loc)
-
