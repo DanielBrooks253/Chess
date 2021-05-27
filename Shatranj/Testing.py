@@ -48,14 +48,14 @@ wF = Farzin((7,4), piece_name='wF ', color='white')
 bS = Shah((0,3), piece_name='bS ', color='black')
 bF = Farzin((0,4), piece_name='bF ', color='black')
 
-board = Board(set([wp0.pos, wp1.pos, wp2.pos, wp3.pos,
-                wp4.pos, wp5.pos, wp6.pos, wp7.pos,
-                wr0.pos, wr1.pos, wa0.pos, wa1.pos,
-                we0.pos, we1.pos, wS.pos, wF.pos]), 
-              set([bp0.pos, bp1.pos, bp2.pos, bp3.pos,
-                bp4.pos, bp5.pos, bp6.pos, bp7.pos,
-                br0.pos, br1.pos, ba0.pos, ba1.pos,
-                be0.pos, be1.pos, bS.pos, bF.pos]))
+board = Board([wp0, wp1, wp2, wp3,
+                wp4, wp5, wp6, wp7,
+                wr0, wr1, wa0, wa1,
+                we0, we1, wS, wF], 
+              [bp0, bp1, bp2, bp3,
+                bp4, bp5, bp6, bp7,
+                br0, br1, ba0, ba1,
+                be0, be1, bS, bF])
 
 board.print_board(wp0,wp1,wp2,wp3,wp4,wp5,wp6,wp7,
                    wr0,wr1,wa0,wa1,we0,we1,wS,wF,
@@ -63,9 +63,14 @@ board.print_board(wp0,wp1,wp2,wp3,wp4,wp5,wp6,wp7,
                    br0,br1,ba0,ba1,be0,be1,bS,bF)
 
 
-print(wa1.Available_Moves(board.y_dim, board.x_dim, 
+# Make a Move
+print(wp0.Available_Moves(board.y_dim, board.x_dim, 
                           board.white_piece_loc, board.black_piece_loc))
+board.update_locs('white', (6,0), (5,0), 'wp0')
+wp0.Make_Move((5,0))
 
-# board.update_locs('white', (6,4), (0,0), is_captured=True)
-# print(board.white_piece_loc)
-# print(board.black_piece_loc)
+board.print_board(wp0,wp1,wp2,wp3,wp4,wp5,wp6,wp7,
+                   wr0,wr1,wa0,wa1,we0,we1,wS,wF,
+                   bp0,bp1,bp2,bp3,bp4,bp5,bp6,bp7,
+                   br0,br1,ba0,ba1,be0,be1,bS,bF)
+

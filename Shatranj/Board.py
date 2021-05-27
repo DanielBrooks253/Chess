@@ -2,14 +2,11 @@ import numpy as np
 
 class Board:
     def __init__(self, white_loc, black_loc, y_dim=8, x_dim=8):
-        self.black_piece_loc = black_loc # All black piece locations (Generally)
-        self.white_piece_loc = white_loc # All white piece locations (Generally)
+        self.black_piece_loc = set([i.pos for i in black_loc])
+        self.white_piece_loc = set([i.pos for i in white_loc])
 
-        self.black_moves = set()
-        self.white_moves = set()
-
-        #self.black_piece_dict = dict() # Key location, value piece name
-        #self.white_piece_dict = dict() # Key location, value piece name
+        self.black_piece_dict = {i.pos:i.piece_name for i in black_loc}
+        self.white_piece_dict = {i.pos:i.piece_name for i in white_loc}
 
         self.y_dim=y_dim
         self.x_dim=x_dim
@@ -23,6 +20,7 @@ class Board:
                 add_new_move = rm_old_move | {new_move}
 
                 self.white_piece_loc = add_new_move
+
             else:
                 self.white_piece_loc -= {new_move}
 

@@ -7,7 +7,10 @@ class Pieces:
 
         self.has_moved=False
         self.captured=False
-        self.giving_check=False   
+        self.giving_check=False  
+
+    def Make_Move(self, new_pos):
+        self.pos = new_pos 
 
 class Shah(Pieces):
     '''
