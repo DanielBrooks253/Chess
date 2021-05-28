@@ -1,12 +1,12 @@
 import numpy as np
 
 class Board:
-    def __init__(self, white_loc, black_loc, y_dim=8, x_dim=8):
-        self.black_piece_loc = set([i.pos for i in black_loc])
-        self.white_piece_loc = set([i.pos for i in white_loc])
+    def __init__(self, white_pieces, black_pieces, y_dim=8, x_dim=8):
+        self.black_piece_loc = set([i.pos for i in black_pieces])
+        self.white_piece_loc = set([i.pos for i in white_pieces])
 
-        self.black_piece_dict = {i.pos:i.piece_name for i in black_loc}
-        self.white_piece_dict = {i.pos:i.piece_name for i in white_loc}
+        self.pos_obj_dict = {i.pos:i for i in white_pieces + black_pieces if i.pos is not None}
+        self.name_obj_dict = {i.piece_name:i for i in white_pieces + black_pieces}
 
         self.y_dim=y_dim
         self.x_dim=x_dim
@@ -39,6 +39,10 @@ class Board:
                 add_new_move = rm_old_move | {new_move}
 
                 self.black_piece_loc = add_new_move
+
+    def update_obj_dicts(self, objs):
+        self.pos_obj_dict = {i.pos:i for i in objs.values() if i.pos is not None}
+        self.name_obj_dict = {i.piece_name:i for i in objs.values()}
 
     def print_board(self, *args):
         board = np.chararray((self.x_dim, self.y_dim), itemsize=3)

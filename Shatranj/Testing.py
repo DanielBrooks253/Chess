@@ -42,11 +42,11 @@ be0 = Pil((0,2), piece_name='be0', color='black')
 be1 = Pil((0,5), piece_name='be1', color='black')
 
 # Shah (King) and Farzin (Queen)
-wS = Shah((7,3), piece_name='wS ', color='white')
-wF = Farzin((7,4), piece_name='wF ', color='white')
+wS = Shah((7,3), piece_name='wS0', color='white')
+wF = Farzin((7,4), piece_name='wF0', color='white')
 
-bS = Shah((0,3), piece_name='bS ', color='black')
-bF = Farzin((0,4), piece_name='bF ', color='black')
+bS = Shah((0,3), piece_name='bS0', color='black')
+bF = Farzin((0,4), piece_name='bF0', color='black')
 
 board = Board([wp0, wp1, wp2, wp3,
                 wp4, wp5, wp6, wp7,
@@ -57,20 +57,70 @@ board = Board([wp0, wp1, wp2, wp3,
                 br0, br1, ba0, ba1,
                 be0, be1, bS, bF])
 
-board.print_board(wp0,wp1,wp2,wp3,wp4,wp5,wp6,wp7,
-                   wr0,wr1,wa0,wa1,we0,we1,wS,wF,
-                   bp0,bp1,bp2,bp3,bp4,bp5,bp6,bp7,
-                   br0,br1,ba0,ba1,be0,be1,bS,bF)
-
+board.print_board(board.name_obj_dict['wp0'],board.name_obj_dict['wp1'],
+                  board.name_obj_dict['wp2'],board.name_obj_dict['wp3'],
+                  board.name_obj_dict['wp4'],board.name_obj_dict['wp5'],
+                  board.name_obj_dict['wp6'],board.name_obj_dict['wp7'],
+                  board.name_obj_dict['wr0'],board.name_obj_dict['wr1'],
+                  board.name_obj_dict['wa0'],board.name_obj_dict['wa1'],
+                  board.name_obj_dict['we0'],board.name_obj_dict['we1'],
+                  board.name_obj_dict['wS0'],board.name_obj_dict['wF0'],
+                  board.name_obj_dict['bp0'],board.name_obj_dict['bp1'],
+                  board.name_obj_dict['bp2'],board.name_obj_dict['bp3'],
+                  board.name_obj_dict['bp4'],board.name_obj_dict['bp5'],
+                  board.name_obj_dict['bp6'],board.name_obj_dict['bp7'],
+                  board.name_obj_dict['br0'],board.name_obj_dict['br1'],
+                  board.name_obj_dict['ba0'],board.name_obj_dict['ba1'],
+                  board.name_obj_dict['be0'],board.name_obj_dict['be1'],
+                  board.name_obj_dict['bS0'],board.name_obj_dict['bF0'])
 
 # Make a Move
-print(wp0.Available_Moves(board.y_dim, board.x_dim, 
-                          board.white_piece_loc, board.black_piece_loc))
-board.update_locs('white', (6,0), (5,0), 'wp0')
-wp0.Make_Move((5,0))
+# print(board.name_obj_dict['wp0'].Available_Moves(board.y_dim, board.x_dim, 
+#                           board.white_piece_loc, board.black_piece_loc))
 
-board.print_board(wp0,wp1,wp2,wp3,wp4,wp5,wp6,wp7,
-                   wr0,wr1,wa0,wa1,we0,we1,wS,wF,
-                   bp0,bp1,bp2,bp3,bp4,bp5,bp6,bp7,
-                   br0,br1,ba0,ba1,be0,be1,bS,bF)
+old_move = (6,0)
+new_move = (1,0)
+
+# if new move has opposite color piece
+if board.name_obj_dict['wp0'].color == 'white':
+  if len({new_move} & board.black_piece_loc) == 0:
+    board.update_locs(board.name_obj_dict['wp0'].color, old_move, new_move)
+    board.name_obj_dict['wp0'].Make_Move(new_move)
+    board.update_obj_dicts(board.name_obj_dict)
+  else:
+    board.pos_obj_dict[new_move].pos = None
+    board.pos_obj_dict[new_move].captured = True
+    board.name_obj_dict['wp0'].Make_Move(new_move)
+    board.update_locs(board.name_obj_dict['wp0'].color, old_move, new_move, is_captured=True)
+    board.update_obj_dicts(board.name_obj_dict)
+else:
+  if len({new_move} & board.white_piece_loc) == 0:
+    board.update_locs(board.name_obj_dict['wp0'].color, old_move, new_move)
+    board.name_obj_dict['wp0'].Make_Move(new_move)
+    board.update_obj_dicts(board.name_obj_dict)
+  else:
+    board.pos_obj_dict[new_move].pos = None
+    board.pos_obj_dict[new_move].captured = True
+    board.name_obj_dict['wp0'].Make_Move(new_move)
+    board.update_locs(board.name_obj_dict['wp0'].color, old_move, new_move, is_captured=True)
+    board.update_obj_dicts(board.name_obj_dict)
+
+# board.print_board(board.name_obj_dict['wp0'],board.name_obj_dict['wp1'],
+#                   board.name_obj_dict['wp2'],board.name_obj_dict['wp3'],
+#                   board.name_obj_dict['wp4'],board.name_obj_dict['wp5'],
+#                   board.name_obj_dict['wp6'],board.name_obj_dict['wp7'],
+#                   board.name_obj_dict['wr0'],board.name_obj_dict['wr1'],
+#                   board.name_obj_dict['wa0'],board.name_obj_dict['wa1'],
+#                   board.name_obj_dict['we0'],board.name_obj_dict['we1'],
+#                   board.name_obj_dict['wS0'],board.name_obj_dict['wF0'],
+#                   board.name_obj_dict['bp0'],board.name_obj_dict['bp1'],
+#                   board.name_obj_dict['bp2'],board.name_obj_dict['bp3'],
+#                   board.name_obj_dict['bp4'],board.name_obj_dict['bp5'],
+#                   board.name_obj_dict['bp6'],board.name_obj_dict['bp7'],
+#                   board.name_obj_dict['br0'],board.name_obj_dict['br1'],
+#                   board.name_obj_dict['ba0'],board.name_obj_dict['ba1'],
+#                   board.name_obj_dict['be0'],board.name_obj_dict['be1'],
+#                   board.name_obj_dict['bS0'],board.name_obj_dict['bF0'])
+
+
 
