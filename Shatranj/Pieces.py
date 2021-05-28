@@ -19,8 +19,8 @@ class Shah(Pieces):
         1) Cannot Castle
     '''
     def __init__(self, start_pos, piece_name, color='white'):
-        self.in_check = False
-        super().__init__(start_pos, piece_name, color)
+        self.checking_pos = {None}
+        super().__init__(start_pos, piece_name, color='white')
 
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
@@ -30,11 +30,19 @@ class Shah(Pieces):
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
+        rm_checks = rm_same_color - self.checking_pos
         
-        if len(rm_same_color) == 0:
+        if len(rm_checks) == 0:
             return None
         else:
-            return rm_same_color
+            return rm_checks
+
+    def In_Check(self, king_pos, opp_moves):
+        if len({king_pos} & opp_moves) != 0:
+            self.checking_pos = opp_moves
+            return True
+        else:
+            return False
 
 class Rukh(Pieces):
     '''

@@ -5,6 +5,9 @@ class Board:
         self.black_piece_loc = set([i.pos for i in black_pieces])
         self.white_piece_loc = set([i.pos for i in white_pieces])
 
+        self.white_available_moves = set().union(*list(filter(None, [i.Available_Moves(y_dim, x_dim, self.white_piece_loc, self.black_piece_loc) for i in white_pieces])))
+        self.black_available_moves = set().union(*list(filter(None, [i.Available_Moves(y_dim, x_dim, self.black_piece_loc, self.white_piece_loc) for i in black_pieces])))
+
         self.pos_obj_dict = {i.pos:i for i in white_pieces + black_pieces if i.pos is not None}
         self.name_obj_dict = {i.piece_name:i for i in white_pieces + black_pieces}
 
@@ -42,7 +45,11 @@ class Board:
 
     def update_obj_dicts(self, objs):
         self.pos_obj_dict = {i.pos:i for i in objs.values() if i.pos is not None}
-        self.name_obj_dict = {i.piece_name:i for i in objs.values()}
+        self.name_obj_dict = {i.piece_name:i for i in objs.values() if i.pos is not None}
+
+    def update_avail_moves(self, white_objs, black_objs):
+        self.white_available_moves = set().union(*list(filter(None, [i.Available_Moves(self.y_dim, self.x_dim, self.white_piece_loc, self.black_piece_loc) for i in white_objs])))
+        self.black_available_moves = set().union(*list(filter(None, [i.Available_Moves(self.y_dim, self.x_dim, self.black_piece_loc, self.white_piece_loc) for i in black_objs])))
 
     def print_board(self, *args):
         board = np.chararray((self.x_dim, self.y_dim), itemsize=3)
