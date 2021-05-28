@@ -20,6 +20,7 @@ class Shah(Pieces):
     '''
     def __init__(self, start_pos, piece_name, color='white'):
         self.checking_pos = {None}
+        self.in_check = False
         super().__init__(start_pos, piece_name, color='white')
 
     def Get_Moves(self):
@@ -40,9 +41,9 @@ class Shah(Pieces):
     def In_Check(self, king_pos, opp_moves):
         if len({king_pos} & opp_moves) != 0:
             self.checking_pos = opp_moves
-            return True
+            self.in_check = True
         else:
-            return False
+            self.in_check = False
 
 class Rukh(Pieces):
     '''

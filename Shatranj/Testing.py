@@ -74,71 +74,77 @@ board.print_board(board.name_obj_dict['wp0'],board.name_obj_dict['wp1'],
                   board.name_obj_dict['be0'],board.name_obj_dict['be1'],
                   board.name_obj_dict['bS0'],board.name_obj_dict['bF0'])
 
-# Make a Move
 # print(board.name_obj_dict['wp0'].Available_Moves(board.y_dim, board.x_dim, 
 #                           board.white_piece_loc, board.black_piece_loc))
 
-old_move = (7,1)
-new_move = (2,2)
+piece_id = 'ba0'
+old_move = (0,1)
+new_move = (5,2)
 
 # if new move has opposite color piece
-if board.name_obj_dict['wa0'].color == 'white':
-  if len({new_move} & board.black_piece_loc) == 0:
-    board.name_obj_dict['wa0'].Make_Move(new_move)
-
-    board.update_locs(board.name_obj_dict['wa0'].color, old_move, new_move)
-    board.update_obj_dicts(board.name_obj_dict)
-    board.update_avail_moves([board.pos_obj_dict[i] for i in board.white_piece_loc], [board.pos_obj_dict[i] for i in board.black_piece_loc])
-
-    board.name_obj_dict['bS0'].In_Check(board.name_obj_dict['bS0'].pos, board.white_available_moves)
+if board.name_obj_dict[piece_id].color == 'white': # Whites Move
+  if board.name_obj_dict['wS0'].in_check:
+    pass  # Create for moving into check                                                                  
   else:
-    board.name_obj_dict['wp0'].Make_Move(new_move)
+    if len({new_move} & board.black_piece_loc) == 0: # No capture
+      board.name_obj_dict[piece_id].Make_Move(new_move)
 
-    board.pos_obj_dict[new_move].pos = None
-    board.pos_obj_dict[new_move].captured = True
+      board.update_locs(board.name_obj_dict[piece_id].color, old_move, new_move)
+      board.update_obj_dicts(board.name_obj_dict)
+      board.update_avail_moves([board.pos_obj_dict[i] for i in board.white_piece_loc], [board.pos_obj_dict[i] for i in board.black_piece_loc])
 
-    board.update_locs(board.name_obj_dict['wp0'].color, old_move, new_move, is_captured=True)
-    board.update_obj_dicts(board.name_obj_dict)
-    board.update_avail_moves([board.pos_obj_dict[i] for i in board.white_piece_loc], [board.pos_obj_dict[i] for i in board.black_piece_loc])
+      # board.name_obj_dict['wS0'].In_Check(board.name_obj_dict['wS0'].pos, board.black_available_moves)
+    else: # Capture
+      board.name_obj_dict['wp0'].Make_Move(new_move)
 
-    board.name_obj_dict['bS0'].In_Check(board.name_obj_dict['bS0'].pos, board.white_available_moves)
-else:
-  if len({new_move} & board.white_piece_loc) == 0:
-    board.name_obj_dict['wp0'].Make_Move(new_move)
+      board.pos_obj_dict[new_move].pos = None
+      board.pos_obj_dict[new_move].captured = True
 
-    board.update_locs(board.name_obj_dict['wp0'].color, old_move, new_move)
-    board.update_obj_dicts(board.name_obj_dict)
-    board.update_avail_moves([board.pos_obj_dict[i] for i in board.black_piece_loc], [board.pos_obj_dict[i] for i in board.white_piece_loc])
+      board.update_locs(board.name_obj_dict['wp0'].color, old_move, new_move, is_captured=True)
+      board.update_obj_dicts(board.name_obj_dict)
+      board.update_avail_moves([board.pos_obj_dict[i] for i in board.white_piece_loc], [board.pos_obj_dict[i] for i in board.black_piece_loc])
 
-    board.name_obj_dict['wS0'].In_Check(board.name_obj_dict['wS0'].pos, board.black_available_moves)
+      # board.name_obj_dict['wS0'].In_Check(board.name_obj_dict['wS0'].pos, board.black_available_moves)
+else: # Blacks Moves
+  if board.name_obj_dict['bS0'].in_check:
+    pass
   else:
-    board.name_obj_dict['wp0'].Make_Move(new_move)
+    if len({new_move} & board.white_piece_loc) == 0: # No Capture
+      board.name_obj_dict[piece_id].Make_Move(new_move)
 
-    board.pos_obj_dict[new_move].pos = None
-    board.pos_obj_dict[new_move].captured = True
+      board.update_locs(board.name_obj_dict[piece_id].color, old_move, new_move)
+      board.update_obj_dicts(board.name_obj_dict)
+      board.update_avail_moves([board.pos_obj_dict[i] for i in board.black_piece_loc], [board.pos_obj_dict[i] for i in board.white_piece_loc])
 
-    board.update_locs(board.name_obj_dict['wp0'].color, old_move, new_move, is_captured=True)
-    board.update_obj_dicts(board.name_obj_dict)
-    board.update_avail_moves([board.pos_obj_dict[i] for i in board.white_piece_loc], [board.pos_obj_dict[i] for i in board.black_piece_loc])
+      # board.name_obj_dict['bS0'].In_Check(board.name_obj_dict['bS0'].pos, board.white_available_moves)
+    else: # Capture
+      board.name_obj_dict['wp0'].Make_Move(new_move)
 
-    board.name_obj_dict['wS0'].In_Check(board.name_obj_dict['wS0'].pos, board.black_available_moves)
+      board.pos_obj_dict[new_move].pos = None
+      board.pos_obj_dict[new_move].captured = True
 
-board.print_board(board.name_obj_dict['wp0'],board.name_obj_dict['wp1'],
-                  board.name_obj_dict['wp2'],board.name_obj_dict['wp3'],
-                  board.name_obj_dict['wp4'],board.name_obj_dict['wp5'],
-                  board.name_obj_dict['wp6'],board.name_obj_dict['wp7'],
-                  board.name_obj_dict['wr0'],board.name_obj_dict['wr1'],
-                  board.name_obj_dict['wa0'],board.name_obj_dict['wa1'],
-                  board.name_obj_dict['we0'],board.name_obj_dict['we1'],
-                  board.name_obj_dict['wS0'],board.name_obj_dict['wF0'],
-                  board.name_obj_dict['bp0'],board.name_obj_dict['bp1'],
-                  board.name_obj_dict['bp2'],board.name_obj_dict['bp3'],
-                  board.name_obj_dict['bp4'],board.name_obj_dict['bp5'],
-                  board.name_obj_dict['bp6'],board.name_obj_dict['bp7'],
-                  board.name_obj_dict['br0'],board.name_obj_dict['br1'],
-                  board.name_obj_dict['ba0'],board.name_obj_dict['ba1'],
-                  board.name_obj_dict['be0'],board.name_obj_dict['be1'],
-                  board.name_obj_dict['bS0'],board.name_obj_dict['bF0'])
+      board.update_locs(board.name_obj_dict['wp0'].color, old_move, new_move, is_captured=True)
+      board.update_obj_dicts(board.name_obj_dict)
+      board.update_avail_moves([board.pos_obj_dict[i] for i in board.white_piece_loc], [board.pos_obj_dict[i] for i in board.black_piece_loc])
+
+      # board.name_obj_dict['bS0'].In_Check(board.name_obj_dict['bS0'].pos, board.white_available_moves)
+
+# board.print_board(board.name_obj_dict['wp0'],board.name_obj_dict['wp1'],
+#                   board.name_obj_dict['wp2'],board.name_obj_dict['wp3'],
+#                   board.name_obj_dict['wp4'],board.name_obj_dict['wp5'],
+#                   board.name_obj_dict['wp6'],board.name_obj_dict['wp7'],
+#                   board.name_obj_dict['wr0'],board.name_obj_dict['wr1'],
+#                   board.name_obj_dict['wa0'],board.name_obj_dict['wa1'],
+#                   board.name_obj_dict['we0'],board.name_obj_dict['we1'],
+#                   board.name_obj_dict['wS0'],board.name_obj_dict['wF0'],
+#                   board.name_obj_dict['bp0'],board.name_obj_dict['bp1'],
+#                   board.name_obj_dict['bp2'],board.name_obj_dict['bp3'],
+#                   board.name_obj_dict['bp4'],board.name_obj_dict['bp5'],
+#                   board.name_obj_dict['bp6'],board.name_obj_dict['bp7'],
+#                   board.name_obj_dict['br0'],board.name_obj_dict['br1'],
+#                   board.name_obj_dict['ba0'],board.name_obj_dict['ba1'],
+#                   board.name_obj_dict['be0'],board.name_obj_dict['be1'],
+#                   board.name_obj_dict['bS0'],board.name_obj_dict['bF0'])
 
 
 
