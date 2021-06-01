@@ -84,6 +84,12 @@ new_move = (5,2)
 # if new move has opposite color piece
 if board.name_obj_dict[piece_id].color == 'white': # Whites Move
   if board.name_obj_dict['wS0'].in_check:
+    '''
+    1) Loop through all the objects on the board
+    2) Check if their available moves intersect with kings pos/files
+    3) union moves and position
+    4) find opposite pieces that intersect with those moves
+    '''
     pass  # Create for moving into check                                                                  
   else:
     if len({new_move} & board.black_piece_loc) == 0: # No capture
