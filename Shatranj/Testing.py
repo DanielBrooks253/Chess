@@ -153,4 +153,3 @@ else: # Blacks Moves
 #                   board.name_obj_dict['bS0'],board.name_obj_dict['bF0'])
 
 
-
