@@ -1,9 +1,10 @@
 ###### Shatranj (Persian Chess) ######
 class Pieces:
-    def __init__(self, start_pos, piece_name, color='white'):
+    def __init__(self, start_pos, piece_type, piece_name, color='white'):
         self.pos=start_pos
         self.piece_name=piece_name
         self.color = color.lower()
+        self.piece_type = piece_type
 
         self.has_moved=False
         self.captured=False
@@ -18,10 +19,10 @@ class Shah(Pieces):
 
         1) Cannot Castle
     '''
-    def __init__(self, start_pos, piece_name, color='white'):
+    def __init__(self, start_pos, piece_type, piece_name, color='white'):
         self.checking_pos = {None}
         self.in_check = False
-        super().__init__(start_pos, piece_name, color='white')
+        super().__init__(start_pos, piece_type, piece_name, color='white')
 
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
@@ -85,16 +86,19 @@ class Rukh(Pieces):
         same_color_left = False
         same_color_right = False
 
+        # Get a list of pieces that are ont he same file as the current piece
         closest_up = list(filter(lambda x: x[1] == self.pos[1] and x[0] < self.pos[0], combine_locs))
         closest_down = list(filter(lambda x: x[1] == self.pos[1] and x[0] > self.pos[0], combine_locs))
         closest_left = list(filter(lambda x: x[0] == self.pos[0] and x[1] < self.pos[1], combine_locs))
         closest_right = list(filter(lambda x: x[0] == self.pos[0] and x[1] > self.pos[1], combine_locs))
 
+        # FInd the closest piece out of the list of same file candidates
         closest_up = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
         closest_down = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]
         closest_left = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]
         closest_right = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[0]
 
+        # Check to see if the closest piece is the same color or not as the current peice
         if len({closest_up} & same_color_locs) != 0: same_color_up = True
         if len({closest_down} & same_color_locs) != 0: same_color_down = True
         if len({closest_left} & same_color_locs) != 0: same_color_left = True
@@ -158,9 +162,9 @@ class Pujada(Pieces):
         3) Captures diagonally
     '''
 
-    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+    def __init__(self, start_pos, piece_type, piece_name, color='white', promoted=False):
         self.promoted = promoted
-        super().__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_type, piece_name, color)
 
     def Get_Moves(self):
         if self.promoted:
