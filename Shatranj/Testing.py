@@ -73,35 +73,36 @@ board.print_board(board.name_obj_dict)
 ## \/\/ Game Play \/\/
 
 # Make a move
-piece_id = 'bp0'
-old_loc = (1,0)
-new_loc = (6,0)
+old_loc = (6,0)
+new_loc = (1,0)
+
+old_name = board.loc_names[old_loc]
+new_name = (board.loc_names[new_loc])
 
 # Step 1: Capture?
   # Check if the move results in a capture
-if board.name_obj_dict[piece_id].color == 'white':
+if board.name_obj_dict[old_name].color == 'white':
   piece_insct = [key for key, values in board.black_name_obj_dict.items()
-                   if new_loc == values.pos]
+                     if new_loc == values.pos]
   capture_check= (True, piece_insct[0]) if len(piece_insct) != 0 \
                         else (False, None)
 else:
   piece_insct = [key for key, values in board.white_name_obj_dict.items()
-                   if new_loc == values.pos]
+                     if new_loc == values.pos]
   capture_check = (True, piece_insct[0]) if len(piece_insct) != 0 \
                         else (False, None)
 
 # Step 2: Make the move
   # Update the position of the piece
-board.name_obj_dict[piece_id].Make_Move(new_loc)
+board.name_obj_dict[old_name].Make_Move(new_loc)
+
 # Step 3: Update the location of the pieces
   # Update the dictionaries within the board
-board.update_locs(board.name_obj_dict[piece_id].color,
+board.update_locs(board.name_obj_dict[old_name].color,
                   old_loc,
                   new_loc,
                   capture_check[0],
                   capture_check[1])
 
 board.print_board(board.name_obj_dict)
-print(capture_check)
-
 ## /\/\ Game Play /\/\

@@ -5,9 +5,8 @@ class Pieces:
         self.piece_name=piece_name
         self.color = color.lower()
         self.piece_type = piece_type
+        self.piece_image = None
 
-        self.has_moved=False
-        self.captured=False
         self.giving_check=False  
 
     def Make_Move(self, new_pos):
@@ -38,13 +37,6 @@ class Shah(Pieces):
             return None
         else:
             return rm_checks
-
-    def In_Check(self, king_pos, opp_moves):
-        if len({king_pos} & opp_moves) != 0:
-            self.checking_pos = opp_moves
-            self.in_check = True
-        else:
-            self.in_check = False
 
 class Rukh(Pieces):
     '''
@@ -79,8 +71,11 @@ class Rukh(Pieces):
         This function finds the closest orthogonal pieces (If there are any) and creates a set of
         unavailable moves accordingly
         '''
+        # Get the locations pf all the pieces on the board
         combine_locs = same_color_locs | opp_color_locs
 
+        # Set flags for the orthogonal locations to see if the same color
+        # piece is closest in any of the four directions
         same_color_up = False
         same_color_down = False
         same_color_left = False
@@ -104,6 +99,9 @@ class Rukh(Pieces):
         if len({closest_left} & same_color_locs) != 0: same_color_left = True
         if len({closest_right} & same_color_locs) != 0: same_color_right = True
 
+        # If the closest piece is of the same color, you can move to the 
+        # space one unit before. If it is of a different color, you can move
+        # onto the same piece and capture.
         if same_color_up and closest_up is not None:
             up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*closest_up[0]))
         elif not same_color_up and closest_up is not None:
@@ -132,6 +130,7 @@ class Rukh(Pieces):
         else:
             right_no = set()
 
+        # Return the union of the four directions
         return up_no|down_no|left_no|right_no
 
 class Asp(Pieces):
