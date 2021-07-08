@@ -1,3 +1,5 @@
+## \/\/ Pregame Loading \/\/
+
 import numpy as np
 from Board import Board
 from Pieces import Shah, Pil, Rukh, Asp, Pujada, Farzin
@@ -59,45 +61,47 @@ board = Board([wp0, wp1, wp2, wp3,
                 br0, br1, ba0, ba1,
                 be0, be1, bS, bF])
 
+
 # Print the board
-board.print_board(board.name_obj_dict['wp0'],board.name_obj_dict['wp1'],
-                  board.name_obj_dict['wp2'],board.name_obj_dict['wp3'],
-                  board.name_obj_dict['wp4'],board.name_obj_dict['wp5'],
-                  board.name_obj_dict['wp6'],board.name_obj_dict['wp7'],
-                  board.name_obj_dict['wr0'],board.name_obj_dict['wr1'],
-                  board.name_obj_dict['wa0'],board.name_obj_dict['wa1'],
-                  board.name_obj_dict['we0'],board.name_obj_dict['we1'],
-                  board.name_obj_dict['wS0'],board.name_obj_dict['wF0'],
-                  board.name_obj_dict['bp0'],board.name_obj_dict['bp1'],
-                  board.name_obj_dict['bp2'],board.name_obj_dict['bp3'],
-                  board.name_obj_dict['bp4'],board.name_obj_dict['bp5'],
-                  board.name_obj_dict['bp6'],board.name_obj_dict['bp7'],
-                  board.name_obj_dict['br0'],board.name_obj_dict['br1'],
-                  board.name_obj_dict['ba0'],board.name_obj_dict['ba1'],
-                  board.name_obj_dict['be0'],board.name_obj_dict['be1'],
-                  board.name_obj_dict['bS0'],board.name_obj_dict['bF0'])
+board.print_board(board.name_obj_dict)
 
+## /\/\ Pregame Loading /\/\
 
-# print(board.name_obj_dict['br0'].Available_Moves(board.y_dim, board.x_dim, 
-#                           board.black_piece_loc, board.white_piece_loc))
+#=====================================================================#
+#=====================================================================#
+
+## \/\/ Game Play \/\/
 
 # Make a move
 piece_id = 'bp0'
 old_loc = (1,0)
-new_loc = (2,0)
+new_loc = (6,0)
 
-# Step 1: Make the move
+# Step 1: Capture?
+  # Check if the move results in a capture
+if board.name_obj_dict[piece_id].color == 'white':
+  piece_insct = [key for key, values in board.black_name_obj_dict.items()
+                   if new_loc == values.pos]
+  capture_check= (True, piece_insct[0]) if len(piece_insct) != 0 \
+                        else (False, None)
+else:
+  piece_insct = [key for key, values in board.white_name_obj_dict.items()
+                   if new_loc == values.pos]
+  capture_check = (True, piece_insct[0]) if len(piece_insct) != 0 \
+                        else (False, None)
+
+# Step 2: Make the move
   # Update the position of the piece
-# Step 2: Update the location of the pieces
-  # Update the dictionaries within the board
-# Step 3: Update The moves
-  # Update all of the available moves for the pieces
-
 board.name_obj_dict[piece_id].Make_Move(new_loc)
+# Step 3: Update the location of the pieces
+  # Update the dictionaries within the board
 board.update_locs(board.name_obj_dict[piece_id].color,
                   old_loc,
-                  new_loc)
+                  new_loc,
+                  capture_check[0],
+                  capture_check[1])
 
-print(board.name_obj_dict[piece_id].pos)
+board.print_board(board.name_obj_dict)
+print(capture_check)
 
-
+## /\/\ Game Play /\/\

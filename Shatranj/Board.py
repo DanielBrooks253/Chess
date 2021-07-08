@@ -21,7 +21,7 @@ class Board:
         if is_captured: # Remove piece from opposing color and update sets
             self.name_obj_dict[caputed_piece].pos = None
             if color == 'white':
-                self.name_obj_dict_black[caputed_piece].pos = None
+                self.black_name_obj_dict_blacK[caputed_piece].pos = None
 
                 self.black_piece_loc -= {new_move}
 
@@ -31,7 +31,7 @@ class Board:
                 self.white_piece_loc = add_new_move
 
             else:
-                self.name_obj_dict_white[caputed_piece].pos = None
+                self.white_name_obj_dict[caputed_piece].pos = None
                 self.white_piece_loc -= {new_move}
 
                 rm_old_move = self.black_piece_loc - {old_move}
@@ -50,15 +50,15 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    def print_board(self, *args):
+    def print_board(self, args):
         board = np.chararray((self.x_dim, self.y_dim), itemsize=3)
         board[:] = "  "
 
-        for items in args:
-            if items.pos is None:
+        for _, values in args.items():
+            if values.pos is None:
                 continue
             else:
-                board[items.pos[0], items.pos[1]] = items.piece_name
+                board[values.pos[0], values.pos[1]] = values.piece_name
 
         print(board)
 
