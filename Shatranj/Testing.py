@@ -80,7 +80,7 @@ board.print_board(board.name_obj_dict)
   # (If any moves result in you being in check)
 
 old_loc = (7,1)
-new_loc = (2,2)
+new_loc = (2,3)
 
 old_name = board.loc_names[old_loc]
 
@@ -111,5 +111,18 @@ board.update_locs(board.name_obj_dict[old_name].color,
                   capture_check[1])
 
 board.print_board(board.name_obj_dict)
-print(board.loc_names)
+
+# Check to see if King is in check
+if turn == 'white':
+  check = board.name_obj_dict['bS0'].check_check(
+                board.white_name_obj_dict, # color for available moves
+                board.white_piece_loc,
+                board.black_piece_loc)
+else:
+    check = board.name_obj_dict['wS0'].check_check(
+                board.black_name_obj_dict,
+                board.black_piece_loc,
+                board.white_piece_loc)
+
+print(check)
 ## /\/\ Game Play /\/\

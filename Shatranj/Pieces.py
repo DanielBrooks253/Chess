@@ -26,7 +26,7 @@ class Shah(Pieces):
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Shah.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -38,14 +38,14 @@ class Shah(Pieces):
         else:
             return rm_checks
 
-    def check_check(self, king_obj, opp_objs, same_locs):
+    def check_check(self, opp_objs, same_locs, opp_locs):
         '''
             See if the king is in check or not
         '''
-        opp_moves = set([i.Available_Moves(8, 8, same_locs) 
-                     for i in opp_objs.values()])
+        opp_moves = list(filter(None, [i.Available_Moves(8, 8, same_locs, opp_locs) 
+                     for i in opp_objs.values()]))
 
-        if king_obj.pos in opp_moves:
+        if self.pos in set().union(*opp_moves):
             return True
         else:
             return False
@@ -153,7 +153,7 @@ class Asp(Pieces):
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([2,2,1,1,-2,-2,-1,-1], [1,-1,2,-2,1,-1,2,-2])])
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Asp.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -186,7 +186,7 @@ class Pujada(Pieces):
             else:
                 return {(self.pos[0]-1, self.pos[1])}
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Pujada.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -207,7 +207,7 @@ class Farzin(Pieces):
     def Get_Moves(self):
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
     
-    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Farzin.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -229,7 +229,7 @@ class Pil(Pieces):
     def Get_Moves(self):
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([2,2,-2,-2], [2,-2,2,-2])]) 
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Pil.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
