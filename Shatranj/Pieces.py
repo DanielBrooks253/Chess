@@ -26,7 +26,7 @@ class Shah(Pieces):
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
         all_moves = Shah.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -37,6 +37,18 @@ class Shah(Pieces):
             return None
         else:
             return rm_checks
+
+    def check_check(self, king_obj, opp_objs, same_locs):
+        '''
+            See if the king is in check or not
+        '''
+        opp_moves = set([i.Available_Moves(8, 8, same_locs) 
+                     for i in opp_objs.values()])
+
+        if king_obj.pos in opp_moves:
+            return True
+        else:
+            return False
 
 class Rukh(Pieces):
     '''
@@ -87,7 +99,7 @@ class Rukh(Pieces):
         closest_left = list(filter(lambda x: x[0] == self.pos[0] and x[1] < self.pos[1], combine_locs))
         closest_right = list(filter(lambda x: x[0] == self.pos[0] and x[1] > self.pos[1], combine_locs))
 
-        # FInd the closest piece out of the list of same file candidates
+        # Find the closest piece out of the list of same file candidates
         closest_up = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
         closest_down = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]
         closest_left = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]
@@ -141,7 +153,7 @@ class Asp(Pieces):
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([2,2,1,1,-2,-2,-1,-1], [1,-1,2,-2,1,-1,2,-2])])
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
         all_moves = Asp.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -174,7 +186,7 @@ class Pujada(Pieces):
             else:
                 return {(self.pos[0]-1, self.pos[1])}
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
         all_moves = Pujada.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -195,7 +207,7 @@ class Farzin(Pieces):
     def Get_Moves(self):
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
     
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
         all_moves = Farzin.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -217,7 +229,7 @@ class Pil(Pieces):
     def Get_Moves(self):
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([2,2,-2,-2], [2,-2,2,-2])]) 
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs):
         all_moves = Pil.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
