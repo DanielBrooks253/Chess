@@ -1,10 +1,10 @@
 ## \/\/ Pregame Loading \/\/
 
-import numpy as np
 from Board import Board
 from Pieces import Shah, Pil, Rukh, Asp, Pujada, Farzin
 
 turn = 'white'
+end_game = False
 
 # Initialize all of the pieces on the board
 wp0 = Pujada((6,0), piece_type='one', piece_name='wp0', color='white')
@@ -74,7 +74,31 @@ board.print_board(board.name_obj_dict)
 
 ## \/\/ Game Play \/\/
 
+name = 'wa0'
+
+# Filter out available moves 
+  # 1) move of piece would result in check for your king
+  # 2) moves do not stop check if you are already in check
+    # a) blocking checking piece
+    # b) capturing checking piece
+    # c) move king out of the way
+if board.name_obj_dict[name].color == 'white':
+  board.name_obj_dict[name].Available_Moves(
+    board.x_dim,
+    board.y_dim,
+    board.white_piece_loc,
+    board.black_piece_loc
+  )
+else:
+  board.name_obj_dict[name].Available_Moves(
+    board.x_dim,
+    board.y_dim,
+    board.black_piece_loc,
+    board.white_piece_loc
+  )
+
 new_loc = (2,2)
+
 board.name_obj_dict['wa0'].Make_Move(new_loc, board)
 board.print_board(board.name_obj_dict)
 

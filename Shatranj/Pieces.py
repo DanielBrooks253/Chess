@@ -10,12 +10,7 @@ class Pieces:
         self.giving_check=False  
 
     def Make_Move(self, new_loc, board_obj):
-        # current_name = board_obj.loc_names[self.pos]
 
-        # 1) Check if move is valid
-            # Is the move within the Available move space
-            # Check if move will result in check of own king
-        
         # 2): Capture?
             # Check if the move results in a capture
         if self.color == 'white':
