@@ -1,16 +1,38 @@
 ###### Shatranj (Persian Chess) ######
 class Pieces:
-    def __init__(self, start_pos, piece_name, color='white'):
+    def __init__(self, start_pos, piece_type, piece_name, color='white'):
         self.pos=start_pos
         self.piece_name=piece_name
         self.color = color.lower()
+        self.piece_type = piece_type
+        self.piece_image = None
 
-        self.has_moved=False
-        self.captured=False
         self.giving_check=False  
 
-    def Make_Move(self, new_pos):
-        self.pos = new_pos 
+    def Make_Move(self, new_loc, board_obj):
+
+        # 2): Capture?
+            # Check if the move results in a capture
+        if self.color == 'white':
+            piece_insct = [key for key, values in board_obj.black_name_obj_dict.items()
+                            if new_loc == values.pos]
+            capture_check= (True, piece_insct[0]) if len(piece_insct) != 0 \
+                            else (False, None)
+        else:
+            piece_insct = [key for key, values in board_obj.white_name_obj_dict.items()
+                             if new_loc == values.pos]
+            capture_check = (True, piece_insct[0]) if len(piece_insct) != 0 \
+                        else (False, None)
+
+        # 3) Update the location of the pieces
+            # Update the dictionaries within the board
+        board_obj.update_locs(self.color,
+                          self.pos,
+                          new_loc,
+                          capture_check[0],
+                          capture_check[1])
+
+        self.pos = new_loc
 
 class Shah(Pieces):
     '''
@@ -18,15 +40,15 @@ class Shah(Pieces):
 
         1) Cannot Castle
     '''
-    def __init__(self, start_pos, piece_name, color='white'):
+    def __init__(self, start_pos, piece_type, piece_name, color='white'):
         self.checking_pos = {None}
         self.in_check = False
-        super().__init__(start_pos, piece_name, color='white')
+        super().__init__(start_pos, piece_type, piece_name, color='white')
 
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Shah.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -38,12 +60,17 @@ class Shah(Pieces):
         else:
             return rm_checks
 
-    def In_Check(self, king_pos, opp_moves):
-        if len({king_pos} & opp_moves) != 0:
-            self.checking_pos = opp_moves
-            self.in_check = True
+    def check_check(self, opp_objs, same_locs, opp_locs):
+        '''
+            See if the king is in check or not
+        '''
+        opp_moves = list(filter(None, [i.Available_Moves(8, 8, same_locs, opp_locs) 
+                     for i in opp_objs.values()]))
+
+        if self.pos in set().union(*opp_moves):
+            return True
         else:
-            self.in_check = False
+            return False
 
 class Rukh(Pieces):
     '''
@@ -78,28 +105,37 @@ class Rukh(Pieces):
         This function finds the closest orthogonal pieces (If there are any) and creates a set of
         unavailable moves accordingly
         '''
+        # Get the locations pf all the pieces on the board
         combine_locs = same_color_locs | opp_color_locs
 
+        # Set flags for the orthogonal locations to see if the same color
+        # piece is closest in any of the four directions
         same_color_up = False
         same_color_down = False
         same_color_left = False
         same_color_right = False
 
+        # Get a list of pieces that are ont he same file as the current piece
         closest_up = list(filter(lambda x: x[1] == self.pos[1] and x[0] < self.pos[0], combine_locs))
         closest_down = list(filter(lambda x: x[1] == self.pos[1] and x[0] > self.pos[0], combine_locs))
         closest_left = list(filter(lambda x: x[0] == self.pos[0] and x[1] < self.pos[1], combine_locs))
         closest_right = list(filter(lambda x: x[0] == self.pos[0] and x[1] > self.pos[1], combine_locs))
 
+        # Find the closest piece out of the list of same file candidates
         closest_up = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
         closest_down = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]
         closest_left = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]
         closest_right = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[0]
 
+        # Check to see if the closest piece is the same color or not as the current peice
         if len({closest_up} & same_color_locs) != 0: same_color_up = True
         if len({closest_down} & same_color_locs) != 0: same_color_down = True
         if len({closest_left} & same_color_locs) != 0: same_color_left = True
         if len({closest_right} & same_color_locs) != 0: same_color_right = True
 
+        # If the closest piece is of the same color, you can move to the 
+        # space one unit before. If it is of a different color, you can move
+        # onto the same piece and capture.
         if same_color_up and closest_up is not None:
             up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*closest_up[0]))
         elif not same_color_up and closest_up is not None:
@@ -128,6 +164,7 @@ class Rukh(Pieces):
         else:
             right_no = set()
 
+        # Return the union of the four directions
         return up_no|down_no|left_no|right_no
 
 class Asp(Pieces):
@@ -138,7 +175,7 @@ class Asp(Pieces):
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([2,2,1,1,-2,-2,-1,-1], [1,-1,2,-2,1,-1,2,-2])])
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Asp.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -158,9 +195,9 @@ class Pujada(Pieces):
         3) Captures diagonally
     '''
 
-    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+    def __init__(self, start_pos, piece_type, piece_name, color='white', promoted=False):
         self.promoted = promoted
-        super().__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_type, piece_name, color)
 
     def Get_Moves(self):
         if self.promoted:
@@ -171,7 +208,7 @@ class Pujada(Pieces):
             else:
                 return {(self.pos[0]-1, self.pos[1])}
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Pujada.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -192,7 +229,7 @@ class Farzin(Pieces):
     def Get_Moves(self):
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
     
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Farzin.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -214,7 +251,7 @@ class Pil(Pieces):
     def Get_Moves(self):
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([2,2,-2,-2], [2,-2,2,-2])]) 
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         all_moves = Pil.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
