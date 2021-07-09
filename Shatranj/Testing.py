@@ -74,55 +74,15 @@ board.print_board(board.name_obj_dict)
 
 ## \/\/ Game Play \/\/
 
-# Step 1: Available Moves
-  # Get all the available moves for the selected piece
-  # Check if moves are valid or not 
-  # (If any moves result in you being in check)
-
-old_loc = (7,1)
-new_loc = (2,3)
-
-old_name = board.loc_names[old_loc]
-
-# Make a move
-# Step 2: Capture?
-  # Check if the move results in a capture
-if board.name_obj_dict[old_name].color == 'white':
-  piece_insct = [key for key, values in board.black_name_obj_dict.items()
-                     if new_loc == values.pos]
-  capture_check= (True, piece_insct[0]) if len(piece_insct) != 0 \
-                        else (False, None)
-else:
-  piece_insct = [key for key, values in board.white_name_obj_dict.items()
-                     if new_loc == values.pos]
-  capture_check = (True, piece_insct[0]) if len(piece_insct) != 0 \
-                        else (False, None)
-
-# Step 3: Make the move
-  # Update the position of the piece
-board.name_obj_dict[old_name].Make_Move(new_loc)
-
-# Step 4: Update the location of the pieces
-  # Update the dictionaries within the board
-board.update_locs(board.name_obj_dict[old_name].color,
-                  old_loc,
-                  new_loc,
-                  capture_check[0],
-                  capture_check[1])
-
+new_loc = (2,2)
+board.name_obj_dict['wa0'].Make_Move(new_loc, board)
 board.print_board(board.name_obj_dict)
 
 # Check to see if King is in check
-if turn == 'white':
-  check = board.name_obj_dict['bS0'].check_check(
-                board.white_name_obj_dict, # color for available moves
-                board.white_piece_loc,
-                board.black_piece_loc)
-else:
-    check = board.name_obj_dict['wS0'].check_check(
-                board.black_name_obj_dict,
-                board.black_piece_loc,
-                board.white_piece_loc)
+# check = board.name_obj_dict['bS0'].check_check(
+#                 board.white_name_obj_dict, # color for available moves
+#                 board.white_piece_loc,
+#                 board.black_piece_loc)
 
-print(check)
+# print(check)
 ## /\/\ Game Play /\/\

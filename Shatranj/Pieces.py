@@ -9,8 +9,35 @@ class Pieces:
 
         self.giving_check=False  
 
-    def Make_Move(self, new_pos):
-        self.pos = new_pos 
+    def Make_Move(self, new_loc, board_obj):
+        # current_name = board_obj.loc_names[self.pos]
+
+        # 1) Check if move is valid
+            # Is the move within the Available move space
+            # Check if move will result in check of own king
+        
+        # 2): Capture?
+            # Check if the move results in a capture
+        if self.color == 'white':
+            piece_insct = [key for key, values in board_obj.black_name_obj_dict.items()
+                            if new_loc == values.pos]
+            capture_check= (True, piece_insct[0]) if len(piece_insct) != 0 \
+                            else (False, None)
+        else:
+            piece_insct = [key for key, values in board_obj.white_name_obj_dict.items()
+                             if new_loc == values.pos]
+            capture_check = (True, piece_insct[0]) if len(piece_insct) != 0 \
+                        else (False, None)
+
+        # 3) Update the location of the pieces
+            # Update the dictionaries within the board
+        board_obj.update_locs(self.color,
+                          self.pos,
+                          new_loc,
+                          capture_check[0],
+                          capture_check[1])
+
+        self.pos = new_loc
 
 class Shah(Pieces):
     '''
