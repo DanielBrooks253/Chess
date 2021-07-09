@@ -20,16 +20,14 @@ class Board:
         # Dimensions of the chess board
         self.y_dim=y_dim
         self.x_dim=x_dim
-
-        self.turn = 'white'
         
     def update_locs(self, color, old_move, new_move, is_captured=False, caputed_piece=None):
+        self.loc_names[new_move] = self.loc_names[old_move]
+        del self.loc_names[old_move]
+
         if is_captured: # Remove piece from opposing color and update sets
             # Change the captured pieces position to None
             self.name_obj_dict[caputed_piece].pos = None
-
-            self.loc_names[new_move] = self.loc_names[old_move]
-            del self.loc_names[old_move]
             
             if color == 'white':
                 self.black_name_obj_dict[caputed_piece].pos = None

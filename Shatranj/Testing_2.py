@@ -4,8 +4,6 @@ import numpy as np
 from Board import Board
 from Pieces import Shah, Pil, Rukh, Asp, Pujada, Farzin
 
-turn = 'white'
-
 # Initialize all of the pieces on the board
 wp0 = Pujada((6,0), piece_type='one', piece_name='wp0', color='white')
 wp1 = Pujada((6,1), piece_type='one', piece_name='wp1', color='white')
@@ -66,50 +64,3 @@ board = Board([wp0, wp1, wp2, wp3,
 
 # Print the board
 board.print_board(board.name_obj_dict)
-
-## /\/\ Pregame Loading /\/\
-
-#=====================================================================#
-#=====================================================================#
-
-## \/\/ Game Play \/\/
-
-# Step 1: Available Moves
-  # Get all the available moves for the selected piece
-  # Check if moves are valid or not 
-  # (If any moves result in you being in check)
-
-old_loc = (7,1)
-new_loc = (2,2)
-
-old_name = board.loc_names[old_loc]
-
-# Make a move
-# Step 2: Capture?
-  # Check if the move results in a capture
-if board.name_obj_dict[old_name].color == 'white':
-  piece_insct = [key for key, values in board.black_name_obj_dict.items()
-                     if new_loc == values.pos]
-  capture_check= (True, piece_insct[0]) if len(piece_insct) != 0 \
-                        else (False, None)
-else:
-  piece_insct = [key for key, values in board.white_name_obj_dict.items()
-                     if new_loc == values.pos]
-  capture_check = (True, piece_insct[0]) if len(piece_insct) != 0 \
-                        else (False, None)
-
-# Step 3: Make the move
-  # Update the position of the piece
-board.name_obj_dict[old_name].Make_Move(new_loc)
-
-# Step 4: Update the location of the pieces
-  # Update the dictionaries within the board
-board.update_locs(board.name_obj_dict[old_name].color,
-                  old_loc,
-                  new_loc,
-                  capture_check[0],
-                  capture_check[1])
-
-board.print_board(board.name_obj_dict)
-print(board.loc_names)
-## /\/\ Game Play /\/\
