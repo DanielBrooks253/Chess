@@ -9,24 +9,12 @@ class Board:
         self.black_piece_loc = set([i.pos for i in black_pieces])
         self.white_piece_loc = set([i.pos for i in white_pieces])
 
-<<<<<<< HEAD
-        self.white_available_moves = set().union(*list(filter(None, [i.Available_Moves(y_dim, x_dim, self.white_piece_loc, self.black_piece_loc) for i in white_pieces])))
-        self.black_available_moves = set().union(*list(filter(None, [i.Available_Moves(y_dim, x_dim, self.black_piece_loc, self.white_piece_loc) for i in black_pieces])))
-
-        # self.white_pos_obj_dict = {i.pos:i for i in white_pieces if i.pos is not None}
-        # self.black_pos_obj_dict = {i.pos:i for i in black_pieces if i.pos is not None}
-        self.pos_obj_dict = {i.pos:i for i in white_pieces + black_pieces if i.pos is not None}
-
-        # self.white_name_obj_dict = {i.piece_name:i for i in white_pieces}
-        # self.black_name_obj_dict = {i.piece_name:i for i in black_pieces}
-=======
         # Dictionary that takes the piece name and maps it to the object
         # One for each color and an overall dictionary
         self.white_name_obj_dict = {i.piece_name:i for i in white_pieces}
         self.black_name_obj_dict = {i.piece_name:i for i in black_pieces}
 
         self.loc_names = {i.pos:i.piece_name for i in white_pieces + black_pieces}
->>>>>>> Dev
         self.name_obj_dict = {i.piece_name:i for i in white_pieces + black_pieces}
 
         # Dimensions of the chess board
