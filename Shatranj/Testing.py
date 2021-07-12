@@ -1,10 +1,9 @@
 ## \/\/ Pregame Loading \/\/
-
 from Board import Board
 from Pieces import Shah, Pil, Rukh, Asp, Pujada, Farzin
 
-turn = 'white'
-end_game = False
+num_turns = 0
+checkmate = False
 
 # Initialize all of the pieces on the board
 wp0 = Pujada((6,0), piece_type='one', piece_name='wp0', color='white')
@@ -74,33 +73,39 @@ board.print_board(board.name_obj_dict)
 
 ## \/\/ Game Play \/\/
 
-name = 'wa0'
+while not checkmate:
+  turn = 'white' if num_turns % 2 == 0 else 'black'
+  legal_move = False
 
-# Filter out available moves 
-  # 1) move of piece would result in check for your king
-  # 2) moves do not stop check if you are already in check
-    # a) blocking checking piece
-    # b) capturing checking piece
-    # c) move king out of the way
-if board.name_obj_dict[name].color == 'white':
-  board.name_obj_dict[name].Available_Moves(
-    board.x_dim,
-    board.y_dim,
-    board.white_piece_loc,
-    board.black_piece_loc
-  )
-else:
-  board.name_obj_dict[name].Available_Moves(
-    board.x_dim,
-    board.y_dim,
-    board.black_piece_loc,
-    board.white_piece_loc
-  )
+  name = input("What piece should I move? ")
+  if board.name_obj_dict[name].color == turn:
+    moves = board.name_obj_dict[name].Available_Moves(
+                      board.x_dim,
+                      board.y_dim,
+                      board.white_piece_loc,
+                      board.black_piece_loc
+    )
+  else:
+    moves = board.name_obj_dict[name].Available_Moves(
+                      board.x_dim,
+                      board.y_dim,
+                      board.black_piece_loc,
+                      board.white_piece_loc
+    )
 
-new_loc = (2,2)
+  while not legal_move:
+    print(moves)
 
-board.name_obj_dict['wa0'].Make_Move(new_loc, board)
-board.print_board(board.name_obj_dict)
+    new_loc_str = input('Where should I move the piece to? ')
+    new_loc = (int(new_loc_str[1]), int(new_loc_str[3]))
+    if new_loc not in moves:
+      continue
+    else:
+      legale_move = True
+      board.name_obj_dict[name].Make_Move(new_loc, board)
+      board.print_board(board.name_obj_dict)
+      num_turns+=1
+      break
 
 # Check to see if King is in check
 # check = board.name_obj_dict['bS0'].check_check(
