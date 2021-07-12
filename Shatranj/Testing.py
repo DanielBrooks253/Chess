@@ -88,6 +88,11 @@ while not checkmate:
                       board.black_piece_loc
     )
   
+    if board.name_obj_dict['wS0'].in_check:
+      print(board.name_obj_dict[name].avail_move_check_check(
+        moves, board
+      ))
+
     while not legal_move:
       if moves is None: break
 
@@ -118,7 +123,12 @@ while not checkmate:
                       board.black_piece_loc,
                       board.white_piece_loc
     )
+
     while not legal_move:
+      if board.name_obj_dict['bS0'].in_check:
+        if len(board.name_obj_dict[name].avail_move_check_check(
+        moves, board)) != 0: 
+          moves = None
 
       if moves is None: break
       print(moves)

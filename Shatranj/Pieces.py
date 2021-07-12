@@ -34,96 +34,96 @@ class Pieces:
 
         self.pos = new_loc
 
-def avail_move_check_check(self, available_moves, board_obj):
-    rm = False
-    checks = {}
+    def avail_move_check_check(self, available_moves, board_obj):
+        rm = False
+        checks = set()
 
-    # Copy the locations so the "fake" moves do not change the actual objects
-    black_loc_copy = board_obj.black_piece_loc.copy()
-    white_loc_copy = board_obj.white_piece_loc.copy()
+        # Copy the locations so the "fake" moves do not change the actual objects
+        black_loc_copy = board_obj.black_piece_loc.copy()
+        white_loc_copy = board_obj.white_piece_loc.copy()
 
-    name_obj_copy = board_obj.name_obj_dict.copy()
-    white_name_obj_copy = board_obj.white_name_obj_dict.copy()
-    black_name_obj_copy = board_obj.black_name_obj_dict.copy()
+        name_obj_copy = board_obj.name_obj_dict.copy()
+        white_name_obj_copy = board_obj.white_name_obj_dict.copy()
+        black_name_obj_copy = board_obj.black_name_obj_dict.copy()
 
-    # This logic temprarily changes the position for the given piece
-    # to check if any of the available moves result in the king not
-    # being in check
+        # This logic temprarily changes the position for the given piece
+        # to check if any of the available moves result in the king not
+        # being in check
 
-    if self.color == 'white':
-        for i in available_moves:
-            if i in black_loc_copy:
-                opp_piece = board_obj.loc_names[i]
-                rm = True
-
-                white_loc_copy -= {self.pos}
-                black_name_obj_copy[opp_piece].pos = None
-
-                black_loc_copy -= {i}
-                white_loc_copy |= {i}
-            
-            else:
-                white_loc_copy -={self.pos}
-                white_loc_copy |= {i}
-
-            # Check if the resulting move would still keep your king
-            # in check or not. If it would, add the move to the list of
-            # check moves
-
-            if name_obj_copy['wS0'].check_check(name_obj_copy['wS0'],
-                black_name_obj_copy,
-                black_loc_copy,
-                white_loc_copy):
-
-                checks |= {i}
-            else:
-                pass
-
-            if rm:
-                white_loc_copy -= {i}
-                black_name_obj_copy[opp_piece].pos = i
-
-                black_loc_copy |= {i}
-                white_loc_copy |= {self.pos}
-            else:
-                white_loc_copy -= {i}
-                white_loc_copy |= {self.pos}
-    else:
-        for i in available_moves:
-                if i in white_loc_copy:
-                    rm = True
+        if self.color == 'white':
+            for i in available_moves:
+                if i in black_loc_copy:
                     opp_piece = board_obj.loc_names[i]
+                    rm = True
 
-                    black_loc_copy -= {self.pos}
-                    white_name_obj_copy[opp_piece].pos = None
+                    white_loc_copy -= {self.pos}
+                    black_name_obj_copy[opp_piece].pos = None
 
-                    white_loc_copy -= {i}
-                    black_loc_copy |= {i}
+                    black_loc_copy -= {i}
+                    white_loc_copy |= {i}
                 
                 else:
-                    black_loc_copy -={self.pos}
-                    black_loc_copy |= {i}
+                    white_loc_copy -={self.pos}
+                    white_loc_copy |= {i}
 
-                if name_obj_copy['bS0'].check_check(
-                        white_name_obj_copy,
-                        white_loc_copy,
-                        black_loc_copy):
+                # Check if the resulting move would still keep your king
+                # in check or not. If it would, add the move to the list of
+                # check moves
+
+                if name_obj_copy['wS0'].check_check(name_obj_copy['wS0'],
+                    black_name_obj_copy,
+                    black_loc_copy,
+                    white_loc_copy):
 
                     checks |= {i}
-
                 else:
                     pass
 
                 if rm:
-                    black_loc_copy -= {i}
-                    white_name_obj_copy[opp_piece].pos = i
+                    white_loc_copy -= {i}
+                    black_name_obj_copy[opp_piece].pos = i
 
-                    white_loc_copy |= {i}
-                    black_loc_copy |= {self.pos}
+                    black_loc_copy |= {i}
+                    white_loc_copy |= {self.pos}
                 else:
-                    black_loc_copy -= {i}
-                    black_loc_copy |= {self.pos}
-    return checks
+                    white_loc_copy -= {i}
+                    white_loc_copy |= {self.pos}
+        else:
+            for i in available_moves:
+                    if i in white_loc_copy:
+                        rm = True
+                        opp_piece = board_obj.loc_names[i]
+
+                        black_loc_copy -= {self.pos}
+                        white_name_obj_copy[opp_piece].pos = None
+
+                        white_loc_copy -= {i}
+                        black_loc_copy |= {i}
+                    
+                    else:
+                        black_loc_copy -={self.pos}
+                        black_loc_copy |= {i}
+
+                    if name_obj_copy['bS0'].check_check(
+                            white_name_obj_copy,
+                            white_loc_copy,
+                            black_loc_copy):
+
+                        checks |= {i}
+
+                    else:
+                        pass
+
+                    if rm:
+                        black_loc_copy -= {i}
+                        white_name_obj_copy[opp_piece].pos = i
+
+                        white_loc_copy |= {i}
+                        black_loc_copy |= {self.pos}
+                    else:
+                        black_loc_copy -= {i}
+                        black_loc_copy |= {self.pos}
+        return checks
 
 class Shah(Pieces):
     '''
