@@ -87,7 +87,7 @@ while not checkmate:
                       board.white_piece_loc,
                       board.black_piece_loc
     )
-
+  
     while not legal_move:
       if moves is None: break
 
@@ -141,13 +141,4 @@ while not checkmate:
         num_turns+=1
         break
 
-  
-
-# Check to see if King is in check
-# check = board.name_obj_dict['bS0'].check_check(
-#                 board.white_name_obj_dict, # color for available moves
-#                 board.white_piece_loc,
-#                 board.black_piece_loc)
-
-# print(check)
 ## /\/\ Game Play /\/\
