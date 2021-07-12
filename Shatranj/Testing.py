@@ -78,35 +78,70 @@ while not checkmate:
   legal_move = False
 
   name = input("What piece should I move? ")
-  if board.name_obj_dict[name].color == turn:
+
+  # ---- White Pieces ----
+  if turn == 'white':
     moves = board.name_obj_dict[name].Available_Moves(
                       board.x_dim,
                       board.y_dim,
                       board.white_piece_loc,
                       board.black_piece_loc
     )
+
+    while not legal_move:
+      if moves is None: break
+
+      print(moves)
+
+      new_loc_str = input('Where should I move the piece to? ')
+      new_loc = (int(new_loc_str[1]), int(new_loc_str[3]))
+
+      if new_loc not in moves:
+        continue
+      else:
+        legale_move = True
+
+        board.name_obj_dict[name].Make_Move(new_loc, board)
+        board.print_board(board.name_obj_dict)
+
+        board.name_obj_dict['bS0'].in_check = board.name_obj_dict['bS0'].check_check(
+                                            board.white_name_obj_dict, # color for available moves
+                                            board.white_piece_loc,
+                                            board.black_piece_loc)
+        num_turns+=1
+        break
   else:
+    # ---- Black Pieces ----
     moves = board.name_obj_dict[name].Available_Moves(
                       board.x_dim,
                       board.y_dim,
                       board.black_piece_loc,
                       board.white_piece_loc
     )
+    while not legal_move:
 
-  while not legal_move:
-    print(moves)
+      if moves is None: break
+      print(moves)
 
-    new_loc_str = input('Where should I move the piece to? ')
-    new_loc = (int(new_loc_str[1]), int(new_loc_str[3]))
-    if new_loc not in moves:
-      continue
-    else:
-      legale_move = True
-      
-      board.name_obj_dict[name].Make_Move(new_loc, board)
-      board.print_board(board.name_obj_dict)
-      num_turns+=1
-      break
+      new_loc_str = input('Where should I move the piece to? ')
+      new_loc = (int(new_loc_str[1]), int(new_loc_str[3]))
+
+      if new_loc not in moves:
+        continue
+      else:
+        legale_move = True
+
+        board.name_obj_dict[name].Make_Move(new_loc, board)
+        board.print_board(board.name_obj_dict)
+
+        board.name_obj_dict['wS0'].in_check = board.name_obj_dict['wS0'].check_check(
+                                              board.black_name_obj_dict, # color for available moves
+                                              board.black_piece_loc,
+                                              board.white_piece_loc)
+        num_turns+=1
+        break
+
+  
 
 # Check to see if King is in check
 # check = board.name_obj_dict['bS0'].check_check(
