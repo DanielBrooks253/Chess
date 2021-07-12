@@ -102,6 +102,7 @@ while not checkmate:
       continue
     else:
       legale_move = True
+      
       board.name_obj_dict[name].Make_Move(new_loc, board)
       board.print_board(board.name_obj_dict)
       num_turns+=1
