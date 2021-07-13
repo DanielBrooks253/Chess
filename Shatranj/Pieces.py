@@ -46,7 +46,7 @@ class Pieces:
         white_name_obj_copy = board_obj.white_name_obj_dict.copy()
         black_name_obj_copy = board_obj.black_name_obj_dict.copy()
 
-        # This logic temprarily changes the position for the given piece
+        # This logic temporarily changes the position for the given piece
         # to check if any of the available moves result in the king not
         # being in check
 
@@ -155,7 +155,7 @@ class Shah(Pieces):
         '''
             See if the king is in check or not
         '''
-        opp_moves = list(filter(None, [i.Available_Moves(8, 8, same_locs, opp_locs) 
+        opp_moves = list(filter(None, [None if i.pos is None else i.Available_Moves(8, 8, same_locs, opp_locs) 
                      for i in opp_objs.values()]))
 
         if self.pos in set().union(*opp_moves):
@@ -228,30 +228,30 @@ class Rukh(Pieces):
         # space one unit before. If it is of a different color, you can move
         # onto the same piece and capture.
         if same_color_up and closest_up is not None:
-            up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*closest_up[0]))
-        elif not same_color_up and closest_up is not None:
             up_no = set(zip(range(closest_up[0], -1, -1), [closest_up[1]]*closest_up[0]))
+        elif not same_color_up and closest_up is not None:
+            up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*closest_up[0]))
         else:
             up_no = set()
 
         if same_color_down and closest_down is not None:
-            down_no = set(zip(range((closest_down[0]+1), y_dim), [closest_down[1]] * (((y_dim-1) - closest_down[0]) + closest_down[0])))
+            down_no = set(zip(range((closest_down[0]), y_dim), [closest_down[1]] * (((y_dim-1) - closest_down[0]) + closest_down[0])))
         elif not same_color_down and closest_down is not None:
-            down_no = set(zip(range(closest_down[0], y_dim), [closest_down[1]] * ((y_dim - closest_down[0]) + closest_down[0])))
+            down_no = set(zip(range(closest_down[0]+1, y_dim), [closest_down[1]] * ((y_dim - closest_down[0]) + closest_down[0])))
         else:
             down_no = set()
 
         if same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]] * closest_left[1], range((closest_left[1]-1), -1, -1)))
+            left_no = set(zip([closest_left[0]] * closest_left[1], range((closest_left[1]), -1, -1)))
         elif not same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]] * closest_left[1], range(closest_left[1], -1, -1)))
+            left_no = set(zip([closest_left[0]] * closest_left[1], range((closest_left[1]-1), -1, -1)))
         else:
             left_no = set()
 
         if same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * (((x_dim-1)-closest_right[1]) + closest_right[1]), range((closest_right[1]+1), x_dim)))
+            right_no = set(zip([closest_right[0]] * (((x_dim-1)-closest_right[1]) + closest_right[1]), range((closest_right[1]), x_dim)))
         elif not same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * ((x_dim-closest_right[1]) + closest_right[1]), range(closest_right[1], x_dim)))
+            right_no = set(zip([closest_right[0]] * ((x_dim-closest_right[1]) + closest_right[1]), range((closest_right[1]+1), x_dim)))
         else:
             right_no = set()
 

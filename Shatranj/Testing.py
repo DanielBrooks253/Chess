@@ -126,11 +126,16 @@ while not checkmate:
 
     while not legal_move:
       if board.name_obj_dict['bS0'].in_check:
-        if len(board.name_obj_dict[name].avail_move_check_check(
-        moves, board)) != 0: 
-          moves = None
+        invalid_moves = board.name_obj_dict[name].avail_move_check_check(
+                             moves, board)
+        valid_moves = moves - invalid_moves
 
-      if moves is None: break
+        if len(valid_moves) == 0: 
+          break
+        else:
+          legal_move = True
+          moves = valid_moves.copy()
+          
       print(moves)
 
       new_loc_str = input('Where should I move the piece to? ')
