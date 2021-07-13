@@ -133,7 +133,6 @@ while not checkmate:
         if len(valid_moves) == 0: 
           break
         else:
-          legal_move = True
           moves = valid_moves.copy()
           
       print(moves)

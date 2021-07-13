@@ -120,6 +120,8 @@ class Pieces:
 
                         white_loc_copy |= {i}
                         black_loc_copy |= {self.pos}
+                        
+                        rm = False
                     else:
                         black_loc_copy -= {i}
                         black_loc_copy |= {self.pos}
