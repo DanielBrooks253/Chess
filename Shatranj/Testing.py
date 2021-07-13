@@ -94,7 +94,15 @@ while not checkmate:
       ))
 
     while not legal_move:
-      if moves is None: break
+      if board.name_obj_dict['wS0'].in_check:
+        invalid_moves = board.name_obj_dict[name].avail_move_check_check(
+                             moves, board)
+        valid_moves = moves - invalid_moves
+
+        if len(valid_moves) == 0: 
+          break
+        else:
+          moves = valid_moves.copy()
 
       print(moves)
 
