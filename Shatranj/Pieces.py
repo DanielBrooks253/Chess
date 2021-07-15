@@ -1,11 +1,10 @@
 ###### Shatranj (Persian Chess) ######
 class Pieces:
-    def __init__(self, start_pos, piece_type, piece_name, color='white'):
+    def __init__(self, start_pos, piece_name, piece_image, color='white'):
         self.pos=start_pos
         self.piece_name=piece_name
         self.color = color.lower()
-        self.piece_type = piece_type
-        self.piece_image = None
+        self.piece_image = piece_image
 
         self.giving_check=False  
 
@@ -133,10 +132,10 @@ class Shah(Pieces):
 
         1) Cannot Castle
     '''
-    def __init__(self, start_pos, piece_type, piece_name, color='white'):
+    def __init__(self, start_pos, piece_name, piece_image, color='white'):
         self.checking_pos = {None}
         self.in_check = False
-        super().__init__(start_pos, piece_type, piece_name, color='white')
+        super().__init__(start_pos, piece_name, piece_image, color)
 
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
@@ -288,9 +287,9 @@ class Pujada(Pieces):
         3) Captures diagonally
     '''
 
-    def __init__(self, start_pos, piece_type, piece_name, color='white', promoted=False):
+    def __init__(self, start_pos, piece_name, piece_image, color='white', promoted=False):
         self.promoted = promoted
-        super().__init__(start_pos, piece_type, piece_name, color)
+        super().__init__(start_pos, piece_name, piece_image, color)
 
     def Get_Moves(self):
         if self.promoted:
