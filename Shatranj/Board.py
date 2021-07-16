@@ -83,16 +83,17 @@ class Board:
         Board.drawPieces(self, screen, names_obj)
 
     def drawBoard(self, screen):
-        colors = [p.Color("white"), p.Color("gray")]
+        colors = [p.Color("beige"), p.Color("darkkhaki")]
         for r in range(self.x_dim):
             for c in range(self.y_dim):
                 p.draw.rect(screen, colors[(r+c)%2], 
                    p.Rect(r*self.SQ_SIZE, c*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
 
     def drawPieces(self, screen, names_obj):
+        # x and y axis are flipped when drawing the pieces
         for piece in names_obj.values():
             screen.blit(piece.piece_image, 
-                 p.Rect(piece.pos[1]*self.SQ_SIZE, piece.pos[0]*self.SQ_SIZE, 
+                 p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
                         self.SQ_SIZE, self.SQ_SIZE))
                 
 

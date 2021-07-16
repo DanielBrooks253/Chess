@@ -8,6 +8,7 @@ WIDTH = HEIGHT = 512
 DIMENSION = 8
 MAX_FPS = 15
 SQ_SIZE = HEIGHT//DIMENSION
+pct_shrink = .75
 
 IMAGES = {} 
 
@@ -15,10 +16,12 @@ for pieces in [('wp', 'pawn-w1'), ('wr', 'chariot-w1'), ('wa', 'knight-w1'),
                ('we', 'elephant-w1'), ('wS', 'king-w1'), ('wF', 'queen-w1'),
                ('bp', 'pawn-b1'), ('br', 'chariot-b1'), ('ba', 'knight-b1'),
                ('be', 'elephant-b1'), ('bS', 'king-b1'), ('bF', 'queen-b1')]:
-            IMAGES[pieces[0]] = p.transform.scale(p.image.load("Images/" + pieces[1] + ".jpg"), (SQ_SIZE, SQ_SIZE))
+            IMAGES[pieces[0]] = p.transform.scale(p.image.load("Images/" + pieces[1] + ".jpg"), (int(SQ_SIZE*pct_shrink), int(SQ_SIZE*pct_shrink)))
 
 # Pygame initializations
 screen = p.display.set_mode((WIDTH, HEIGHT))
+p.display.set_caption('Shatranj')
+
 clock = p.time.Clock()
 screen.fill(p.Color('white'))
 running = True
