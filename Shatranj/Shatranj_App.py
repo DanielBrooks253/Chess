@@ -8,15 +8,16 @@ WIDTH = HEIGHT = 512
 DIMENSION = 8
 MAX_FPS = 15
 SQ_SIZE = HEIGHT//DIMENSION
-pct_shrink = .75
+PCT_SHRINK = .75
 
 IMAGES = {} 
 
+# Get all of the images loaded for the given pieces
 for pieces in [('wp', 'pawn-w1'), ('wr', 'chariot-w1'), ('wa', 'knight-w1'),
                ('we', 'elephant-w1'), ('wS', 'king-w1'), ('wF', 'queen-w1'),
                ('bp', 'pawn-b1'), ('br', 'chariot-b1'), ('ba', 'knight-b1'),
                ('be', 'elephant-b1'), ('bS', 'king-b1'), ('bF', 'queen-b1')]:
-            IMAGES[pieces[0]] = p.transform.scale(p.image.load("Images/" + pieces[1] + ".jpg"), (int(SQ_SIZE*pct_shrink), int(SQ_SIZE*pct_shrink)))
+            IMAGES[pieces[0]] = p.transform.scale(p.image.load("Images/" + pieces[1] + ".jpg"), (int(SQ_SIZE*PCT_SHRINK), int(SQ_SIZE*PCT_SHRINK)))
 
 # Pygame initializations
 screen = p.display.set_mode((WIDTH, HEIGHT))
@@ -26,7 +27,11 @@ clock = p.time.Clock()
 screen.fill(p.Color('white'))
 running = True
 
+sq_selected = () # no sqaure that is selected (row, col)
+player_Clicks = [] # keep track of the number of clicks the user does
+
 # Initialize all of the pieces on the board
+# Pujada (Pawns)
 wp0 = Pujada((6,0), piece_name='wp0', piece_image = IMAGES['wp'], color='white')
 wp1 = Pujada((6,1), piece_name='wp1', piece_image = IMAGES['wp'], color='white')
 wp2 = Pujada((6,2), piece_name='wp2', piece_image = IMAGES['wp'], color='white')
@@ -87,7 +92,23 @@ while running:
     for e in p.event.get():
         if e.type == p.QUIT:
             running = False
+        elif e.type == p.MOUSEBUTTONDOWN:
+            location = p.mouse.get_pos() #(x, y) location of mouse
+            row = location[0]//SQ_SIZE
+            col = location[1]//SQ_SIZE
 
+            if sq_selected == (row, col):
+                sq_selected = ()
+                player_Clicks = []
+            else:
+                # NEED: Check if location has a piece on it or not
+                piece_selected = (row, col)
+                player_Clicks.append(sq_selected)
+
+            if len(player_Clicks) == 2: # Clicked two times; first highlight piece, second move piece
+                pass
+
+    # Draw the pieces and tiles on the board
     board.drawGameState(screen, board.name_obj_dict)
     clock.tick(MAX_FPS)
     p.display.flip()

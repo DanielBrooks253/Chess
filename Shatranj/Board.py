@@ -83,7 +83,8 @@ class Board:
         Board.drawPieces(self, screen, names_obj)
 
     def drawBoard(self, screen):
-        colors = [p.Color("beige"), p.Color("darkkhaki")]
+        # Red check; gray moves
+        colors = [p.Color("wheat1"), p.Color("darkkhaki")]
         for r in range(self.x_dim):
             for c in range(self.y_dim):
                 p.draw.rect(screen, colors[(r+c)%2], 
