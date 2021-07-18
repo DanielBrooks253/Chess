@@ -229,7 +229,7 @@ class Rukh(Pieces):
         # space one unit before. If it is of a different color, you can move
         # onto the same piece and capture.
         if same_color_up and closest_up is not None:
-            up_no = set(zip(range(closest_up[0], -1, -1), [closest_up[1]]*closest_up[0]))
+            up_no = set(zip(range(closest_up[0], -1, -1), [closest_up[1]]*(closest_up[0]+1)))
         elif not same_color_up and closest_up is not None:
             up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*closest_up[0]))
         else:

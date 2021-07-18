@@ -8,15 +8,16 @@ WIDTH = HEIGHT = 512
 DIMENSION = 8
 MAX_FPS = 15
 SQ_SIZE = HEIGHT//DIMENSION
-pct_shrink = .75
+PCT_SHRINK = .75
 
 IMAGES = {} 
 
+# Get all of the images loaded for the given pieces
 for pieces in [('wp', 'pawn-w1'), ('wr', 'chariot-w1'), ('wa', 'knight-w1'),
                ('we', 'elephant-w1'), ('wS', 'king-w1'), ('wF', 'queen-w1'),
                ('bp', 'pawn-b1'), ('br', 'chariot-b1'), ('ba', 'knight-b1'),
                ('be', 'elephant-b1'), ('bS', 'king-b1'), ('bF', 'queen-b1')]:
-            IMAGES[pieces[0]] = p.transform.scale(p.image.load("Images/" + pieces[1] + ".jpg"), (int(SQ_SIZE*pct_shrink), int(SQ_SIZE*pct_shrink)))
+            IMAGES[pieces[0]] = p.transform.scale(p.image.load("Images/" + pieces[1] + ".jpg"), (int(SQ_SIZE*PCT_SHRINK), int(SQ_SIZE*PCT_SHRINK)))
 
 # Pygame initializations
 screen = p.display.set_mode((WIDTH, HEIGHT))
@@ -26,7 +27,11 @@ clock = p.time.Clock()
 screen.fill(p.Color('white'))
 running = True
 
+sq_selected = () # no sqaure that is selected (row, col)
+player_Clicks = [] # keep track of the number of clicks the user does
+
 # Initialize all of the pieces on the board
+# Pujada (Pawns)
 wp0 = Pujada((6,0), piece_name='wp0', piece_image = IMAGES['wp'], color='white')
 wp1 = Pujada((6,1), piece_name='wp1', piece_image = IMAGES['wp'], color='white')
 wp2 = Pujada((6,2), piece_name='wp2', piece_image = IMAGES['wp'], color='white')
@@ -83,12 +88,57 @@ board = Board([wp0, wp1, wp2, wp3,
                 br0, br1, ba0, ba1,
                 be0, be1, bS, bF], HEIGHT, DIMENSION)
 
+clicked_piece = None
 while running:
     for e in p.event.get():
         if e.type == p.QUIT:
             running = False
+        elif e.type == p.MOUSEBUTTONDOWN: # code 1025
+            location = p.mouse.get_pos() #(x, y) location of mouse
+            row = location[0]//SQ_SIZE
+            col = location[1]//SQ_SIZE
 
-    board.drawGameState(screen, board.name_obj_dict)
+            # Check if location has a piece on it 
+            if (col,row) not in board.loc_names.keys():
+                break
+            else:
+                # Gets the object name
+                piece_name = board.loc_names[(col, row)]
+
+                # Gets moves for the white and black pieces
+                if board.name_obj_dict[piece_name].color == 'white':
+                    moves = board.name_obj_dict[piece_name].Available_Moves(
+                        board.x_dim,
+                        board.y_dim,
+                        board.white_piece_loc,
+                        board.black_piece_loc
+                    )
+                else:
+                    moves = board.name_obj_dict[piece_name].Available_Moves(
+                        board.x_dim,
+                        board.y_dim,
+                        board.black_piece_loc,
+                        board.white_piece_loc
+                    )
+
+            if moves is None:
+                clicked_piece = ((col, row))
+            else:
+                clicked_piece = {(col, row)} | moves
+            
+            if sq_selected == (row, col):
+                sq_selected = ()
+                player_Clicks = []
+            else:
+                # NEED: Check if location has a piece on it or not
+                piece_selected = (row, col)
+                player_Clicks.append(sq_selected)
+
+            if len(player_Clicks) == 2: # Clicked two times; first highlight piece, second move piece
+                pass
+
+    # Draw the pieces and tiles on the board
+    board.drawGameState(screen, board.name_obj_dict, clicked_piece, False)
     clock.tick(MAX_FPS)
     p.display.flip()
 
