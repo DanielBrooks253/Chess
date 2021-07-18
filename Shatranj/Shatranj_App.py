@@ -98,11 +98,31 @@ while running:
             row = location[0]//SQ_SIZE
             col = location[1]//SQ_SIZE
 
-            clicked_piece = (col, row)
-            # board.drawGameState(screen, board.name_obj_dict, (col, row))
-            # clock.tick(MAX_FPS)
-            # p.display.flip()
+            if (col,row) not in board.loc_names.keys():
+                break
+            else:
+                piece_name = board.loc_names[(col, row)]
 
+                if board.name_obj_dict[piece_name].color == 'white':
+                    moves = board.name_obj_dict[piece_name].Available_Moves(
+                        board.x_dim,
+                        board.y_dim,
+                        board.white_piece_loc,
+                        board.black_piece_loc
+                    )
+                else:
+                    moves = board.name_obj_dict[piece_name].Available_Moves(
+                        board.x_dim,
+                        board.y_dim,
+                        board.black_piece_loc,
+                        board.white_piece_loc
+                    )
+
+            if moves is None:
+                clicked_piece = ((col, row))
+            else:
+                clicked_piece = {(col, row)} | moves
+            
             if sq_selected == (row, col):
                 sq_selected = ()
                 player_Clicks = []
@@ -115,7 +135,7 @@ while running:
                 pass
 
     # Draw the pieces and tiles on the board
-    board.drawGameState(screen, board.name_obj_dict, clicked_piece)
+    board.drawGameState(screen, board.name_obj_dict, clicked_piece, False)
     clock.tick(MAX_FPS)
     p.display.flip()
 

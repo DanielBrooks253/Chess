@@ -65,46 +65,59 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    def print_board(self, args):
-        # Print a character array  for the board
-        board = np.chararray((self.x_dim, self.y_dim), itemsize=3)
-        board[:] = "  "
+    # def print_board(self, args):
+        # # Print a character array  for the board
+        # board = np.chararray((self.x_dim, self.y_dim), itemsize=3)
+        # board[:] = "  "
 
-        for _, values in args.items():
-            if values.pos is None:
-                continue
-            else:
-                board[values.pos[0], values.pos[1]] = values.piece_name
+        # for _, values in args.items():
+        #     if values.pos is None:
+        #         continue
+        #     else:
+        #         board[values.pos[0], values.pos[1]] = values.piece_name
 
-        print(board)
+        # print(board)
 
-    def drawGameState(self, screen, names_obj, args):
+    def drawGameState(self, screen, names_obj, *args):
         Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
         Board.drawPieces(self, screen, names_obj)
 
     def drawBoard(self, screen, args):
         # Red check; gray moves
+        # Draw the tiles on the board
         colors = [p.Color("wheat1"), p.Color("darkkhaki")]
         for r in range(self.x_dim):
             for c in range(self.y_dim):
-                # if loc in self.loc_names.keys():
-                #     color = p.Color("gray")
-                # else:
-                #     color = colors[(r+c)%2]
                 p.draw.rect(screen, colors[(r+c)%2], 
                    p.Rect(r*self.SQ_SIZE, c*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
-                
-                if args in self.loc_names:
-                    p.draw.rect(screen, p.Color('gray'), 
-                   p.Rect(args[1]*self.SQ_SIZE, args[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
 
+        # Check to see if a place has been clicked 
+        # Highlight the space and the pieces moves in grey
+        if args[0] is not None:
+            if type(args[0]) is tuple: 
+                if args[0] in self.loc_names.keys():
+                    if args[1]:
+                        # --ADD--: Keep king highlighted in red
+                        p.draw.rect(screen, p.Color('red'), 
+                            p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                    else:
+                        p.draw.rect(screen, p.Color('gray'), 
+                           p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+            else:
+                for i in args[0]:
+                    p.draw.rect(screen, p.Color('gray'), 
+                       p.Rect(i[1]*self.SQ_SIZE, i[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
 
     def drawPieces(self, screen, names_obj):
+        # Draw the pieces on the board
         # x and y axis are flipped when drawing the pieces
         for piece in names_obj.values():
-            screen.blit(piece.piece_image, 
-                 p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
-                        self.SQ_SIZE, self.SQ_SIZE))
+            if piece.pos is None:
+                continue
+            else:
+                screen.blit(piece.piece_image, 
+                    p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
+                            self.SQ_SIZE, self.SQ_SIZE))
                 
 
 
