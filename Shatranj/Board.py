@@ -78,17 +78,26 @@ class Board:
 
         print(board)
 
-    def drawGameState(self, screen, names_obj):
-        Board.drawBoard(self, screen) # Draw board first so pieces do not get overwritten
+    def drawGameState(self, screen, names_obj, args):
+        Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
         Board.drawPieces(self, screen, names_obj)
 
-    def drawBoard(self, screen):
+    def drawBoard(self, screen, args):
         # Red check; gray moves
         colors = [p.Color("wheat1"), p.Color("darkkhaki")]
         for r in range(self.x_dim):
             for c in range(self.y_dim):
+                # if loc in self.loc_names.keys():
+                #     color = p.Color("gray")
+                # else:
+                #     color = colors[(r+c)%2]
                 p.draw.rect(screen, colors[(r+c)%2], 
                    p.Rect(r*self.SQ_SIZE, c*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                
+                if args in self.loc_names:
+                    p.draw.rect(screen, p.Color('gray'), 
+                   p.Rect(args[1]*self.SQ_SIZE, args[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+
 
     def drawPieces(self, screen, names_obj):
         # x and y axis are flipped when drawing the pieces

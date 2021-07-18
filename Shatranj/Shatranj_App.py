@@ -88,14 +88,20 @@ board = Board([wp0, wp1, wp2, wp3,
                 br0, br1, ba0, ba1,
                 be0, be1, bS, bF], HEIGHT, DIMENSION)
 
+clicked_piece = None
 while running:
     for e in p.event.get():
         if e.type == p.QUIT:
             running = False
-        elif e.type == p.MOUSEBUTTONDOWN:
+        elif e.type == p.MOUSEBUTTONDOWN: # code 1025
             location = p.mouse.get_pos() #(x, y) location of mouse
             row = location[0]//SQ_SIZE
             col = location[1]//SQ_SIZE
+
+            clicked_piece = (col, row)
+            # board.drawGameState(screen, board.name_obj_dict, (col, row))
+            # clock.tick(MAX_FPS)
+            # p.display.flip()
 
             if sq_selected == (row, col):
                 sq_selected = ()
@@ -109,7 +115,7 @@ while running:
                 pass
 
     # Draw the pieces and tiles on the board
-    board.drawGameState(screen, board.name_obj_dict)
+    board.drawGameState(screen, board.name_obj_dict, clicked_piece)
     clock.tick(MAX_FPS)
     p.display.flip()
 
