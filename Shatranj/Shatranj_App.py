@@ -12,7 +12,7 @@ PCT_SHRINK = .75
 
 IMAGES = {} 
 
-turn = 'white'
+num_turns = 0
 legal_moves=False
 checkmate=False
 stalemate=False
@@ -112,25 +112,26 @@ while running:
                 if (col, row) not in board.loc_names.keys():
                     break
                 else:
-                    player_Clicks.append((col, row))
                     piece_name = board.loc_names[(col, row)]
 
                     if board.name_obj_dict[piece_name].color == 'white' and \
-                    turn == 'white':
+                    num_turns % 2 == 0:
                         moves = board.name_obj_dict[piece_name].Available_Moves(
                             board.x_dim,
                             board.y_dim,
                             board.white_piece_loc,
                             board.black_piece_loc
                         )
+                        player_Clicks.append((col, row))
                     elif board.name_obj_dict[piece_name].color == 'black' and \
-                turn == 'black':
+                num_turns % 2 != 0:
                         moves = board.name_obj_dict[piece_name].Available_Moves(
                             board.x_dim,
                             board.y_dim,
                             board.black_piece_loc,
                             board.white_piece_loc
                         )
+                        player_Clicks.append((col, row))
                     else:
                         break
                 
@@ -141,59 +142,34 @@ while running:
 
             # If second click
             else:
-                pass
-                # Check to see if click on in available moves
-                # CHeck to see if click is the same position as before
-                # Make the move
-                # reset click list
-            
-            # Check if location has a piece on it 
-            # if (col,row) not in board.loc_names.keys():
-            #     break
-            # else:
-            #     # Gets the object name
-            #     piece_name = board.loc_names[(col, row)]
+                # Check if the player clciked the sames square or not
+                # Unselect the piece
+                if (col, row) in player_Clicks:
+                    high_squares = None
+                    player_Clicks = []
+                else:
+                    # If the piece has no availaable moves,
+                    # ingore the clicks
+                    if moves is None:
+                        break
+                    # If the second click is in the pieces available
+                    # moves, make the move and update everything
+                    elif (col,row) in moves:
+                        board.name_obj_dict[piece_name].Make_Move(
+                            (col, row),
+                            board)
 
-            #     # Gets moves for the white and black pieces when it is their turn
-            #     if board.name_obj_dict[piece_name].color == 'white' and \
-            #     turn == 'white':
-            #         moves = board.name_obj_dict[piece_name].Available_Moves(
-            #             board.x_dim,
-            #             board.y_dim,
-            #             board.white_piece_loc,
-            #             board.black_piece_loc
-            #         )
-
-            #         player_Clicks.append((col, row))
-
-            #     elif board.name_obj_dict[piece_name].color == 'black' and \
-            #     turn == 'black':
-            #         moves = board.name_obj_dict[piece_name].Available_Moves(
-            #             board.x_dim,
-            #             board.y_dim,
-            #             board.black_piece_loc,
-            #             board.white_piece_loc
-            #         )
-            #         player_Clicks.append((col, row))
-            #     else:
-            #         break
-
-            # if moves is None:
-            #     if len(player_Clicks) < 2:
-            #         high_squares = ((col, row))
-            #     else:
-            #         high_squares = None
-            # else:
-            #     if len(player_Clicks) < 2:
-            #         high_squares = {(col, row)} | moves
-            #     else:
-            #         high_squares = None
+                        legal_moves = True
+                        player_Clicks.append((col, row))
+                        num_turns +=1
+                        high_squares = None
+                        player_Clicks = []
+                    else:
+                        break
 
     # Draw the pieces and tiles on the board
     board.drawGameState(screen, board.name_obj_dict, high_squares, False)
     clock.tick(MAX_FPS)
     p.display.flip()
-
-    player_Clicks = []
 
 

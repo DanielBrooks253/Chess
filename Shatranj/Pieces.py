@@ -9,9 +9,7 @@ class Pieces:
         self.giving_check=False  
 
     def Make_Move(self, new_loc, board_obj):
-
-        # 2): Capture?
-            # Check if the move results in a capture
+        # Check if the move results in a capture
         if self.color == 'white':
             piece_insct = [key for key, values in board_obj.black_name_obj_dict.items()
                             if new_loc == values.pos]
@@ -243,9 +241,9 @@ class Rukh(Pieces):
             down_no = set()
 
         if same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]] * closest_left[1], range((closest_left[1]), -1, -1)))
+            left_no = set(zip([closest_left[0]]*(closest_left[1]+1), range((closest_left[1]), -1, -1)))
         elif not same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]] * closest_left[1], range((closest_left[1]-1), -1, -1)))
+            left_no = set(zip([closest_left[0]]*closest_left[1], range((closest_left[1]-1), -1, -1)))
         else:
             left_no = set()
 
