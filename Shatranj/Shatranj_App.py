@@ -98,11 +98,14 @@ while running:
             row = location[0]//SQ_SIZE
             col = location[1]//SQ_SIZE
 
+            # Check if location has a piece on it 
             if (col,row) not in board.loc_names.keys():
                 break
             else:
+                # Gets the object name
                 piece_name = board.loc_names[(col, row)]
 
+                # Gets moves for the white and black pieces
                 if board.name_obj_dict[piece_name].color == 'white':
                     moves = board.name_obj_dict[piece_name].Available_Moves(
                         board.x_dim,

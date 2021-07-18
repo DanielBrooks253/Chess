@@ -101,11 +101,11 @@ class Board:
                         p.draw.rect(screen, p.Color('red'), 
                             p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
                     else:
-                        p.draw.rect(screen, p.Color('gray'), 
+                        p.draw.rect(screen, p.Color('darkolivegreen'), 
                            p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
             else:
                 for i in args[0]:
-                    p.draw.rect(screen, p.Color('gray'), 
+                    p.draw.rect(screen, p.Color('darkolivegreen'), 
                        p.Rect(i[1]*self.SQ_SIZE, i[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
 
     def drawPieces(self, screen, names_obj):

@@ -60,7 +60,7 @@ board = Board([wp0, wp1, wp2, wp3,
               [bp0, bp1, bp2, bp3,
                 bp4, bp5, bp6, bp7,
                 br0, br1, ba0, ba1,
-                be0, be1, bS, bF])
+                be0, be1, bS, bF], 512, 8)
 
 
 # Print the board
