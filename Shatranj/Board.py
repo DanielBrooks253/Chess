@@ -1,4 +1,3 @@
-import numpy as np
 import pygame as p
 
 class Board:
@@ -86,6 +85,7 @@ class Board:
         # Red check; gray moves
         # Draw the tiles on the board
         colors = [p.Color("wheat1"), p.Color("darkkhaki")]
+
         for r in range(self.x_dim):
             for c in range(self.y_dim):
                 p.draw.rect(screen, colors[(r+c)%2], 

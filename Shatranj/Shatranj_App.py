@@ -102,55 +102,98 @@ while running:
             location = p.mouse.get_pos() #(x, y) location of mouse
             row = location[0]//SQ_SIZE
             col = location[1]//SQ_SIZE
-            
-            # Check if location has a piece on it 
-            if (col,row) not in board.loc_names.keys():
-                break
-            else:
-                # Gets the object name
-                piece_name = board.loc_names[(col, row)]
 
-                # Gets moves for the white and black pieces when it is their turn
-                if board.name_obj_dict[piece_name].color == 'white' and \
-                turn == 'white':
-                    moves = board.name_obj_dict[piece_name].Available_Moves(
-                        board.x_dim,
-                        board.y_dim,
-                        board.white_piece_loc,
-                        board.black_piece_loc
-                    )
-                    player_Clicks.append((col, row))
-                elif board.name_obj_dict[piece_name].color == 'black' and \
-                turn == 'black':
-                    moves = board.name_obj_dict[piece_name].Available_Moves(
-                        board.x_dim,
-                        board.y_dim,
-                        board.black_piece_loc,
-                        board.white_piece_loc
-                    )
-                    player_Clicks.append((col, row))
-                else:
+            # If first click
+            if len(player_Clicks) == 0:
+                # Check to make sure that is is a valid move (piece is on square)
+                # Get available moves
+                # Highlight moves
+
+                if (col, row) not in board.loc_names.keys():
                     break
+                else:
+                    player_Clicks.append((col, row))
+                    piece_name = board.loc_names[(col, row)]
 
-            if moves is None:
-                if len(player_Clicks) < 2:
+                    if board.name_obj_dict[piece_name].color == 'white' and \
+                    turn == 'white':
+                        moves = board.name_obj_dict[piece_name].Available_Moves(
+                            board.x_dim,
+                            board.y_dim,
+                            board.white_piece_loc,
+                            board.black_piece_loc
+                        )
+                    elif board.name_obj_dict[piece_name].color == 'black' and \
+                turn == 'black':
+                        moves = board.name_obj_dict[piece_name].Available_Moves(
+                            board.x_dim,
+                            board.y_dim,
+                            board.black_piece_loc,
+                            board.white_piece_loc
+                        )
+                    else:
+                        break
+                
+                if moves is None:
                     high_squares = ((col, row))
                 else:
-                    high_squares = None
-            else:
-                if len(player_Clicks) < 2:
                     high_squares = {(col, row)} | moves
-                else:
-                    high_squares = None
+
+            # If second click
+            else:
+                pass
+                # Check to see if click on in available moves
+                # CHeck to see if click is the same position as before
+                # Make the move
+                # reset click list
+            
+            # Check if location has a piece on it 
+            # if (col,row) not in board.loc_names.keys():
+            #     break
+            # else:
+            #     # Gets the object name
+            #     piece_name = board.loc_names[(col, row)]
+
+            #     # Gets moves for the white and black pieces when it is their turn
+            #     if board.name_obj_dict[piece_name].color == 'white' and \
+            #     turn == 'white':
+            #         moves = board.name_obj_dict[piece_name].Available_Moves(
+            #             board.x_dim,
+            #             board.y_dim,
+            #             board.white_piece_loc,
+            #             board.black_piece_loc
+            #         )
+
+            #         player_Clicks.append((col, row))
+
+            #     elif board.name_obj_dict[piece_name].color == 'black' and \
+            #     turn == 'black':
+            #         moves = board.name_obj_dict[piece_name].Available_Moves(
+            #             board.x_dim,
+            #             board.y_dim,
+            #             board.black_piece_loc,
+            #             board.white_piece_loc
+            #         )
+            #         player_Clicks.append((col, row))
+            #     else:
+            #         break
+
+            # if moves is None:
+            #     if len(player_Clicks) < 2:
+            #         high_squares = ((col, row))
+            #     else:
+            #         high_squares = None
+            # else:
+            #     if len(player_Clicks) < 2:
+            #         high_squares = {(col, row)} | moves
+            #     else:
+            #         high_squares = None
 
     # Draw the pieces and tiles on the board
     board.drawGameState(screen, board.name_obj_dict, high_squares, False)
     clock.tick(MAX_FPS)
     p.display.flip()
 
-    if len(player_Clicks) == 2: player_Clicks = []
-
-# if first click, highlight piece and available moves
-# if second click on the same square, all pieces are unselected
+    player_Clicks = []
 
 
