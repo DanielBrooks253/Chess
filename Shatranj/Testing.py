@@ -6,51 +6,51 @@ num_turns = 0
 checkmate = False
 
 # Initialize all of the pieces on the board
-wp0 = Pujada((6,0), piece_name='wp0', piece_image = IMAGES['wp'], color='white')
-wp1 = Pujada((6,1), piece_name='wp1', piece_image = IMAGES['wp'], color='white')
-wp2 = Pujada((6,2), piece_name='wp2', piece_image = IMAGES['wp'], color='white')
-wp3 = Pujada((6,3), piece_name='wp3', piece_image = IMAGES['wp'], color='white')
-wp4 = Pujada((6,4), piece_name='wp4', piece_image = IMAGES['wp'], color='white')
-wp5 = Pujada((6,5), piece_name='wp5', piece_image = IMAGES['wp'], color='white')
-wp6 = Pujada((6,6), piece_name='wp6', piece_image = IMAGES['wp'], color='white')
-wp7 = Pujada((6,7), piece_name='wp7', piece_image = IMAGES['wp'], color='white')
+wp0 = Pujada((6,0), piece_name='wp0', piece_image = None, color='white')
+wp1 = Pujada((6,1), piece_name='wp1', piece_image = None, color='white')
+wp2 = Pujada((6,2), piece_name='wp2', piece_image = None, color='white')
+wp3 = Pujada((6,3), piece_name='wp3', piece_image = None, color='white')
+wp4 = Pujada((6,4), piece_name='wp4', piece_image = None, color='white')
+wp5 = Pujada((6,5), piece_name='wp5', piece_image = None, color='white')
+wp6 = Pujada((6,6), piece_name='wp6', piece_image = None, color='white')
+wp7 = Pujada((6,7), piece_name='wp7', piece_image = None, color='white')
 
-bp0 = Pujada((1,0), piece_name='bp0', piece_image = IMAGES['bp'], color='black')
-bp1 = Pujada((1,1), piece_name='bp1', piece_image = IMAGES['bp'], color='black')
-bp2 = Pujada((1,2), piece_name='bp2', piece_image = IMAGES['bp'], color='black')
-bp3 = Pujada((1,3), piece_name='bp3', piece_image = IMAGES['bp'], color='black')
-bp4 = Pujada((1,4), piece_name='bp4', piece_image = IMAGES['bp'], color='black')
-bp5 = Pujada((1,5), piece_name='bp5', piece_image = IMAGES['bp'], color='black')
-bp6 = Pujada((1,6), piece_name='bp6', piece_image = IMAGES['bp'], color='black')
-bp7 = Pujada((1,7), piece_name='bp7', piece_image = IMAGES['bp'], color='black')
+bp0 = Pujada((1,0), piece_name='bp0', piece_image = None, color='black')
+bp1 = Pujada((1,1), piece_name='bp1', piece_image = None, color='black')
+bp2 = Pujada((1,2), piece_name='bp2', piece_image = None, color='black')
+bp3 = Pujada((1,3), piece_name='bp3', piece_image = None, color='black')
+bp4 = Pujada((1,4), piece_name='bp4', piece_image = None, color='black')
+bp5 = Pujada((1,5), piece_name='bp5', piece_image = None, color='black')
+bp6 = Pujada((1,6), piece_name='bp6', piece_image = None, color='black')
+bp7 = Pujada((1,7), piece_name='bp7', piece_image = None, color='black')
 
 # Rukh (Rooks)
-wr0 = Rukh((7,0), piece_name='wr0', piece_image = IMAGES['wr'], color='white')
-wr1 = Rukh((7,7), piece_name='wr1', piece_image = IMAGES['wr'], color='white')
+wr0 = Rukh((7,0), piece_name='wr0', piece_image = None, color='white')
+wr1 = Rukh((7,7), piece_name='wr1', piece_image = None, color='white')
 
-br0 = Rukh((0,0), piece_name='br0', piece_image = IMAGES['br'], color='black')
-br1 = Rukh((0,7), piece_name='br1', piece_image = IMAGES['br'], color='black')
+br0 = Rukh((0,0), piece_name='br0', piece_image = None, color='black')
+br1 = Rukh((0,7), piece_name='br1', piece_image = None, color='black')
 
 # Asp (Horses)
-wa0 = Asp((7,1), piece_name='wa0', piece_image = IMAGES['wa'], color='white')
-wa1 = Asp((7,6), piece_name='wa1', piece_image = IMAGES['wa'], color='white')
+wa0 = Asp((7,1), piece_name='wa0', piece_image = None, color='white')
+wa1 = Asp((7,6), piece_name='wa1', piece_image = None, color='white')
 
-ba0 = Asp((0,1), piece_name='ba0', piece_image = IMAGES['ba'], color='black')
-ba1 = Asp((0,6), piece_name='ba1', piece_image = IMAGES['ba'], color='black')
+ba0 = Asp((0,1), piece_name='ba0', piece_image = None, color='black')
+ba1 = Asp((0,6), piece_name='ba1', piece_image = None, color='black')
 
 # Pil (Elephants)
-we0 = Pil((7,2), piece_name='we0', piece_image = IMAGES['we'], color='white')
-we1 = Pil((7,5), piece_name='we1', piece_image = IMAGES['we'], color='white')
+we0 = Pil((7,2), piece_name='we0', piece_image = None, color='white')
+we1 = Pil((7,5), piece_name='we1', piece_image = None, color='white')
 
-be0 = Pil((0,2), piece_name='be0', piece_image = IMAGES['be'], color='black')
-be1 = Pil((0,5), piece_name='be1', piece_image = IMAGES['be'], color='black')
+be0 = Pil((0,2), piece_name='be0', piece_image = None, color='black')
+be1 = Pil((0,5), piece_name='be1', piece_image = None, color='black')
 
 # Shah (King) and Farzin (Queen)
-wS = Shah((7,3), piece_name='wS0', piece_image = IMAGES['wS'], color='white')
-wF = Farzin((7,4), piece_name='wF0', piece_image = IMAGES['wF'], color='white')
+wS = Shah((7,3), piece_name='wS0', piece_image = None, color='white')
+wF = Farzin((7,4), piece_name='wF0', piece_image = None, color='white')
 
-bS = Shah((0,3), piece_name='bS0', piece_image = IMAGES['bS'], color='black')
-bF = Farzin((0,4), piece_name='bF0', piece_image = IMAGES['bF'], color='black')
+bS = Shah((0,3), piece_name='bS0', piece_image = None, color='black')
+bF = Farzin((0,4), piece_name='bF0', piece_image = None, color='black')
 
 # Set the pieces on the board for the start of the match
 board = Board([wp0, wp1, wp2, wp3,
