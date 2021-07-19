@@ -67,7 +67,7 @@ class Pieces:
                 # in check or not. If it would, add the move to the list of
                 # check moves
 
-                if name_obj_copy['wS0'].check_check(name_obj_copy['wS0'],
+                if name_obj_copy['wS0'].check_check(
                     black_name_obj_copy,
                     black_loc_copy,
                     white_loc_copy):

@@ -32,7 +32,7 @@ clock = p.time.Clock()
 screen.fill(p.Color('white'))
 running = True
 
-sq_selected = () # no sqaure that is selected (row, col)
+# sq_selected = () # no sqaure that is selected (row, col)
 player_Clicks = [] # keep track of the number of clicks the user does
 
 # Initialize all of the pieces on the board
@@ -122,7 +122,27 @@ while running:
                             board.white_piece_loc,
                             board.black_piece_loc
                         )
-                        player_Clicks.append((col, row))
+                        # Check to see if you are in check
+                        if board.name_obj_dict['wS0'].in_check:
+                            if moves is None:
+                                player_Clicks.append((col, row))
+                            else:
+                                invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
+                                    moves, board)
+                                # Removes all the moves that will not get you out
+                                # of check
+                                valid_moves = moves - invalid_moves
+                                # If there are no valid moves, return none
+                                if len(valid_moves) == 0:
+                                    moves = None
+                                    player_Clicks.append((col, row))
+                                else:
+                                    moves = valid_moves.copy()
+                                    player_Clicks.append((col, row))
+                        else:
+                            # If you are not in check, capture the click
+                           player_Clicks.append((col, row)) 
+
                     elif board.name_obj_dict[piece_name].color == 'black' and \
                 num_turns % 2 != 0:
                         moves = board.name_obj_dict[piece_name].Available_Moves(
@@ -131,7 +151,26 @@ while running:
                             board.black_piece_loc,
                             board.white_piece_loc
                         )
-                        player_Clicks.append((col, row))
+                        # Check to see if you are in check
+                        if board.name_obj_dict['bS0'].in_check:
+                            if moves is None:
+                                player_Clicks.append((col, row))
+                            else:
+                                invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
+                                    moves, board)
+                                # Removes all the moves that will not get you out
+                                # of check
+                                valid_moves = moves - invalid_moves
+                                # If there are no valid moves, return none
+                                if len(valid_moves) == 0:
+                                    moves = None
+                                    player_Clicks.append((col, row))
+                                else:
+                                    moves = valid_moves.copy()
+                                    player_Clicks.append((col, row))
+                        else:
+                            # If you are not in check, capture the click
+                            player_Clicks.append((col, row))
                     else:
                         break
                 
@@ -160,16 +199,39 @@ while running:
                             board)
 
                         legal_moves = True
-                        player_Clicks.append((col, row))
-                        num_turns +=1
+                        # player_Clicks.append((col, row))
                         high_squares = None
                         player_Clicks = []
+
+                        if num_turns % 2 == 0:
+                            board.name_obj_dict['bS0'].in_check = board.name_obj_dict['bS0'].check_check(
+                                board.white_name_obj_dict,
+                                board.white_piece_loc,
+                                board.black_piece_loc
+                            )
+                        else:
+                            board.name_obj_dict['wS0'].in_check = board.name_obj_dict['wS0'].check_check(
+                                board.black_name_obj_dict,
+                                board.black_piece_loc,
+                                board.white_piece_loc
+                            )
+                        num_turns +=1
                     else:
                         break
-
-    # Draw the pieces and tiles on the board
-    board.drawGameState(screen, board.name_obj_dict, high_squares, False)
-    clock.tick(MAX_FPS)
-    p.display.flip()
+    
+    if board.name_obj_dict['wS0'].in_check:
+        board.drawGameState(screen, board.name_obj_dict, high_squares, 
+                            board.name_obj_dict['wS0'].pos)
+        clock.tick(MAX_FPS)
+        p.display.flip()
+    elif board.name_obj_dict['bS0'].in_check:
+        board.drawGameState(screen, board.name_obj_dict, high_squares, 
+                            board.name_obj_dict['bS0'].pos)
+        clock.tick(MAX_FPS)
+        p.display.flip()
+    else:
+        board.drawGameState(screen, board.name_obj_dict, high_squares, None)
+        clock.tick(MAX_FPS)
+        p.display.flip()
 
 

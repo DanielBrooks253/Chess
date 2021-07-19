@@ -96,17 +96,15 @@ class Board:
         if args[0] is not None:
             if type(args[0]) is tuple: 
                 if args[0] in self.loc_names.keys():
-                    if args[1]:
-                        # --ADD--: Keep king highlighted in red
-                        p.draw.rect(screen, p.Color('red'), 
-                            p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
-                    else:
-                        p.draw.rect(screen, p.Color('darkolivegreen'), 
-                           p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                    p.draw.rect(screen, p.Color('darkolivegreen'), 
+                        p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
             else:
                 for i in args[0]:
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
                        p.Rect(i[1]*self.SQ_SIZE, i[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+        if args[1] is not None:
+            p.draw.rect(screen, p.Color('red'), 
+                        p.Rect(args[1][1]*self.SQ_SIZE, args[1][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
 
     def drawPieces(self, screen, names_obj):
         # Draw the pieces on the board
