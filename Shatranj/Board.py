@@ -64,19 +64,6 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    # def print_board(self, args):
-        # # Print a character array  for the board
-        # board = np.chararray((self.x_dim, self.y_dim), itemsize=3)
-        # board[:] = "  "
-
-        # for _, values in args.items():
-        #     if values.pos is None:
-        #         continue
-        #     else:
-        #         board[values.pos[0], values.pos[1]] = values.piece_name
-
-        # print(board)
-
     def drawGameState(self, screen, names_obj, *args):
         Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
         Board.drawPieces(self, screen, names_obj)

@@ -13,7 +13,6 @@ PCT_SHRINK = .75
 IMAGES = {} 
 
 num_turns = 0
-legal_moves=False
 checkmate=False
 stalemate=False
 
@@ -114,6 +113,7 @@ while running:
                 else:
                     piece_name = board.loc_names[(col, row)]
 
+                    # Get the available moves for the given color
                     if board.name_obj_dict[piece_name].color == 'white' and \
                     num_turns % 2 == 0:
                         moves = board.name_obj_dict[piece_name].Available_Moves(
@@ -122,23 +122,6 @@ while running:
                             board.white_piece_loc,
                             board.black_piece_loc
                         )
-                        # Check to see if you are in check
-                        if moves is None:
-                            player_Clicks.append((col, row))
-                        else:
-                            invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
-                                moves, board)
-                            # Removes all the moves that will not get you out
-                            # of check
-                            valid_moves = moves - invalid_moves
-                            # If there are no valid moves, return none
-                            if len(valid_moves) == 0:
-                                moves = None
-                                player_Clicks.append((col, row))
-                            else:
-                                moves = valid_moves.copy()
-                                player_Clicks.append((col, row))
-                    # Repeat for blacks turn
                     elif board.name_obj_dict[piece_name].color == 'black' and \
                 num_turns % 2 != 0:
                         moves = board.name_obj_dict[piece_name].Available_Moves(
@@ -147,29 +130,29 @@ while running:
                             board.black_piece_loc,
                             board.white_piece_loc
                         )
-                        # Check to see if you are in check
-                        if moves is None:
-                            player_Clicks.append((col, row))
-                        else:
-                            invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
-                                moves, board)
-                            # Removes all the moves that will not get you out
-                            # of check
-                            valid_moves = moves - invalid_moves
-                            # If there are no valid moves, return none
-                            if len(valid_moves) == 0:
-                                moves = None
-                                player_Clicks.append((col, row))
-                            else:
-                                moves = valid_moves.copy()
-                                player_Clicks.append((col, row))
-                    else:
+                    # Do not highlight anything if the place they click 
+                    # doesn't have any piece or a piece of their color
+                    else: 
                         break
                 
                 if moves is None:
+                    player_Clicks.append((col, row))
                     high_squares = ((col, row))
                 else:
-                    high_squares = {(col, row)} | moves
+                    invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
+                                moves, board)
+                    # Removes all the moves that will not get you out
+                    # of check
+                    valid_moves = moves - invalid_moves
+                    # If there are no valid moves, return none
+                    if len(valid_moves) == 0:
+                        moves = None
+                        player_Clicks.append((col, row))
+                    else:
+                        moves = valid_moves.copy()
+                        player_Clicks.append((col, row))
+
+                    high_squares = {(col, row)} | valid_moves
 
             # If second click
             else:
@@ -179,7 +162,7 @@ while running:
                     high_squares = None
                     player_Clicks = []
                 else:
-                    # If the piece has no availaable moves,
+                    # If the piece has no available moves,
                     # ingore the clicks
                     if moves is None:
                         break
@@ -190,24 +173,23 @@ while running:
                             (col, row),
                             board)
 
-                        legal_moves = True
                         # player_Clicks.append((col, row))
                         high_squares = None
                         player_Clicks = []
 
-                        if num_turns % 2 == 0:
-                            board.name_obj_dict['bS0'].in_check = board.name_obj_dict['bS0'].check_check(
-                                board.white_name_obj_dict,
-                                board.white_piece_loc,
-                                board.black_piece_loc
-                            )
-                        else:
-                            board.name_obj_dict['wS0'].in_check = board.name_obj_dict['wS0'].check_check(
-                                board.black_name_obj_dict,
-                                board.black_piece_loc,
-                                board.white_piece_loc
-                            )
+                        board.name_obj_dict['bS0'].in_check = board.name_obj_dict['bS0'].check_check(
+                            board.white_name_obj_dict,
+                            board.white_piece_loc,
+                            board.black_piece_loc
+                        )
+
+                        board.name_obj_dict['wS0'].in_check = board.name_obj_dict['wS0'].check_check(
+                            board.black_name_obj_dict,
+                            board.black_piece_loc,
+                            board.white_piece_loc
+                        )
                         num_turns +=1
+                        
                     else:
                         break
     

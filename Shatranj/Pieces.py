@@ -319,6 +319,17 @@ class Pujada(Pieces):
         super().__init__(start_pos, piece_name, piece_image, color)
 
     def Get_Moves(self):
+        if self.color == 'black':
+            if self.pos[0] == 7:
+                self.promoted = True
+            else:
+                pass
+        else:
+            if self.pos[0] == 0:
+                self.promoted = True 
+            else:
+                pass
+
         if self.promoted:
             return Farzin.Get_Moves(self)
         else:
