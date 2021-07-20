@@ -1,4 +1,3 @@
-import numpy as np
 import pygame as p
 
 class Board:
@@ -65,19 +64,6 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    # def print_board(self, args):
-        # # Print a character array  for the board
-        # board = np.chararray((self.x_dim, self.y_dim), itemsize=3)
-        # board[:] = "  "
-
-        # for _, values in args.items():
-        #     if values.pos is None:
-        #         continue
-        #     else:
-        #         board[values.pos[0], values.pos[1]] = values.piece_name
-
-        # print(board)
-
     def drawGameState(self, screen, names_obj, *args):
         Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
         Board.drawPieces(self, screen, names_obj)
@@ -86,6 +72,7 @@ class Board:
         # Red check; gray moves
         # Draw the tiles on the board
         colors = [p.Color("wheat1"), p.Color("darkkhaki")]
+
         for r in range(self.x_dim):
             for c in range(self.y_dim):
                 p.draw.rect(screen, colors[(r+c)%2], 
@@ -96,17 +83,15 @@ class Board:
         if args[0] is not None:
             if type(args[0]) is tuple: 
                 if args[0] in self.loc_names.keys():
-                    if args[1]:
-                        # --ADD--: Keep king highlighted in red
-                        p.draw.rect(screen, p.Color('red'), 
-                            p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
-                    else:
-                        p.draw.rect(screen, p.Color('darkolivegreen'), 
-                           p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                    p.draw.rect(screen, p.Color('darkolivegreen'), 
+                        p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
             else:
                 for i in args[0]:
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
                        p.Rect(i[1]*self.SQ_SIZE, i[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+        if args[1] is not None:
+            p.draw.rect(screen, p.Color('red'), 
+                        p.Rect(args[1][1]*self.SQ_SIZE, args[1][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
 
     def drawPieces(self, screen, names_obj):
         # Draw the pieces on the board
