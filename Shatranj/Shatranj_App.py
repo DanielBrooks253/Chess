@@ -123,26 +123,22 @@ while running:
                             board.black_piece_loc
                         )
                         # Check to see if you are in check
-                        if board.name_obj_dict['wS0'].in_check:
-                            if moves is None:
+                        if moves is None:
+                            player_Clicks.append((col, row))
+                        else:
+                            invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
+                                moves, board)
+                            # Removes all the moves that will not get you out
+                            # of check
+                            valid_moves = moves - invalid_moves
+                            # If there are no valid moves, return none
+                            if len(valid_moves) == 0:
+                                moves = None
                                 player_Clicks.append((col, row))
                             else:
-                                invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
-                                    moves, board)
-                                # Removes all the moves that will not get you out
-                                # of check
-                                valid_moves = moves - invalid_moves
-                                # If there are no valid moves, return none
-                                if len(valid_moves) == 0:
-                                    moves = None
-                                    player_Clicks.append((col, row))
-                                else:
-                                    moves = valid_moves.copy()
-                                    player_Clicks.append((col, row))
-                        else:
-                            # If you are not in check, capture the click
-                           player_Clicks.append((col, row)) 
-
+                                moves = valid_moves.copy()
+                                player_Clicks.append((col, row))
+                    # Repeat for blacks turn
                     elif board.name_obj_dict[piece_name].color == 'black' and \
                 num_turns % 2 != 0:
                         moves = board.name_obj_dict[piece_name].Available_Moves(
@@ -152,25 +148,21 @@ while running:
                             board.white_piece_loc
                         )
                         # Check to see if you are in check
-                        if board.name_obj_dict['bS0'].in_check:
-                            if moves is None:
+                        if moves is None:
+                            player_Clicks.append((col, row))
+                        else:
+                            invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
+                                moves, board)
+                            # Removes all the moves that will not get you out
+                            # of check
+                            valid_moves = moves - invalid_moves
+                            # If there are no valid moves, return none
+                            if len(valid_moves) == 0:
+                                moves = None
                                 player_Clicks.append((col, row))
                             else:
-                                invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
-                                    moves, board)
-                                # Removes all the moves that will not get you out
-                                # of check
-                                valid_moves = moves - invalid_moves
-                                # If there are no valid moves, return none
-                                if len(valid_moves) == 0:
-                                    moves = None
-                                    player_Clicks.append((col, row))
-                                else:
-                                    moves = valid_moves.copy()
-                                    player_Clicks.append((col, row))
-                        else:
-                            # If you are not in check, capture the click
-                            player_Clicks.append((col, row))
+                                moves = valid_moves.copy()
+                                player_Clicks.append((col, row))
                     else:
                         break
                 
@@ -181,7 +173,7 @@ while running:
 
             # If second click
             else:
-                # Check if the player clciked the sames square or not
+                # Check if the player clicked the sames square or not
                 # Unselect the piece
                 if (col, row) in player_Clicks:
                     high_squares = None
