@@ -56,8 +56,17 @@ class Pieces:
                     old_move = self.pos
                     self.pos = i
 
-                    white_loc_copy -= {self.pos}
+                    white_loc_copy -= {old_move}
                     white_loc_copy |= {i}
+                    # Check to see if the movement of the king will capture a piece
+                    if i in black_loc_copy:
+                        rm =True
+                        opp_piece = board_obj.loc_names[i]
+
+                        black_loc_copy -= {i}
+                        black_name_obj_copy[opp_piece].pos = None
+                    else:
+                        pass
                 # Check to see if the move will capture a piece
                 # Change the captured pieces pos to None and
                 # remove it from the locations
@@ -90,8 +99,16 @@ class Pieces:
                 # scenarios
                 if self.piece_name == 'wS0':
                     self.pos = old_move
+
                     white_loc_copy -= {i}
                     white_loc_copy |= {self.pos}
+
+                    if rm:
+                        black_loc_copy |= {i}
+                        black_name_obj_copy[opp_piece].pos = i
+                        rm = False
+                    else:
+                        pass
                 elif rm:
                     rm = False
 
@@ -107,13 +124,23 @@ class Pieces:
         # Repeat the same process for the black moves
         else:
             for i in available_moves:
-                #If the piece being moved is a king
+                # If the piece being moved is a king
                 if self.piece_name == 'bS0':
                     old_move = self.pos
                     self.pos = i
 
-                    black_loc_copy -= {self.pos}
+                    black_loc_copy -= {old_move}
                     black_loc_copy |= {i}
+
+                    if i in white_loc_copy:
+                        rm =True
+                        opp_piece = board_obj.loc_names[i]
+
+                        white_loc_copy -= {i}
+                        white_name_obj_copy[opp_piece].pos = None
+                    else:
+                        pass
+
                 elif i in white_loc_copy:
                     rm = True
                     opp_piece = board_obj.loc_names[i]
@@ -140,8 +167,16 @@ class Pieces:
 
                 if self.piece_name == 'bS0':
                     self.pos = old_move
+
                     black_loc_copy -= {i}
                     black_loc_copy |= {self.pos}
+
+                    if rm:
+                        white_loc_copy |= {i}
+                        white_name_obj_copy[opp_piece].pos = i
+                        rm = False
+                    else:
+                        pass
                 elif rm:
                     rm = False
 

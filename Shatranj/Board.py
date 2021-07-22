@@ -68,17 +68,28 @@ class Board:
                         continue
         return True
 
+    def game_over_lose_pieces(self, color_name_obj):
+        for i in color_name_obj.values():
+            if i.piece_name == 'bS0' or i.piece_name == 'wS0':
+                continue
+            else:
+                if i.pos is None:
+                    continue
+                else:
+                    return False
+        return True
 
-    def update_locs(self, color, old_move, new_move, is_captured=False, caputed_piece=None):
+
+    def update_locs(self, color, old_move, new_move, is_captured=False, captured_piece=None):
         self.loc_names[new_move] = self.loc_names[old_move]
         del self.loc_names[old_move]
 
         if is_captured: # Remove piece from opposing color and update sets
             # Change the captured pieces position to None
-            self.name_obj_dict[caputed_piece].pos = None
+            self.name_obj_dict[captured_piece].pos = None
             
             if color == 'white':
-                self.black_name_obj_dict[caputed_piece].pos = None
+                self.black_name_obj_dict[captured_piece].pos = None
 
                 # Remove the captured piece location from the location dictionary
                 self.black_piece_loc -= {new_move}
@@ -91,7 +102,7 @@ class Board:
                 self.white_piece_loc = add_new_move
 
             else:
-                self.white_name_obj_dict[caputed_piece].pos = None
+                self.white_name_obj_dict[captured_piece].pos = None
                 self.white_piece_loc -= {new_move}
 
                 rm_old_move = self.black_piece_loc - {old_move}
