@@ -13,8 +13,8 @@ PCT_SHRINK = .75
 IMAGES = {} 
 
 num_turns = 0
-checkmate=False
-stalemate=False
+checkmate = False
+stalemate = False
 
 # Get all of the images loaded for the given pieces
 for pieces in [('wp', 'pawn-w1'), ('wr', 'chariot-w1'), ('wa', 'knight-w1'),
@@ -188,6 +188,47 @@ while running:
                             board.black_piece_loc,
                             board.white_piece_loc
                         )
+
+                        # print(wS.in_check)
+                        # print(bS.in_check)
+
+                        if num_turns % 2 == 0:
+                            if board.game_over_chkmt_stlmt_check(
+                                board.white_name_obj_dict,
+                                num_turns
+                            ) and bS.in_check:
+
+                                checkmate=True
+                                print('Checkmate!! Black Wins')
+
+                            elif board.game_over_chkmt_stlmt_check(
+                                board.white_name_obj_dict,
+                                num_turns
+                            ) and not bS.in_check:
+
+                                stalemate = True
+                                print('Stalemate!! Black Wins')
+                            else:
+                                pass
+                        else:
+                            if board.game_over_chkmt_stlmt_check(
+                                board.black_name_obj_dict,
+                                num_turns
+                            ) and wS.in_check:
+
+                                checkmate=True
+                                print('Checkmate!! White Wins')
+
+                            elif board.game_over_chkmt_stlmt_check(
+                                board.black_name_obj_dict,
+                                num_turns
+                            ) and not wS.in_check:
+
+                                stalemate = True
+                                print('Stalemate!! White Wins')
+                            else:
+                                pass
+
                         num_turns +=1
                         
                     else:
