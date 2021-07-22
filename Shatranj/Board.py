@@ -22,17 +22,74 @@ class Board:
         self.x_dim=x_dim
 
         self.SQ_SIZE = height //dimension
-        
-    def update_locs(self, color, old_move, new_move, is_captured=False, caputed_piece=None):
+
+    def game_over_chkmt_stlmt_check(self, color_name_obj, num_turns):
+        for i in color_name_obj.values():
+            if i.pos is None:
+                continue
+            else:
+                if num_turns % 2 == 0: # White move
+                    moves = i.Available_Moves(
+                        self.x_dim,
+                        self.y_dim,
+                        self.white_piece_loc,
+                        self.black_piece_loc
+                    )
+                    
+                    if moves is None:
+                        continue
+                    else:
+                        invalid_moves = i.avail_move_check_check(moves, self)
+
+                    # Check if the pieces have any available moves to get out
+                    # of check. If there are you are not in checkmate; break
+                    # out of the loop.
+                    if len(moves - invalid_moves) != 0:
+                        return False
+                    else:
+                        continue
+
+                else: # Black Move
+                    moves = i.Available_Moves(
+                        self.x_dim,
+                        self.y_dim,
+                        self.black_piece_loc,
+                        self.white_piece_loc
+                    )
+                    
+                    if moves is None:
+                        continue
+                    else:
+                        invalid_moves = i.avail_move_check_check(moves, self)
+
+                    if len(moves - invalid_moves) != 0:
+                        return False
+                    else:
+                        continue
+        return True
+
+    def game_over_lose_pieces(self, color_name_obj):
+        for i in color_name_obj.values():
+            if i.piece_name == 'bS0' or i.piece_name == 'wS0':
+                continue
+            else:
+                if i.pos is None:
+                    continue
+                else:
+                    return False
+        return True
+
+
+    def update_locs(self, color, old_move, new_move, is_captured=False, captured_piece=None):
         self.loc_names[new_move] = self.loc_names[old_move]
         del self.loc_names[old_move]
 
         if is_captured: # Remove piece from opposing color and update sets
             # Change the captured pieces position to None
-            self.name_obj_dict[caputed_piece].pos = None
+            self.name_obj_dict[captured_piece].pos = None
             
             if color == 'white':
-                self.black_name_obj_dict[caputed_piece].pos = None
+                self.black_name_obj_dict[captured_piece].pos = None
 
                 # Remove the captured piece location from the location dictionary
                 self.black_piece_loc -= {new_move}
@@ -45,7 +102,7 @@ class Board:
                 self.white_piece_loc = add_new_move
 
             else:
-                self.white_name_obj_dict[caputed_piece].pos = None
+                self.white_name_obj_dict[captured_piece].pos = None
                 self.white_piece_loc -= {new_move}
 
                 rm_old_move = self.black_piece_loc - {old_move}

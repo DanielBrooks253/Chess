@@ -13,8 +13,9 @@ PCT_SHRINK = .75
 IMAGES = {} 
 
 num_turns = 0
-checkmate=False
-stalemate=False
+checkmate = False
+stalemate = False
+all_pieces_captured_turns = []
 
 # Get all of the images loaded for the given pieces
 for pieces in [('wp', 'pawn-w1'), ('wr', 'chariot-w1'), ('wa', 'knight-w1'),
@@ -188,6 +189,68 @@ while running:
                             board.black_piece_loc,
                             board.white_piece_loc
                         )
+
+                        if num_turns % 2 == 0:
+                            if board.game_over_chkmt_stlmt_check(
+                                board.black_name_obj_dict,
+                                num_turns
+                            ) and bS.in_check:
+
+                                checkmate=True
+                                print('Checkmate!! White Wins')
+
+                            elif board.game_over_chkmt_stlmt_check(
+                                board.black_name_obj_dict,
+                                num_turns
+                            ) and not bS.in_check:
+
+                                stalemate = True
+                                print('Stalemate!! White Wins')
+                            else:
+                                all_pieces_captured_turns.append(
+                            board.game_over_lose_pieces(board.black_name_obj_dict)
+                        )
+
+                        else:
+                            if board.game_over_chkmt_stlmt_check(
+                                board.white_name_obj_dict,
+                                num_turns
+                            ) and wS.in_check:
+
+                                checkmate=True
+                                print('Checkmate!! Black Wins')
+
+                            elif board.game_over_chkmt_stlmt_check(
+                                board.white_name_obj_dict,
+                                num_turns
+                            ) and not wS.in_check:
+
+                                stalemate = True
+                                print('Stalemate!! Black Wins')
+                            else:
+                                all_pieces_captured_turns.append(
+                            board.game_over_lose_pieces(board.white_name_obj_dict)
+                        )
+
+                        if len(all_pieces_captured_turns) == 2 and \
+                            sum(all_pieces_captured_turns) == 2:
+
+                            print("!! The Game Ends in a Draw !!")
+
+                        elif len(all_pieces_captured_turns) == 2 and \
+                            all_pieces_captured_turns[0] and \
+                            num_turns % 2 == 0:
+                            print('!! Black Wins by Capturing all Whites Pieces !!')
+
+                        elif len(all_pieces_captured_turns) == 2 and \
+                            all_pieces_captured_turns[0] and \
+                            num_turns % 2 != 0:
+                            print('!! White Wins by Capturing all Blacks Pieces !!')
+                        elif all_pieces_captured_turns[0] == 0:
+                            all_pieces_captured_turns = []
+                        else:
+                            pass
+                        
                         num_turns +=1
                         
                     else:

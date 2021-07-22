@@ -53,10 +53,20 @@ class Pieces:
                 # Need to move the position of the king along with
                 # the different moves
                 if self.piece_name == 'wS0':
-                    old_move, self.pos = self.pos, i
+                    old_move = self.pos
+                    self.pos = i
 
-                    white_loc_copy -= {self.pos}
+                    white_loc_copy -= {old_move}
                     white_loc_copy |= {i}
+                    # Check to see if the movement of the king will capture a piece
+                    if i in black_loc_copy:
+                        rm =True
+                        opp_piece = board_obj.loc_names[i]
+
+                        black_loc_copy -= {i}
+                        black_name_obj_copy[opp_piece].pos = None
+                    else:
+                        pass
                 # Check to see if the move will capture a piece
                 # Change the captured pieces pos to None and
                 # remove it from the locations
@@ -74,7 +84,7 @@ class Pieces:
                     white_loc_copy -= {self.pos}
                     white_loc_copy |= {i}
 
-                # Check to see if th resulting move would get you out
+                # Check to see if the resulting move would get you out
                 # of check or not
                 if name_obj_copy['wS0'].check_check(
                     black_name_obj_copy,
@@ -89,8 +99,16 @@ class Pieces:
                 # scenarios
                 if self.piece_name == 'wS0':
                     self.pos = old_move
+
                     white_loc_copy -= {i}
                     white_loc_copy |= {self.pos}
+
+                    if rm:
+                        black_loc_copy |= {i}
+                        black_name_obj_copy[opp_piece].pos = i
+                        rm = False
+                    else:
+                        pass
                 elif rm:
                     rm = False
 
@@ -106,12 +124,23 @@ class Pieces:
         # Repeat the same process for the black moves
         else:
             for i in available_moves:
-                #If the piece being moved is a king
+                # If the piece being moved is a king
                 if self.piece_name == 'bS0':
-                    old_move, self.pos = self.pos, i
+                    old_move = self.pos
+                    self.pos = i
 
-                    black_loc_copy -= {self.pos}
+                    black_loc_copy -= {old_move}
                     black_loc_copy |= {i}
+
+                    if i in white_loc_copy:
+                        rm =True
+                        opp_piece = board_obj.loc_names[i]
+
+                        white_loc_copy -= {i}
+                        white_name_obj_copy[opp_piece].pos = None
+                    else:
+                        pass
+
                 elif i in white_loc_copy:
                     rm = True
                     opp_piece = board_obj.loc_names[i]
@@ -138,8 +167,16 @@ class Pieces:
 
                 if self.piece_name == 'bS0':
                     self.pos = old_move
+
                     black_loc_copy -= {i}
                     black_loc_copy |= {self.pos}
+
+                    if rm:
+                        white_loc_copy |= {i}
+                        white_name_obj_copy[opp_piece].pos = i
+                        rm = False
+                    else:
+                        pass
                 elif rm:
                     rm = False
 
@@ -258,28 +295,28 @@ class Rukh(Pieces):
         if same_color_up and closest_up is not None:
             up_no = set(zip(range(closest_up[0], -1, -1), [closest_up[1]]*(closest_up[0]+1)))
         elif not same_color_up and closest_up is not None:
-            up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*closest_up[0]))
+            up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*(closest_up[0]+1)))
         else:
             up_no = set()
 
         if same_color_down and closest_down is not None:
             down_no = set(zip(range((closest_down[0]), y_dim), [closest_down[1]] * (((y_dim-1) - closest_down[0]) + closest_down[0]+1)))
         elif not same_color_down and closest_down is not None:
-            down_no = set(zip(range(closest_down[0]+1, y_dim), [closest_down[1]] * ((y_dim - closest_down[0]) + closest_down[0])))
+            down_no = set(zip(range((closest_down[0]+1), y_dim), [closest_down[1]] * ((y_dim - closest_down[0]) + closest_down[0]+1)))
         else:
             down_no = set()
 
         if same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]]*(closest_left[1]), range((closest_left[1]), -1, -1)))
+            left_no = set(zip([closest_left[0]]*(closest_left[1]+1), range((closest_left[1]), -1, -1)))
         elif not same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]]*closest_left[1], range((closest_left[1]-1), -1, -1)))
+            left_no = set(zip([closest_left[0]]*(closest_left[1]+1), range((closest_left[1]-1), -1, -1)))
         else:
             left_no = set()
 
         if same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * (((x_dim-1)-closest_right[1]) + closest_right[1]), range((closest_right[1]), x_dim)))
+            right_no = set(zip([closest_right[0]] * (((x_dim-1)-closest_right[1]+1) + closest_right[1]), range((closest_right[1]), x_dim)))
         elif not same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * ((x_dim-closest_right[1]) + closest_right[1]), range((closest_right[1]+1), x_dim)))
+            right_no = set(zip([closest_right[0]] * ((x_dim-closest_right[1]+1) + closest_right[1]), range((closest_right[1]+1), x_dim)))
         else:
             right_no = set()
 
