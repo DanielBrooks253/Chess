@@ -4,7 +4,7 @@ class Board:
     '''
         Class to define the chess board
     '''
-    def __init__(self, white_pieces, black_pieces, height, dimension, y_dim=8, x_dim=8):
+    def __init__(self, white_pieces, black_pieces, height, width, dimension, y_dim=8, x_dim=8):
         # get all of the location of the white and black pieces
         self.black_piece_loc = set([i.pos for i in black_pieces])
         self.white_piece_loc = set([i.pos for i in white_pieces])
@@ -21,6 +21,8 @@ class Board:
         self.y_dim=y_dim
         self.x_dim=x_dim
 
+        self.HEIGHT = height
+        self.WIDTH = width
         self.SQ_SIZE = height //dimension
 
     def game_over_chkmt_stlmt_check(self, color_name_obj, num_turns):
@@ -161,5 +163,17 @@ class Board:
                     p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
                             self.SQ_SIZE, self.SQ_SIZE))
                 
+    def drawText(self, screen, text):
+        font = p.font.SysFont('Helvitca', 20, True, False)
+        textObject = font.render(text, 0, p.Color('gray'))
+        textLocation = p.Rect(0,0, self.WIDTH, self.HEIGHT) \
+                        .move(self.WIDTH/2-textObject.get_width()/2, 
+                              self.HEIGHT/2-textObject.get_height()/2)
+
+        screen.blit(textObject, textLocation)
+
+        textObject.font.render(text, 0, p.Color('black'))
+        screen.blit(textObject, textLocation.move(2,2))
+        
 
 

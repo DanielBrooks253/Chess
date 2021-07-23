@@ -1,9 +1,12 @@
 import pygame as p
 
-class Display_objects:
-    def __init__(self, window_height, window_width):
-        self.height = window_height
-        self.width - window_width
+class MessageBox:
+    def __init__(self, window_rect, fonts, message):
+        self.window_rect = window_rect
+        self.fonts = fonts
+        self.background_color = p.Color('gray')
+        self.text_color = p.Color('black')
 
-    def text_box():
-        pass
+        self.window_title_str = '!! Game Over !!'
+        self.title_text_render = self.fonts[1].render(self.window_title_str, 
+                                                      True, self.text_color)
