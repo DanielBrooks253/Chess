@@ -34,10 +34,10 @@ class Board:
                     moves = i.Available_Moves(
                         self.x_dim,
                         self.y_dim,
-                        self.white_piece_loc,
-                        self.black_piece_loc
+                        self.black_piece_loc,
+                        self.white_piece_loc
                     )
-                    
+                    print(moves)
                     if moves is None:
                         continue
                     else:
@@ -55,8 +55,8 @@ class Board:
                     moves = i.Available_Moves(
                         self.x_dim,
                         self.y_dim,
-                        self.black_piece_loc,
-                        self.white_piece_loc
+                        self.white_piece_loc,
+                        self.black_piece_loc
                     )
                     
                     if moves is None:

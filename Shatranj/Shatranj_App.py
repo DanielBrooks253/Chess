@@ -198,6 +198,7 @@ while running:
 
                                 checkmate=True
                                 print('Checkmate!! White Wins')
+                                break
 
                             elif board.game_over_chkmt_stlmt_check(
                                 board.black_name_obj_dict,
@@ -206,6 +207,7 @@ while running:
 
                                 stalemate = True
                                 print('Stalemate!! White Wins')
+                                break
                             else:
                                 all_pieces_captured_turns.append(
                             board.game_over_lose_pieces(board.black_name_obj_dict)
@@ -219,6 +221,7 @@ while running:
 
                                 checkmate=True
                                 print('Checkmate!! Black Wins')
+                                break
 
                             elif board.game_over_chkmt_stlmt_check(
                                 board.white_name_obj_dict,
@@ -227,6 +230,7 @@ while running:
 
                                 stalemate = True
                                 print('Stalemate!! Black Wins')
+                                break
                             else:
                                 all_pieces_captured_turns.append(
                             board.game_over_lose_pieces(board.white_name_obj_dict)
@@ -236,16 +240,20 @@ while running:
                             sum(all_pieces_captured_turns) == 2:
 
                             print("!! The Game Ends in a Draw !!")
+                            break
 
                         elif len(all_pieces_captured_turns) == 2 and \
                             all_pieces_captured_turns[0] and \
                             num_turns % 2 == 0:
                             print('!! Black Wins by Capturing all Whites Pieces !!')
+                            break
 
                         elif len(all_pieces_captured_turns) == 2 and \
                             all_pieces_captured_turns[0] and \
                             num_turns % 2 != 0:
                             print('!! White Wins by Capturing all Blacks Pieces !!')
+                            break
+                        
                         elif all_pieces_captured_turns[0] == 0:
                             all_pieces_captured_turns = []
                         else:
