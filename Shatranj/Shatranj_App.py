@@ -4,6 +4,7 @@ from Board import Board
 from Pieces import Shah, Pil, Rukh, Asp, Pujada, Farzin
 
 p.init()
+
 WIDTH = HEIGHT = 512
 DIMENSION = 8
 MAX_FPS = 15
@@ -13,9 +14,10 @@ PCT_SHRINK = .75
 IMAGES = {} 
 
 num_turns = 0
-checkmate = False
-stalemate = False
+num = 1
+game_over = False
 all_pieces_captured_turns = []
+text = ''
 
 # Get all of the images loaded for the given pieces
 for pieces in [('wp', 'pawn-w1'), ('wr', 'chariot-w1'), ('wa', 'knight-w1'),
@@ -98,185 +100,209 @@ while running:
     for e in p.event.get():
         if e.type == p.QUIT:
             running = False
-        elif e.type == p.MOUSEBUTTONDOWN: # code 1025
-            location = p.mouse.get_pos() #(x, y) location of mouse
-            row = location[0]//SQ_SIZE
-            col = location[1]//SQ_SIZE
+        if not game_over:
+            if e.type == p.MOUSEBUTTONDOWN: # code 1025
+                location = p.mouse.get_pos() #(x, y) location of mouse
+                row = location[0]//SQ_SIZE
+                col = location[1]//SQ_SIZE
 
-            # If first click
-            if len(player_Clicks) == 0:
-                # Check to make sure that is is a valid move (piece is on square)
-                # Get available moves
-                # Highlight moves
+                # If first click
+                if len(player_Clicks) == 0:
+                    # Check to make sure that is is a valid move (piece is on square)
+                    # Get available moves
+                    # Highlight moves
 
-                if (col, row) not in board.loc_names.keys():
-                    break
-                else:
-                    piece_name = board.loc_names[(col, row)]
-
-                    # Get the available moves for the given color
-                    if board.name_obj_dict[piece_name].color == 'white' and \
-                    num_turns % 2 == 0:
-                        moves = board.name_obj_dict[piece_name].Available_Moves(
-                            board.x_dim,
-                            board.y_dim,
-                            board.white_piece_loc,
-                            board.black_piece_loc
-                        )
-                    elif board.name_obj_dict[piece_name].color == 'black' and \
-                num_turns % 2 != 0:
-                        moves = board.name_obj_dict[piece_name].Available_Moves(
-                            board.x_dim,
-                            board.y_dim,
-                            board.black_piece_loc,
-                            board.white_piece_loc
-                        )
-                    # Do not highlight anything if the place they click 
-                    # doesn't have any piece or a piece of their color
-                    else: 
+                    if (col, row) not in board.loc_names.keys():
                         break
-                
-                if moves is None:
-                    player_Clicks.append((col, row))
-                    high_squares = ((col, row))
-                else:
-                    invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
-                                moves, board)
-                    # Removes all the moves that will not get you out
-                    # of check
-                    valid_moves = moves - invalid_moves
-                    # If there are no valid moves, return none
-                    if len(valid_moves) == 0:
-                        moves = None
-                        player_Clicks.append((col, row))
                     else:
-                        moves = valid_moves.copy()
-                        player_Clicks.append((col, row))
+                        piece_name = board.loc_names[(col, row)]
 
-                    high_squares = {(col, row)} | valid_moves
-
-            # If second click
-            else:
-                # Check if the player clicked the sames square or not
-                # Unselect the piece
-                if (col, row) in player_Clicks:
-                    high_squares = None
-                    player_Clicks = []
-                else:
-                    # If the piece has no available moves,
-                    # ingore the clicks
+                        # Get the available moves for the given color
+                        if board.name_obj_dict[piece_name].color == 'white' and \
+                        num_turns % 2 == 0:
+                            moves = board.name_obj_dict[piece_name].Available_Moves(
+                                board.x_dim,
+                                board.y_dim,
+                                board.white_piece_loc,
+                                board.black_piece_loc
+                            )
+                        elif board.name_obj_dict[piece_name].color == 'black' and \
+                    num_turns % 2 != 0:
+                            moves = board.name_obj_dict[piece_name].Available_Moves(
+                                board.x_dim,
+                                board.y_dim,
+                                board.black_piece_loc,
+                                board.white_piece_loc
+                            )
+                        # Do not highlight anything if the place they click 
+                        # doesn't have any piece or a piece of their color
+                        else: 
+                            break
+                    
                     if moves is None:
-                        break
-                    # If the second click is in the pieces available
-                    # moves, make the move and update everything
-                    elif (col,row) in moves:
-                        board.name_obj_dict[piece_name].Make_Move(
-                            (col, row),
-                            board)
+                        player_Clicks.append((col, row))
+                        high_squares = ((col, row))
+                    else:
+                        invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
+                                    moves, board)
+                        # Removes all the moves that will not get you out
+                        # of check
+                        valid_moves = moves - invalid_moves
+                        # If there are no valid moves, return none
+                        if len(valid_moves) == 0:
+                            moves = None
+                            player_Clicks.append((col, row))
+                        else:
+                            moves = valid_moves.copy()
+                            player_Clicks.append((col, row))
 
-                        # player_Clicks.append((col, row))
+                        high_squares = {(col, row)} | valid_moves
+
+                # If second click
+                else:
+                    # Check if the player clicked the sames square or not
+                    # Unselect the piece
+                    if (col, row) in player_Clicks:
                         high_squares = None
                         player_Clicks = []
-
-                        board.name_obj_dict['bS0'].in_check = board.name_obj_dict['bS0'].check_check(
-                            board.white_name_obj_dict,
-                            board.white_piece_loc,
-                            board.black_piece_loc
-                        )
-
-                        board.name_obj_dict['wS0'].in_check = board.name_obj_dict['wS0'].check_check(
-                            board.black_name_obj_dict,
-                            board.black_piece_loc,
-                            board.white_piece_loc
-                        )
-
-                        if num_turns % 2 == 0:
-                            if board.game_over_chkmt_stlmt_check(
-                                board.black_name_obj_dict,
-                                num_turns
-                            ) and bS.in_check:
-
-                                checkmate=True
-                                print('Checkmate!! White Wins')
-                                break
-
-                            elif board.game_over_chkmt_stlmt_check(
-                                board.black_name_obj_dict,
-                                num_turns
-                            ) and not bS.in_check:
-
-                                stalemate = True
-                                print('Stalemate!! White Wins')
-                                break
-                            else:
-                                all_pieces_captured_turns.append(
-                            board.game_over_lose_pieces(board.black_name_obj_dict)
-                        )
-
-                        else:
-                            if board.game_over_chkmt_stlmt_check(
-                                board.white_name_obj_dict,
-                                num_turns
-                            ) and wS.in_check:
-
-                                checkmate=True
-                                print('Checkmate!! Black Wins')
-                                break
-
-                            elif board.game_over_chkmt_stlmt_check(
-                                board.white_name_obj_dict,
-                                num_turns
-                            ) and not wS.in_check:
-
-                                stalemate = True
-                                print('Stalemate!! Black Wins')
-                                break
-                            else:
-                                all_pieces_captured_turns.append(
-                            board.game_over_lose_pieces(board.white_name_obj_dict)
-                        )
-
-                        if len(all_pieces_captured_turns) == 2 and \
-                            sum(all_pieces_captured_turns) == 2:
-
-                            print("!! The Game Ends in a Draw !!")
-                            break
-
-                        elif len(all_pieces_captured_turns) == 2 and \
-                            all_pieces_captured_turns[0] and \
-                            num_turns % 2 == 0:
-                            print('!! Black Wins by Capturing all Whites Pieces !!')
-                            break
-
-                        elif len(all_pieces_captured_turns) == 2 and \
-                            all_pieces_captured_turns[0] and \
-                            num_turns % 2 != 0:
-                            print('!! White Wins by Capturing all Blacks Pieces !!')
-                            break
-                        
-                        elif all_pieces_captured_turns[0] == 0:
-                            all_pieces_captured_turns = []
-                        else:
-                            pass
-                        
-                        num_turns +=1
-                        
                     else:
-                        break
-    
-    if board.name_obj_dict['wS0'].in_check:
-        board.drawGameState(screen, board.name_obj_dict, high_squares, 
-                            board.name_obj_dict['wS0'].pos)
-        clock.tick(MAX_FPS)
-        p.display.flip()
-    elif board.name_obj_dict['bS0'].in_check:
-        board.drawGameState(screen, board.name_obj_dict, high_squares, 
-                            board.name_obj_dict['bS0'].pos)
-        clock.tick(MAX_FPS)
-        p.display.flip()
+                        # If the piece has no available moves,
+                        # ingore the clicks
+                        if moves is None:
+                            break
+                        # If the second click is in the pieces available
+                        # moves, make the move and update everything
+                        elif (col,row) in moves:
+                            board.name_obj_dict[piece_name].Make_Move(
+                                (col, row),
+                                board)
+
+                            # player_Clicks.append((col, row))
+                            high_squares = None
+                            player_Clicks = []
+
+                            board.name_obj_dict['bS0'].in_check = board.name_obj_dict['bS0'].check_check(
+                                board.white_name_obj_dict,
+                                board.white_piece_loc,
+                                board.black_piece_loc
+                            )
+
+                            board.name_obj_dict['wS0'].in_check = board.name_obj_dict['wS0'].check_check(
+                                board.black_name_obj_dict,
+                                board.black_piece_loc,
+                                board.white_piece_loc
+                            )
+
+                            if num_turns % 2 == 0:
+                                if board.game_over_chkmt_stlmt_check(
+                                    board.black_name_obj_dict,
+                                    num_turns
+                                ) and bS.in_check:
+
+                                    text = 'Checkmate!! White Wins'
+                                    game_over = True
+                                    break
+
+                                elif board.game_over_chkmt_stlmt_check(
+                                    board.black_name_obj_dict,
+                                    num_turns
+                                ) and not bS.in_check:
+
+                                    text = 'Stalemate!! White Wins'
+                                    game_over = True
+                                    break
+                                else:
+                                    all_pieces_captured_turns.append(
+                                board.game_over_lose_pieces(board.black_name_obj_dict)
+                            )
+
+                            else:
+                                if board.game_over_chkmt_stlmt_check(
+                                    board.white_name_obj_dict,
+                                    num_turns
+                                ) and wS.in_check:
+
+                                    text = '!! Checkmate Black Wins !!'
+                                    game_over = True
+                                    break
+
+                                elif board.game_over_chkmt_stlmt_check(
+                                    board.white_name_obj_dict,
+                                    num_turns
+                                ) and not wS.in_check:
+
+                                    text = '!! Stalemate Black Wins !!'
+                                    game_over=True
+                                    break
+                                else:
+                                    all_pieces_captured_turns.append(
+                                board.game_over_lose_pieces(board.white_name_obj_dict)
+                            )
+
+                            if len(all_pieces_captured_turns) == 2 and \
+                                sum(all_pieces_captured_turns) == 2:
+
+                                text = "!! The Game Ends in a Draw !!"
+                                game_over = True
+                                break
+
+                            elif len(all_pieces_captured_turns) == 2 and \
+                                all_pieces_captured_turns[0] and \
+                                num_turns % 2 == 0:
+                                text = '!! Black Wins by Capturing all Whites Pieces !!'
+                                num = 2
+                                game_over = True
+                                break
+
+                            elif len(all_pieces_captured_turns) == 2 and \
+                                all_pieces_captured_turns[0] and \
+                                num_turns % 2 != 0:
+                                text = '!! White Wins by Capturing all Blacks Pieces !!'
+                                num = 2
+                                game_over = True
+                                break
+
+                            elif all_pieces_captured_turns[0] == 0:
+                                all_pieces_captured_turns = []
+                            else:
+                                pass
+                            
+                            num_turns +=1
+                            
+                        else:
+                            break
+
+    if game_over:
+        if board.name_obj_dict['wS0'].in_check:
+            board.drawGameState(screen, board.name_obj_dict, True, text, num, high_squares,
+                                board.name_obj_dict['wS0'].pos)
+            clock.tick(MAX_FPS)
+            p.display.flip()
+        elif board.name_obj_dict['bS0'].in_check:
+            board.drawGameState(screen, board.name_obj_dict, True, text, num, high_squares,
+                                board.name_obj_dict['bS0'].pos)
+            clock.tick(MAX_FPS)
+            p.display.flip()
+        else:
+            board.drawGameState(screen, board.name_obj_dict, True, text, num, high_squares,
+                                None)
+            clock.tick(MAX_FPS)
+            p.display.flip()
     else:
-        board.drawGameState(screen, board.name_obj_dict, high_squares, None)
-        clock.tick(MAX_FPS)
-        p.display.flip()
+        if board.name_obj_dict['wS0'].in_check:
+            board.drawGameState(screen, board.name_obj_dict, False, '', num, high_squares,
+                                board.name_obj_dict['wS0'].pos)
+            clock.tick(MAX_FPS)
+            p.display.flip()
+
+        elif board.name_obj_dict['bS0'].in_check:
+            board.drawGameState(screen, board.name_obj_dict, False, '', num, high_squares,
+                                board.name_obj_dict['bS0'].pos)
+            clock.tick(MAX_FPS)
+            p.display.flip()
+        else:
+            board.drawGameState(screen, board.name_obj_dict, False, '', num, high_squares, None)
+            clock.tick(MAX_FPS)
+            p.display.flip()
 
 

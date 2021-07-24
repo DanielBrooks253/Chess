@@ -37,7 +37,6 @@ class Board:
                         self.black_piece_loc,
                         self.white_piece_loc
                     )
-                    print(moves)
                     if moves is None:
                         continue
                     else:
@@ -123,9 +122,14 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    def drawGameState(self, screen, names_obj, *args):
-        Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
-        Board.drawPieces(self, screen, names_obj)
+    def drawGameState(self, screen, names_obj, game_over, text, num, *args):
+        if game_over:
+            Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
+            Board.drawPieces(self, screen, names_obj)
+            Board.drawText(self, screen, text, num)
+        else:
+            Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
+            Board.drawPieces(self, screen, names_obj)
 
     def drawBoard(self, screen, args):
         # Red check; gray moves
@@ -163,16 +167,22 @@ class Board:
                     p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
                             self.SQ_SIZE, self.SQ_SIZE))
                 
-    def drawText(self, screen, text):
-        font = p.font.SysFont('Helvitca', 20, True, False)
-        textObject = font.render(text, 0, p.Color('gray'))
+    def drawText(self, screen, text, num):
+        p.font.init()
+
+        if num == 1:
+            size = 32
+        else:
+            size = 22
+
+
+        font = p.font.SysFont('Comic Sans MS', size, True, False)
+        textObject = font.render(text, 0, p.Color('white'))
         textLocation = p.Rect(0,0, self.WIDTH, self.HEIGHT) \
-                        .move(self.WIDTH/2-textObject.get_width()/2, 
-                              self.HEIGHT/2-textObject.get_height()/2)
-
+                        .move(self.WIDTH//2-textObject.get_width()//2, 
+                              self.HEIGHT//2-textObject.get_height()//2)
         screen.blit(textObject, textLocation)
-
-        textObject.font.render(text, 0, p.Color('black'))
+        textObject = font.render(text, 0, p.Color('gray2'))
         screen.blit(textObject, textLocation.move(2,2))
         
 
