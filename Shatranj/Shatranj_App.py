@@ -272,6 +272,8 @@ while running:
                         else:
                             break
 
+    # Print out the gamestate of the board, depending on if the game
+    # is eneded or not.
     if game_over:
         if board.name_obj_dict['wS0'].in_check:
             board.drawGameState(screen, board.name_obj_dict, True, text, num, high_squares,

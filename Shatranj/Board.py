@@ -70,6 +70,8 @@ class Board:
         return True
 
     def game_over_lose_pieces(self, color_name_obj):
+        # Check to see if all of the pieces that are off
+        # of the board.
         for i in color_name_obj.values():
             if i.piece_name == 'bS0' or i.piece_name == 'wS0':
                 continue
@@ -168,6 +170,7 @@ class Board:
                             self.SQ_SIZE, self.SQ_SIZE))
                 
     def drawText(self, screen, text, num):
+        # Draw the text at the end of the game
         p.font.init()
 
         if num == 1:

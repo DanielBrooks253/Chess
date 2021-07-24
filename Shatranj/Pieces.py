@@ -20,8 +20,7 @@ class Pieces:
                              if new_loc == values.pos]
             capture_check = (True, piece_insct[0]) if len(piece_insct) != 0 \
                         else (False, None)
-
-        # 3) Update the location of the pieces
+                        
             # Update the dictionaries within the board
         board_obj.update_locs(self.color,
                           self.pos,
