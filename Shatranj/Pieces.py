@@ -436,6 +436,7 @@ class Pujada(Pieces):
 
         Can only move one space forward; regardless of the turn
         If promoted (moving to the end of the board); it will always promote to a counselor
+        Can caputre diagonally
     '''
 
     def __init__(self, start_pos, piece_name, piece_image, color='white', promoted=False):
@@ -456,10 +457,13 @@ class Pujada(Pieces):
         self.promoted = promoted
         super().__init__(start_pos, piece_name, piece_image, color)
 
-    def Get_Moves(self):
-        '''
+    def Get_Moves(self, same_color_locs, args):
+        ''' 
         Gets all available moves based off of the pieces position
+
+
         '''
+        move = set()
         if self.color == 'black':
             if self.pos[0] == 7:
                 self.promoted = True
@@ -475,9 +479,36 @@ class Pujada(Pieces):
             return Farzin.Get_Moves(self)
         else:
             if self.color =='black':
-                return {(self.pos[0]+1, self.pos[1])}
+                if (self.pos[0]+1, self.pos[1]) not in same_color_locs|args[0]:
+                    move |= {(self.pos[0]+1, self.pos[1])}
+                else:
+                    pass
+
+                if (self.pos[0]+1, self.pos[1]+1) in args[0]:
+                    move |= {(self.pos[0]+1, self.pos[1]+1)}    
+                else:
+                    pass
+
+                if (self.pos[0]+1, self.pos[1]-1) in args[0]:
+                    move |= {(self.pos[0]+1, self.pos[1]-1)}      
+                else:
+                    pass
             else:
-                return {(self.pos[0]-1, self.pos[1])}
+                if (self.pos[0]-1, self.pos[1]) not in same_color_locs|args[0]:
+                    move |= {(self.pos[0]-1, self.pos[1])}
+                else:
+                    pass
+
+                if (self.pos[0]-1, self.pos[1]-1) in args[0]:
+                    move |= {(self.pos[0]-1, self.pos[1]-1)}      
+                else:
+                    pass
+
+                if (self.pos[0]-1, self.pos[1]+1) in args[0]:
+                    move |= {(self.pos[0]-1, self.pos[1]+1)}      
+                else:
+                    pass
+        return move
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         '''
@@ -493,7 +524,7 @@ class Pujada(Pieces):
         :return rm_checks (set): All possible moves a piece can make (Does not take into account
             checks)
         '''
-        all_moves = Pujada.Get_Moves(self)
+        all_moves = Pujada.Get_Moves(self, same_color_locs, args)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
