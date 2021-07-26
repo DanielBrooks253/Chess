@@ -20,10 +20,10 @@ all_pieces_captured_turns = []
 text = ''
 
 # Get all of the images loaded for the given pieces
-for pieces in [('wp', 'pawn-w1'), ('wr', 'chariot-w1'), ('wa', 'knight-w1'),
-               ('we', 'elephant-w1'), ('wS', 'king-w1'), ('wF', 'queen-w1'),
-               ('bp', 'pawn-b1'), ('br', 'chariot-b1'), ('ba', 'knight-b1'),
-               ('be', 'elephant-b1'), ('bS', 'king-b1'), ('bF', 'queen-b1')]:
+for pieces in [('wp', 'pawn-w1'), ('wr', 'rukh-w1'), ('wa', 'knight-w1'),
+               ('we', 'elephant-w1'), ('wS', 'shah-w1'), ('wF', 'firzan-w1'),
+               ('bp', 'pawn-b1'), ('br', 'rukh-b1'), ('ba', 'knight-b1'),
+               ('be', 'elephant-b1'), ('bS', 'shah-b1'), ('bF', 'firzan-b1')]:
             IMAGES[pieces[0]] = p.transform.scale(p.image.load("Images/" + pieces[1] + ".jpg"), (int(SQ_SIZE*PCT_SHRINK), int(SQ_SIZE*PCT_SHRINK)))
 
 # Pygame initializations
