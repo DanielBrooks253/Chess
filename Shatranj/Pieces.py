@@ -1,14 +1,33 @@
 ###### Shatranj (Persian Chess) ######
 class Pieces:
     def __init__(self, start_pos, piece_name, piece_image, color='white'):
+        '''
+        Initalize the pieces class
+
+        :param start_pos (tuple): The position of the piece on the board (y,x)
+        :param piece_name (str): The name given to the piece
+        :param piece_image (array pixels): The image to be displayed for the piece
+
+        :param color (str): The color of the piece
+            :default value: white
+
+        :return Null (Nothing)
+        '''
         self.pos=start_pos
         self.piece_name=piece_name
         self.color = color.lower()
         self.piece_image = piece_image
 
-        self.giving_check=False  
-
     def Make_Move(self, new_loc, board_obj):
+        '''
+        Makes a move on the chess board
+
+        :param new_loc (tuple): The location that the piece will move to
+        :param board_obj (object Class Board): Houses all of the piece locations and 
+            positions that need to be updated when something is moved
+
+        :return Null (Nothing)
+        '''
         # Check if the move results in a capture
         if self.color == 'white':
             piece_insct = [key for key, values in board_obj.black_name_obj_dict.items()
@@ -28,9 +47,21 @@ class Pieces:
                           capture_check[0],
                           capture_check[1])
 
+        # Change the position to the new location
         self.pos = new_loc
 
     def avail_move_check_check(self, available_moves, board_obj):
+        '''
+        This is used to filter out any moves that would result in a check for your king
+
+        :param avaiable_moves (set): Contains the coordinates of all the possible moves the 
+            selected piece can take
+        :param board_obj (Oblject of Class board): Contains all of the locations of every piece
+            on the board.
+
+        :return checks (set): All of the "illegal" moves that a piece can make. These moves would
+            result in the king being in check after they are taken.
+        '''
         rm = False
         checks = set()
 
@@ -193,17 +224,46 @@ class Shah(Pieces):
     '''
         Has the same movements as the modern day king
 
-        1) Cannot Castle
+        Cannot Castle
+        Inherits from Pieces
     '''
     def __init__(self, start_pos, piece_name, piece_image, color='white'):
+        '''
+        Initalize the shah class
+
+        :param start_pos (tuple): The position of the piece on the board (y,x)
+        :param piece_name (str): The name given to the piece
+        :param piece_image (array pixels): The image to be displayed for the piece
+
+        :param color (str): The color of the piece
+            :default value: white
+
+        :return Null (Nothing)
+        '''
         self.checking_pos = {None}
         self.in_check = False
         super().__init__(start_pos, piece_name, piece_image, color)
 
     def Get_Moves(self):
+        '''
+        Gets all available moves based off of the pieces position
+        '''
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
+        '''
+        Filter out all of the moves that are off of the board and on a space occupied by
+            the same color
+        
+        :param y_dim (int): number of squares in the y direction (up/down)
+        :param x_dim (int): number of squares in the x direction (right/left)
+        :param same_color_locs (list): a list of tuples that house the location of the piece
+            of the same color as the select piece
+        :param args (list): used for extra parameters
+
+        :return rm_checks (set): All possible moves a piece can make (Does not take into account
+            checks)
+        '''
         all_moves = Shah.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -233,6 +293,9 @@ class Rukh(Pieces):
     '''
 
     def Get_Moves(self):
+        '''
+        Gets all available moves based off of the pieces position
+        '''
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in list(zip([1,2,3,4,5,6,7], [0,0,0,0,0,0,0])) + \
                                                                   list(zip([-1,-2,-3,-4,-5,-6,-7], [0,0,0,0,0,0,0])) + \
                                                                   list(zip([0,0,0,0,0,0,0], [1,2,3,4,5,6,7])) + \
@@ -259,6 +322,16 @@ class Rukh(Pieces):
 
         This function finds the closest orthogonal pieces (If there are any) and creates a set of
         unavailable moves accordingly
+
+        :param same_color_locs (list): locations of all the pieces that share the same color
+            as the selected piece
+        :param opp_color_locs (list):locations of all the pieces that have a differnet color
+            as the selected piece
+        :param y_dim (int): number of squares in the y direction (up/down)
+        :param x_dim (int): number of squares in the x direction (right/left)
+
+        :return (set): all of the moves the rook cannot take due to there being a 
+            piece in the way. Used to filter all of the available moves.
         '''
         # Get the locations pf all the pieces on the board
         combine_locs = same_color_locs | opp_color_locs
@@ -328,9 +401,25 @@ class Asp(Pieces):
     '''
 
     def Get_Moves(self):
+        '''
+        Gets all available moves based off of the pieces position
+        '''
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([2,2,1,1,-2,-2,-1,-1], [1,-1,2,-2,1,-1,2,-2])])
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
+        '''
+        Filter out all of the moves that are off of the board and on a space occupied by
+            the same color
+        
+        :param y_dim (int): number of squares in the y direction (up/down)
+        :param x_dim (int): number of squares in the x direction (right/left)
+        :param same_color_locs (list): a list of tuples that house the location of the piece
+            of the same color as the select piece
+        :param args (list): used for extra parameters
+
+        :return rm_checks (set): All possible moves a piece can make (Does not take into account
+            checks)
+        '''
         all_moves = Asp.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -345,16 +434,32 @@ class Pujada(Pieces):
     '''
         Similar to modern day pawn.
 
-        1) Can only move one space forward; regardless of the turn
-        2) If promoted (moving to the end of the board); it will always promote to a counselor
-        3) Captures diagonally
+        Can only move one space forward; regardless of the turn
+        If promoted (moving to the end of the board); it will always promote to a counselor
     '''
 
     def __init__(self, start_pos, piece_name, piece_image, color='white', promoted=False):
+        '''
+        Initalize the Pujada class
+
+        :param start_pos (tuple): The position of the piece on the board (y,x)
+        :param piece_name (str): The name given to the piece
+        :param piece_image (array pixels): The image to be displayed for the piece
+
+        :param color (str): The color of the piece
+            :default value: white
+        :param promoted (Bool): Determine if the piece has been promoted or not
+            If the piece is pormoted it moves different.
+
+        :return Null (Nothing)
+        '''
         self.promoted = promoted
         super().__init__(start_pos, piece_name, piece_image, color)
 
     def Get_Moves(self):
+        '''
+        Gets all available moves based off of the pieces position
+        '''
         if self.color == 'black':
             if self.pos[0] == 7:
                 self.promoted = True
@@ -375,6 +480,19 @@ class Pujada(Pieces):
                 return {(self.pos[0]-1, self.pos[1])}
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
+        '''
+        Filter out all of the moves that are off of the board and on a space occupied by
+            the same color
+        
+        :param y_dim (int): number of squares in the y direction (up/down)
+        :param x_dim (int): number of squares in the x direction (right/left)
+        :param same_color_locs (list): a list of tuples that house the location of the piece
+            of the same color as the select piece
+        :param args (list): used for extra parameters
+
+        :return rm_checks (set): All possible moves a piece can make (Does not take into account
+            checks)
+        '''
         all_moves = Pujada.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -389,13 +507,29 @@ class Farzin(Pieces):
     '''
         Place of the modern day Queen
 
-        1) Can only move one space diagonally
+        Can only move one space diagonally
     '''
 
     def Get_Moves(self):
+        '''
+        Gets all available moves based off of the pieces position
+        '''
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
     
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
+        '''
+        Filter out all of the moves that are off of the board and on a space occupied by
+            the same color
+        
+        :param y_dim (int): number of squares in the y direction (up/down)
+        :param x_dim (int): number of squares in the x direction (right/left)
+        :param same_color_locs (list): a list of tuples that house the location of the piece
+            of the same color as the select piece
+        :param args (list): used for extra parameters
+
+        :return rm_checks (set): All possible moves a piece can make (Does not take into account
+            checks)
+        '''
         all_moves = Farzin.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -415,9 +549,25 @@ class Pil(Pieces):
     '''
 
     def Get_Moves(self):
+        '''
+        Gets all available moves based off of the pieces position
+        '''
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([2,2,-2,-2], [2,-2,2,-2])]) 
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
+        '''
+        Filter out all of the moves that are off of the board and on a space occupied by
+            the same color
+        
+        :param y_dim (int): number of squares in the y direction (up/down)
+        :param x_dim (int): number of squares in the x direction (right/left)
+        :param same_color_locs (list): a list of tuples that house the location of the piece
+            of the same color as the select piece
+        :param args (list): used for extra parameters
+
+        :return rm_checks (set): All possible moves a piece can make (Does not take into account
+            checks)
+        '''
         all_moves = Pil.Get_Moves(self)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 

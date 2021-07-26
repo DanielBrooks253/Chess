@@ -5,6 +5,22 @@ class Board:
         Class to define the chess board
     '''
     def __init__(self, white_pieces, black_pieces, height, width, dimension, y_dim=8, x_dim=8):
+        '''
+        Initializes the Board class
+
+        :param white_pieces (list): list of objects that belong to the white pieces 
+        :param black_pieces (list): list of objects that belong to the black pieces
+        :param height (int): The height of the pygame window
+        :param width (int): The width of the pygame window
+        :param dimension (int): the size of the squares for the chess board
+
+        :param y_dim (int): the number of squares in the y direction (up/down)
+            :default value: 8
+        :param x_dim (int): the number of squares in the x direction (left/right) 
+            :default value: 8
+
+        :return: Null (Nothing)
+        '''
         # get all of the location of the white and black pieces
         self.black_piece_loc = set([i.pos for i in black_pieces])
         self.white_piece_loc = set([i.pos for i in white_pieces])
@@ -26,6 +42,26 @@ class Board:
         self.SQ_SIZE = height //dimension
 
     def game_over_chkmt_stlmt_check(self, color_name_obj, num_turns):
+        '''
+        Cheks to see if the game is over via a stalemate or a checkmate
+
+        :param color_name_obj (dict): a dictionary containing the objeccts of the color pieces
+            that did not make a move.
+            ex) If white just moved, color_name_obj would be a dict of the black pieces. Checking
+                to see if the white move resulted in a checkmate or stalemate for the black king.
+
+            :key: piece name
+            :value: the class associated with the piece
+        :param num_turns (int): The number of turns that have been taken in the game. This is used
+                to determine which moves to check 
+
+            num_turns % 2 == 0: blacks moves
+            num_turns % 2 != 0: whites moves
+
+        :return Bool
+            :True means stalemate or checkmate
+            :False means there are available moves for the king and other pieces
+        '''
         for i in color_name_obj.values():
             if i.pos is None:
                 continue
@@ -70,6 +106,19 @@ class Board:
         return True
 
     def game_over_lose_pieces(self, color_name_obj):
+        '''
+        Checks to see if the opposing player removed all of the users pieces (Minus the king).
+
+        :param color_name_obj (dict): the color of the pieces that who did not make the last move
+            ex) If white just moves color_name_obj would be the black pieces. Checking to see if
+                after whites move there are still black pieces on teh board.
+            :key piece_name
+            :value the class associated with the piece
+
+        :return Bool:
+            :True all of the pieces are off of the board (Minus the king)
+            :False there is at least one piece left on the board
+        '''
         # Check to see if all of the pieces that are off
         # of the board.
         for i in color_name_obj.values():
@@ -84,6 +133,21 @@ class Board:
 
 
     def update_locs(self, color, old_move, new_move, is_captured=False, captured_piece=None):
+        '''
+        Once a move is made, all of the dictionaries will update with the new locations and
+        objects will updated their positions if there was a capture (Change pos to None if captured)
+
+        :param color (str): The color of the piece that is being moved
+        :param old_move (tuple): The location that the piece is currently on (y,x)
+        :param new_move( tuple): The location to which the piece will mvoe to (y,x)
+        
+        :param is_catpured (Bool): Checks to see if the move resulted in a captured piece or not
+            :default value: False
+        :param captured_piece (str): The piece_name/id of of the piece that was captured
+            :defalut value: None
+
+        :return: Null (Nothing)
+        '''
         self.loc_names[new_move] = self.loc_names[old_move]
         del self.loc_names[old_move]
 
@@ -125,6 +189,30 @@ class Board:
                 self.black_piece_loc = add_new_move
 
     def drawGameState(self, screen, names_obj, game_over, text, num, *args):
+        '''
+        Responsible for drawing the game board, pieces and end of game text
+
+        :param screen (pygame obj): Pygame game object that houses all of the "drawings" and images
+            rendered for the chess game (Basically the pygame window and board)
+        :param name_obj (dict): all of the piece objects that are on the board
+            :key piece_name
+            :value class associated with the piece
+        :param game_over (Bool): Flag to determine if the game is over or not
+            :True draw the end if game text
+            : False draw the game baord and pieces
+        :param text (str): The text to display after the game is over
+        :param num (int): The size of the font to display the text
+
+        :param args (list): THis is the catch all parameter. This is used to color the square for
+            the king in red and highlught the available moves for the pieces. 
+            :args[0]: 
+                list of available moves for the piece
+            :args[1]:
+                None if king is not in check
+                king pos if the king is in check
+
+        return: Null (Nothing)
+        '''
         if game_over:
             Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj)
@@ -134,7 +222,7 @@ class Board:
             Board.drawPieces(self, screen, names_obj)
 
     def drawBoard(self, screen, args):
-        # Red check; gray moves
+        # Red check; darkolivegreen moves
         # Draw the tiles on the board
         colors = [p.Color("wheat1"), p.Color("darkkhaki")]
 
@@ -171,6 +259,17 @@ class Board:
                            (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
     def drawPieces(self, screen, names_obj):
+        '''
+        Responsible for drawing the piece images of the board
+
+        :param screen (pygame obj): Pygame game object that houses all of the "drawings" and images
+            rendered for the chess game (Basically the pygame window and board)
+        :param name_obj (dict): all of the piece objects that are on the board
+            :key piece_name
+            :value class associated with the piece
+
+        :return Null (Nothing)
+        '''
         # Draw the pieces on the board
         # x and y axis are flipped when drawing the pieces
         for piece in names_obj.values():
@@ -182,6 +281,16 @@ class Board:
                             self.SQ_SIZE, self.SQ_SIZE))
                 
     def drawText(self, screen, text, num):
+        '''
+        Responsible for drawing the end of the game text across the screen
+
+        :param screen (pygame obj): Pygame game object that houses all of the "drawings" and images
+            rendered for the chess game (Basically the pygame window and board)
+        :param text (str): The text that will show once the game is over
+        :param num (int): The size of the font to show on the screen
+
+        :return Null (Nothing)
+        '''
         # Draw the text at the end of the game
         p.font.init()
 

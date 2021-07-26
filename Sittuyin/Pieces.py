@@ -1,4 +1,10 @@
 ###### Sittuyin (Burmese Chess) ######
+class Pieces:
+    def __init__(self, start_pos, piece_name, piece_image, color='white'):
+        self.pos=start_pos
+        self.piece_name=piece_name
+        self.color = color.lower()
+        self.piece_image = piece_image
 
 class MinGyi(Pieces):
     '''
