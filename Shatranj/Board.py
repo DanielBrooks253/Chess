@@ -142,6 +142,9 @@ class Board:
             for c in range(self.y_dim):
                 p.draw.rect(screen, colors[(r+c)%2], 
                    p.Rect(r*self.SQ_SIZE, c*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                p.draw.rect(screen, p.Color('black'),
+                   p.Rect((r*self.SQ_SIZE-1), (c*self.SQ_SIZE-1), 
+                           (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
         # Check to see if a place has been clicked 
         # Highlight the space and the pieces moves in grey
@@ -150,13 +153,22 @@ class Board:
                 if args[0] in self.loc_names.keys():
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
                         p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                    p.draw.rect(screen, p.Color('black'),
+                        p.Rect((args[0][1]*self.SQ_SIZE-1), (args[0][0]*self.SQ_SIZE-1), 
+                                (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
             else:
                 for i in args[0]:
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
                        p.Rect(i[1]*self.SQ_SIZE, i[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                    p.draw.rect(screen, p.Color('black'),
+                       p.Rect((i[1]*self.SQ_SIZE-1), (i[0]*self.SQ_SIZE-1), 
+                               (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
         if args[1] is not None:
             p.draw.rect(screen, p.Color('red'), 
                         p.Rect(args[1][1]*self.SQ_SIZE, args[1][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+            p.draw.rect(screen, p.Color('black'),
+                        p.Rect((args[1][1]*self.SQ_SIZE-1), (args[1][0]*self.SQ_SIZE-1), 
+                           (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
     def drawPieces(self, screen, names_obj):
         # Draw the pieces on the board
