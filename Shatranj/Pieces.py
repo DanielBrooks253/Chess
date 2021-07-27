@@ -1,6 +1,6 @@
 ###### Shatranj (Persian Chess) ######
 class Pieces:
-    def __init__(self, start_pos, piece_name, piece_image, color='white'):
+    def __init__(self, start_pos, piece_name, piece_image, IMAGES, color='white'):
         '''
         Initalize the pieces class
 
@@ -13,6 +13,7 @@ class Pieces:
 
         :return Null (Nothing)
         '''
+        self.IMAGES = IMAGES
         self.pos=start_pos
         self.piece_name=piece_name
         self.color = color.lower()
@@ -227,7 +228,7 @@ class Shah(Pieces):
         Cannot Castle
         Inherits from Pieces
     '''
-    def __init__(self, start_pos, piece_name, piece_image, color='white'):
+    def __init__(self, start_pos, piece_name, piece_image, IMAGES, color='white'):
         '''
         Initalize the shah class
 
@@ -242,7 +243,7 @@ class Shah(Pieces):
         '''
         self.checking_pos = {None}
         self.in_check = False
-        super().__init__(start_pos, piece_name, piece_image, color)
+        super().__init__(start_pos, piece_name, piece_image, IMAGES, color)
 
     def Get_Moves(self):
         '''
@@ -439,7 +440,7 @@ class Pujada(Pieces):
         Can caputre diagonally
     '''
 
-    def __init__(self, start_pos, piece_name, piece_image, color='white', promoted=False):
+    def __init__(self, start_pos, piece_name, piece_image, IMAGES, color='white', promoted=False):
         '''
         Initalize the Pujada class
 
@@ -455,7 +456,7 @@ class Pujada(Pieces):
         :return Null (Nothing)
         '''
         self.promoted = promoted
-        super().__init__(start_pos, piece_name, piece_image, color)
+        super().__init__(start_pos, piece_name, piece_image, IMAGES, color)
 
     def Get_Moves(self, same_color_locs, args):
         ''' 
@@ -467,11 +468,13 @@ class Pujada(Pieces):
         if self.color == 'black':
             if self.pos[0] == 7:
                 self.promoted = True
+                self.piece_image = self.IMAGES['bF']
             else:
                 pass
         else:
             if self.pos[0] == 0:
                 self.promoted = True 
+                self.piece_image = self.IMAGES['wF']
             else:
                 pass
 
