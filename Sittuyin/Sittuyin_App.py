@@ -1,11 +1,13 @@
 import pygame as p
 
 from Pieces import MinGyi, Yahhta, Myin, Ne, SitKe, Sin
-from Board import Board
+from Board_Test import Board
 
 p.init()
 
-WIDTH = HEIGHT = 512
+WIDTH = 581
+HEIGHT = 512
+
 DIMENSION = 8
 MAX_FPS = 15
 SQ_SIZE = HEIGHT//DIMENSION

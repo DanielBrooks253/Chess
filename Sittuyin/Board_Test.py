@@ -21,7 +21,7 @@ class Board:
 
         self.HEIGHT = height
         self.WIDTH = width
-        self.SQ_SIZE = height //dimension
+        self.SQ_SIZE = (width-68) //dimension
 
         # Promotion squares for the ne (pawns)
         self.promotion_sq_white = ((0,0), (1,1), (2,2), (3,3), (7,0), (6,1), (5,2), (4,3))
@@ -30,8 +30,8 @@ class Board:
     def drawGameState(self, screen, names_obj, game_over, text, num, *args):
         if game_over:
             Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj)
-            Board.drawText(self, screen, text, num)
+            # Board.drawPieces(self, screen, names_obj)
+            # Board.drawText(self, screen, text, num)
         else:
             Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj)
@@ -49,6 +49,9 @@ class Board:
         
         p.draw.line(screen, p.Color('black'), (0 ,0), (512, 512))
         p.draw.line(screen, p.Color('black'), (0, 512), (512, 0))
+
+        p.draw.rect(screen, p.Color('wheat1'), p.Rect(512, 0, 68, 512))
+        p.draw.rect(screen, p.Color('black'), p.Rect(512, 0, 68, 512),1)
 
         # Check to see if a place has been clicked 
         # Highlight the space and the pieces moves in grey
