@@ -7,6 +7,10 @@ class Board:
         self.black_piece_loc = set([i.pos for i in black_pieces])
         self.white_piece_loc = set([i.pos for i in white_pieces])
 
+        # map the setup locations to their respective objects
+        self.white_set_up_locs = {i.set_up_coord:i for i in white_pieces}
+        self.black_set_up_locs = {i.set_up_coord:i for i in black_pieces}
+
         # Dictionary that takes the piece name and maps it to the object
         # One for each color and an overall dictionary
         self.white_name_obj_dict = {i.piece_name:i for i in white_pieces}
@@ -57,7 +61,7 @@ class Board:
         # Highlight the space and the pieces moves in grey
         if args[0] is not None:
             if type(args[0]) is tuple: 
-                if args[0] in self.loc_names.keys():
+                if args[0] in self.loc_names.keys() or args[0] in self.white_set_up_locs or args[0] in self.black_set_up_locs:
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
                         p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
                     p.draw.rect(screen, p.Color('black'),
@@ -80,19 +84,16 @@ class Board:
     def drawPieces(self, screen, names_obj, args):
         # Draw the pieces on the board
         # x and y axis are flipped when drawing the pieces
-        count = 0
         for piece in names_obj.values():
             if piece.pos is None:
                 if args[2] == 0:
                     if piece.color == 'white':
                         screen.blit(piece.piece_image,
-                            p.Rect(self.HEIGHT+10, self.SQ_SIZE*count+10, self.SQ_SIZE, self.SQ_SIZE))
-                        count += 1
+                            p.Rect(piece.set_up_loc[0], piece.set_up_loc[1], self.SQ_SIZE, self.SQ_SIZE))
                 elif args[2] == 1:
                     if piece.color == 'black':
                         screen.blit(piece.piece_image,
-                            p.Rect(self.HEIGHT+10, self.SQ_SIZE*count+10, self.SQ_SIZE, self.SQ_SIZE))
-                        count += 1
+                             p.Rect(piece.set_up_loc[0], piece.set_up_loc[1], self.SQ_SIZE, self.SQ_SIZE))
                 else:
                     pass
             else:
