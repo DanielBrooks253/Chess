@@ -1,11 +1,12 @@
 import pygame as p
+from pygame.constants import MOUSEBUTTONDOWN
 
 from Pieces import MinGyi, Yahhta, Myin, Ne, SitKe, Sin
 from Board_Test import Board
 
 p.init()
 
-WIDTH = 581
+WIDTH = 582
 HEIGHT = 512
 
 DIMENSION = 8
@@ -29,6 +30,7 @@ p.display.set_caption('Sittuyin')
 clock = p.time.Clock()
 screen.fill(p.Color('white'))
 running = True
+num_turns = 0
 
 # Instantiate all the pieces
 # Ne (Pawns or soliders)
@@ -92,10 +94,25 @@ board = Board([wn0, wn1, wn2, wn3,
                bs0, bs1, bM, bS], HEIGHT, WIDTH, DIMENSION)
 
 while running:
+
+    if num_turns == 2:
+        board.HEIGHT = 512
+        board.WIDTH = 512
+
+        screen = p.display.set_mode((board.WIDTH, board.HEIGHT))
+        p.display.set_caption('Sittuyin')
+
+        clock = p.time.Clock()
+        screen.fill(p.Color('white'))
+
     for e in p.event.get():
         if e.type == p.QUIT:
             running = False
 
-    board.drawGameState(screen, board.name_obj_dict, False, '', 22, None, None)
+        if e.type == MOUSEBUTTONDOWN:
+            num_turns += 1
+
+
+    board.drawGameState(screen, board.name_obj_dict, False, '', 22, None, None, num_turns)
     clock.tick(MAX_FPS)
     p.display.flip()

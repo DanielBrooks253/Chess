@@ -34,7 +34,7 @@ class Board:
             # Board.drawText(self, screen, text, num)
         else:
             Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj)
+            Board.drawPieces(self, screen, names_obj, args)
 
     def drawBoard(self, screen, args):
         # Red check; darkolivegreen moves
@@ -77,13 +77,25 @@ class Board:
                         p.Rect((args[1][1]*self.SQ_SIZE-1), (args[1][0]*self.SQ_SIZE-1), 
                            (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
-    def drawPieces(self, screen, names_obj):
+    def drawPieces(self, screen, names_obj, args):
         # Draw the pieces on the board
         # x and y axis are flipped when drawing the pieces
+        count = 0
         for piece in names_obj.values():
             if piece.pos is None:
-                continue
+                if args[2] == 0:
+                    if piece.color == 'white':
+                        screen.blit(piece.piece_image,
+                            p.Rect(self.HEIGHT+10, self.SQ_SIZE*count+10, self.SQ_SIZE, self.SQ_SIZE))
+                        count += 1
+                elif args[2] == 1:
+                    if piece.color == 'black':
+                        screen.blit(piece.piece_image,
+                            p.Rect(self.HEIGHT+10, self.SQ_SIZE*count+10, self.SQ_SIZE, self.SQ_SIZE))
+                        count += 1
+                else:
+                    pass
             else:
                 screen.blit(piece.piece_image, 
-                    p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
+                        p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
                             self.SQ_SIZE, self.SQ_SIZE))
