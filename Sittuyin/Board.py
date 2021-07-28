@@ -39,7 +39,14 @@ class Board:
         else:
             Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj, args)
-            Board.Header_Text(self, screen,names_obj, args)
+
+            if args[2] > 1:
+                Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj, args)
+            else:
+                Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj, args)
+                Board.Header_Text(self, screen,names_obj, args)
 
     def drawBoard(self, screen, args):
         # Red check; darkolivegreen moves
