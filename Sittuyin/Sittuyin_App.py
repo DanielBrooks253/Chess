@@ -1,7 +1,7 @@
 import pygame as p
 
 from Pieces import MinGyi, Yahhta, Myin, Ne, SitKe, Sin
-from Board_Test import Board
+from Board import Board
 
 p.init()
 
@@ -216,8 +216,6 @@ while running:
                                bn4, bn5, bn6, bn7,
                                by0, by1, bm0, bm1,
                                bs0, bs1, bM, bS], HEIGHT, WIDTH, DIMENSION)
-
-                print(board.loc_names)
                 pass
 
 

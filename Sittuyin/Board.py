@@ -39,6 +39,7 @@ class Board:
         else:
             Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj, args)
+            Board.Header_Text(self, screen,names_obj, args)
 
     def drawBoard(self, screen, args):
         # Red check; darkolivegreen moves
@@ -115,3 +116,24 @@ class Board:
                     screen.blit(piece.piece_image, 
                             p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
                                 self.SQ_SIZE, self.SQ_SIZE))
+
+    def Header_Text(self, screen, names_obj, args):
+        count = 0
+        if args[2] == 0:
+            side_locs = [i.set_up_coord for i in names_obj.values() if i.color == 'white']
+        else:
+            side_locs = [i.set_up_coord for i in names_obj.values() if i.color == 'black']
+
+        for piece, loc, set_up_loc in \
+          zip(['Yahhta', 'Yahhta', 'Myin', 'Myin', 'Sin', 'Sin', 'Min-Gyi', 'Sit-Ke'],
+              [530, 530, 535, 535,  535, 535, 530, 530],
+              [(0,8), (1,8), (2,8), (3,8), (4,8), (5,8), (6,8), (7,8)]):
+
+            if set_up_loc in side_locs:
+                font = p.font.SysFont('Comic Sans MS', 10, True, False)
+                textObject = font.render(piece, 0, p.Color('black'))
+                textLocation = p.Rect(loc, 64*count, 68, 3)
+                screen.blit(textObject, textLocation)  
+                count += 1
+            else:
+                count += 1
