@@ -177,7 +177,6 @@ while running:
                                 (col, row),
                                 board)
 
-                            # player_Clicks.append((col, row))
                             high_squares = None
                             player_Clicks = []
 

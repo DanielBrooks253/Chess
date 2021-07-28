@@ -334,6 +334,7 @@ class Rukh(Pieces):
         '''
         # Get the locations pf all the pieces on the board
         combine_locs = same_color_locs | opp_color_locs
+        combine_locs = list(filter(None, combine_locs))
 
         # Set flags for the orthogonal locations to see if the same color
         # piece is closest in any of the four directions

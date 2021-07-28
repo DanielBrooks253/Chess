@@ -83,7 +83,7 @@ class Pieces:
                 # If the piece being moved is a king
                 # Need to move the position of the king along with
                 # the different moves
-                if self.piece_name == 'wS0':
+                if self.piece_name == 'wM0':
                     old_move = self.pos
                     self.pos = i
 
@@ -117,7 +117,7 @@ class Pieces:
 
                 # Check to see if the resulting move would get you out
                 # of check or not
-                if name_obj_copy['wS0'].check_check(
+                if name_obj_copy['wM0'].check_check(
                     black_name_obj_copy,
                     black_loc_copy,
                     white_loc_copy):
@@ -128,7 +128,7 @@ class Pieces:
 
                 # Reset all of the original positions for the different 
                 # scenarios
-                if self.piece_name == 'wS0':
+                if self.piece_name == 'wM0':
                     self.pos = old_move
 
                     white_loc_copy -= {i}
@@ -156,7 +156,7 @@ class Pieces:
         else:
             for i in available_moves:
                 # If the piece being moved is a king
-                if self.piece_name == 'bS0':
+                if self.piece_name == 'bM0':
                     old_move = self.pos
                     self.pos = i
 
@@ -187,7 +187,7 @@ class Pieces:
                     black_loc_copy |= {i}
 
                 
-                if name_obj_copy['bS0'].check_check(
+                if name_obj_copy['bM0'].check_check(
                     white_name_obj_copy,
                     white_loc_copy,
                     black_loc_copy):
@@ -196,7 +196,7 @@ class Pieces:
                 else:
                     pass
 
-                if self.piece_name == 'bS0':
+                if self.piece_name == 'bM0':
                     self.pos = old_move
 
                     black_loc_copy -= {i}
@@ -348,6 +348,8 @@ class Yahhta(Pieces):
         '''
         # Get the locations pf all the pieces on the board
         combine_locs = same_color_locs | opp_color_locs
+
+        combine_locs = list(filter(None, combine_locs))
 
         # Set flags for the orthogonal locations to see if the same color
         # piece is closest in any of the four directions

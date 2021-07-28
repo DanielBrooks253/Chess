@@ -25,7 +25,7 @@ class Board:
 
         self.HEIGHT = height
         self.WIDTH = width
-        self.SQ_SIZE = (width-68) //dimension
+        self.SQ_SIZE = (width-70) //dimension
 
         # Promotion squares for the ne (pawns)
         self.promotion_sq_white = ((0,0), (1,1), (2,2), (3,3), (7,0), (6,1), (5,2), (4,3))
@@ -151,24 +151,24 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    def drawGameState(self, screen, names_obj, game_over, text, num, *args):
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, turns):
         if game_over:
-            Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
+            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj)
             Board.drawText(self, screen, text, num)
         else:
-            Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj, args)
+            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+            Board.drawPieces(self, screen, names_obj, turns)
 
-            if args[2] > 1:
-                Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
-                Board.drawPieces(self, screen, names_obj, args)
+            if turns > 1:
+                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj, turns)
             else:
-                Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
-                Board.drawPieces(self, screen, names_obj, args)
-                Board.Header_Text(self, screen,names_obj, args)
+                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj,  turns)
+                Board.Header_Text(self, screen,names_obj, turns)
 
-    def drawBoard(self, screen, args):
+    def drawBoard(self, screen, high_squares, king_pos):
         # Red check; darkolivegreen moves
         # Draw the tiles on the board
         for r in range(self.x_dim):
@@ -187,18 +187,18 @@ class Board:
 
         # Check to see if a place has been clicked 
         # Highlight the space and the pieces moves in grey
-        if args[0] is not None:
-            if type(args[0]) is tuple: 
-                if args[0] in self.loc_names.keys() or args[0] in self.white_set_up_locs or args[0] in self.black_set_up_locs:
+        if high_squares is not None:
+            if type(high_squares) is tuple: 
+                if high_squares in self.loc_names.keys() or high_squares in self.white_set_up_locs or high_squares in self.black_set_up_locs:
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
-                        p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                        p.Rect(high_squares[1]*self.SQ_SIZE, high_squares[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
                     p.draw.rect(screen, p.Color('black'),
-                        p.Rect((args[0][1]*self.SQ_SIZE-1), (args[0][0]*self.SQ_SIZE-1), 
+                        p.Rect((high_squares[1]*self.SQ_SIZE-1), (high_squares[0]*self.SQ_SIZE-1), 
                                 (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
                     p.draw.line(screen, p.Color('black'), (0 ,0), (512, 512))
                     p.draw.line(screen, p.Color('black'), (0, 512), (512, 0))
             else:
-                for i in args[0]:
+                for i in high_squares:
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
                        p.Rect(i[1]*self.SQ_SIZE, i[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
                     p.draw.rect(screen, p.Color('black'),
@@ -207,46 +207,46 @@ class Board:
                     p.draw.line(screen, p.Color('black'), (0 ,0), (512, 512))
                     p.draw.line(screen, p.Color('black'), (0, 512), (512, 0))
 
-        if args[1] is not None:
+        if king_pos is not None:
             p.draw.rect(screen, p.Color('red'), 
-                        p.Rect(args[1][1]*self.SQ_SIZE, args[1][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                        p.Rect(king_pos[1]*self.SQ_SIZE, king_pos[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
             p.draw.rect(screen, p.Color('black'),
-                        p.Rect((args[1][1]*self.SQ_SIZE-1), (args[1][0]*self.SQ_SIZE-1), 
+                        p.Rect((king_pos[1]*self.SQ_SIZE-1), (king_pos[0]*self.SQ_SIZE-1), 
                            (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
             p.draw.line(screen, p.Color('black'), (0 ,0), (512, 512))
             p.draw.line(screen, p.Color('black'), (0, 512), (512, 0))
 
-    def drawPieces(self, screen, names_obj, args):
+    def drawPieces(self, screen, names_obj, turns):
         # Draw the pieces on the board
         # x and y axis are flipped when drawing the pieces
-        if args[2] == 1:
+        if turns == 1:
             p.draw.rect(screen, p.Color('wheat1'), p.Rect(0, 256, 512, 256))
         else:
             pass
 
         for piece in names_obj.values():
             if piece.pos is None:
-                if args[2] == 0:
+                if turns == 0:
                     if piece.color == 'white':
                         screen.blit(piece.piece_image,
                             p.Rect(piece.set_up_loc[0], piece.set_up_loc[1], self.SQ_SIZE, self.SQ_SIZE))
-                elif args[2] == 1:
+                elif turns == 1:
                     if piece.color == 'black':
                         screen.blit(piece.piece_image,
                              p.Rect(piece.set_up_loc[0], piece.set_up_loc[1], self.SQ_SIZE, self.SQ_SIZE))
                 else:
                     pass
             else:
-                if args[2] == 1 and piece.color == 'white':
+                if turns == 1 and piece.color == 'white':
                     continue
                 else:
                     screen.blit(piece.piece_image, 
                             p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
                                 self.SQ_SIZE, self.SQ_SIZE))
 
-    def Header_Text(self, screen, names_obj, args):
+    def Header_Text(self, screen, names_obj, turns):
         count = 0
-        if args[2] == 0:
+        if turns == 0:
             side_locs = [i.set_up_coord for i in names_obj.values() if i.color == 'white']
         else:
             side_locs = [i.set_up_coord for i in names_obj.values() if i.color == 'black']

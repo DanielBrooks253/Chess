@@ -37,7 +37,7 @@ clock = p.time.Clock()
 screen.fill(p.Color('white'))
 running = True
 
-# Instantiate all the pieces
+# Inititalize all the pieces
 # Ne (Pawns or soliders)
 wn0 = Ne((5,0), set_up_coord = None, piece_name = 'wn0', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
 wn1 = Ne((5,1), set_up_coord = None, piece_name = 'wn1', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
@@ -149,6 +149,7 @@ while running:
                         board.white_set_up_locs[player_clicks[0]].set_up_loc = None
                         # Delete the space from the dictionary so it cannot be selected
                         # for the next iteration
+
                         del board.white_set_up_locs[player_clicks[0]]
 
                         board.white_piece_loc |= {(col, row)}
@@ -166,7 +167,7 @@ while running:
             # Black gets to place their pieces
             elif num_turns == 1:
                 if len(player_clicks) == 0:
-                    if row < 8: # Only click in sidebar 
+                    if row < 8 or (col, row) not in board.black_set_up_locs.keys(): # Only click in sidebar 
                         continue
                     else:
                         player_clicks.append((col, row))
@@ -210,15 +211,118 @@ while running:
 
                 board = Board([wn0, wn1, wn2, wn3,
                                wn4, wn5, wn6, wn7,
-                               wy0, wy1, wm0, wm1,
-                               ws0, ws1, wM, wS],
-                               [bn0, bn1, bn2, bn3,
+                               ws0, ws1, wm0, wm1,
+                               wy0, wy1, wM, wS],
+                              [bn0, bn1, bn2, bn3,
                                bn4, bn5, bn6, bn7,
-                               by0, by1, bm0, bm1,
-                               bs0, bs1, bM, bS], HEIGHT, WIDTH, DIMENSION)
-                pass
+                               bs0, bs1, bm0, bm1,
+                               by0, by1, bM, bS], 
+                            HEIGHT, WIDTH, DIMENSION)
 
+                if not game_over:
+                    # First click
+                    if len(player_clicks) == 0:
+                        # Check to make sure that is is a valid move (piece is on square)
+                        # Get available moves
+                        # Highlight moves
+                        if (col, row) not in board.loc_names.keys():
+                            break
+                        else:
+                            piece_name = board.loc_names[(col, row)]
 
-    board.drawGameState(screen, board.name_obj_dict, False, text, num, high_squares, None, num_turns)
-    clock.tick(MAX_FPS)
-    p.display.flip()
+                            if board.name_obj_dict[piece_name].color == 'white' and  \
+                                num_turns % 2 == 0:
+                                moves = board.name_obj_dict[piece_name].Available_Moves(
+                                    board.x_dim,
+                                    board.y_dim,
+                                    board.white_piece_loc,
+                                    board.black_piece_loc
+                                )
+                            elif board.name_obj_dict[piece_name].color == 'black' and  \
+                                num_turns % 2 != 0:
+                                moves = board.name_obj_dict[piece_name].Available_Moves(
+                                    board.x_dim,
+                                    board.y_dim,
+                                    board.black_piece_loc,
+                                    board.white_piece_loc
+                                )
+                            else:
+                                # Do not highlight anything if the place they click 
+                                # doesn't have any piece or a piece of their color 
+                                break
+                        
+                        if moves is None:
+                            player_clicks.append((col, row))
+                            high_squares = ((col, row))
+                        else:
+                            invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
+                                moves, board)
+
+                            # Removes all the moves that will not get you out
+                            # of check
+                            valid_moves = moves - invalid_moves
+
+                            # If there are no valid moves, return none
+                            if len(valid_moves) == 0:
+                                moves = None
+                                player_clicks.append((col, row))
+                            else:
+                                moves = valid_moves.copy()
+                                player_clicks.append((col, row))
+
+                            high_squares = {(col, row)} | valid_moves
+                    
+                    # second click
+                    else:
+                        if (col, row) in player_clicks:
+                            # If the player selects the same square that was previously
+                            # selected, deselect the piece.
+                            high_squares = None
+                            player_clicks = []
+                        else:
+                            # If the piece has no available moves,
+                            # ignore the clicks
+                            if moves is None:
+                                break
+                            # If the second click is in the pieces available
+                            # moves. make the move and update everything.
+                            elif (col, row) in moves:
+                                board.name_obj_dict[piece_name].Make_Move(
+                                    (col, row),
+                                    board
+                                )
+
+                                high_squares = None
+                                player_clicks = []
+                                
+                                # Check to see if the move as resulted in the king being in 
+                                # check or not
+                                board.name_obj_dict['bM0'].in_check = board.name_obj_dict['bM0'].check_check(
+                                    board.white_name_obj_dict,
+                                    board.white_piece_loc,
+                                    board.black_piece_loc
+                                )
+
+                                board.name_obj_dict['wM0'].in_check = board.name_obj_dict['wM0'].check_check(
+                                    board.white_name_obj_dict,
+                                    board.white_piece_loc,
+                                    board.black_piece_loc
+                                )
+                            num_turns += 1
+
+    if board.name_obj_dict['wM0'].in_check:
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
+                                board.name_obj_dict['wS0'].pos, num_turns)
+        clock.tick(MAX_FPS)
+        p.display.flip()
+
+    elif board.name_obj_dict['bM0'].in_check:
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
+                                board.name_obj_dict['bM0'].pos, num_turns)
+        clock.tick(MAX_FPS)
+        p.display.flip()
+
+    else:
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, num_turns)
+        clock.tick(MAX_FPS)
+        p.display.flip()
