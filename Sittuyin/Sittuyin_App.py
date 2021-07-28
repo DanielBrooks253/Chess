@@ -124,7 +124,7 @@ while running:
             # White gets to place their pieces
             if num_turns == 0:
                 if len(player_clicks) == 0:
-                    if row < 8: # Only click in sidebar 
+                    if row < 8 or (col, row) not in board.white_set_up_locs.keys(): # Only click in sidebar 
                         continue
                     else:
                         player_clicks.append((col, row))
@@ -147,6 +147,9 @@ while running:
                         board.white_set_up_locs[player_clicks[0]].pos = (col, row)
                         board.white_set_up_locs[player_clicks[0]].set_up_coord = None
                         board.white_set_up_locs[player_clicks[0]].set_up_loc = None
+                        # Delete the space from the dictionary so it cannot be selected
+                        # for the next iteration
+                        del board.white_set_up_locs[player_clicks[0]]
 
                         board.white_piece_loc |= {(col, row)}
                         high_squares = None
@@ -187,6 +190,8 @@ while running:
                         board.black_set_up_locs[player_clicks[0]].set_up_coord = None
                         board.black_set_up_locs[player_clicks[0]].set_up_loc = None
 
+                        del board.black_set_up_locs[player_clicks[0]]
+
                         board.black_piece_loc |= {(col, row)}
                         high_squares = None
                         player_clicks = []
@@ -199,6 +204,9 @@ while running:
                             pass
             # Normal game play
             else:
+                # Clean up items that are not needed anymore
+                del board.white_set_up_locs
+                del board.black_set_up_locs
                 pass
 
 

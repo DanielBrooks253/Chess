@@ -54,9 +54,10 @@ class Yahhta(Pieces):
         if opp_king_obj.set_up_loc is None:
             filter_nones = set(filter(None, same_color_locs|opp_color_locs))
             king_file = opp_king_obj.pos[0] # File the king is on
-            piece_on_file = list(filter(lambda x: x[1] == king_file, filter_nones))
+            piece_on_file = list(filter(lambda x: x[1] == king_file and 
+                                                  x[0] < opp_king_obj.pos[0], filter_nones))
 
-            if len(piece_on_file) < 4:
+            if len(piece_on_file) < 3:
                 rm_file = all_spots - set(filter(lambda x: x[1] == king_file, all_spots))
                 rm_same_piece_loc = rm_file - same_color_locs
 
