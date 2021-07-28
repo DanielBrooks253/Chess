@@ -207,6 +207,17 @@ while running:
                 # Clean up items that are not needed anymore
                 del board.white_set_up_locs
                 del board.black_set_up_locs
+
+                board = Board([wn0, wn1, wn2, wn3,
+                               wn4, wn5, wn6, wn7,
+                               wy0, wy1, wm0, wm1,
+                               ws0, ws1, wM, wS],
+                               [bn0, bn1, bn2, bn3,
+                               bn4, bn5, bn6, bn7,
+                               by0, by1, bm0, bm1,
+                               bs0, bs1, bM, bS], HEIGHT, WIDTH, DIMENSION)
+
+                print(board.loc_names)
                 pass
 
 

@@ -53,10 +53,16 @@ class Yahhta(Pieces):
 
         if opp_king_obj.set_up_loc is None:
             filter_nones = set(filter(None, same_color_locs|opp_color_locs))
-            king_file = opp_king_obj.pos[0] # File the king is on
+            king_file = opp_king_obj.pos[1] # File the king is on
+
+            # Only have to check for less than, because there is not restriction on
+            # the white rook placement. THey place first so there is no black kine
+            # to worry about
             piece_on_file = list(filter(lambda x: x[1] == king_file and 
                                                   x[0] < opp_king_obj.pos[0], filter_nones))
 
+            # Check to make sure there is a piece, besides the two pawns
+            # between the "placed" rook and the opposing king
             if len(piece_on_file) < 3:
                 rm_file = all_spots - set(filter(lambda x: x[1] == king_file, all_spots))
                 rm_same_piece_loc = rm_file - same_color_locs

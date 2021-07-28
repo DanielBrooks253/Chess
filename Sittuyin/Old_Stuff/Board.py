@@ -7,10 +7,6 @@ class Board:
         self.black_piece_loc = set([i.pos for i in black_pieces])
         self.white_piece_loc = set([i.pos for i in white_pieces])
 
-        # map the setup locations to their respective objects
-        self.white_set_up_locs = {i.set_up_coord:i for i in white_pieces}
-        self.black_set_up_locs = {i.set_up_coord:i for i in black_pieces}
-
         # Dictionary that takes the piece name and maps it to the object
         # One for each color and an overall dictionary
         self.white_name_obj_dict = {i.piece_name:i for i in white_pieces}
@@ -25,7 +21,7 @@ class Board:
 
         self.HEIGHT = height
         self.WIDTH = width
-        self.SQ_SIZE = (width-68) //dimension
+        self.SQ_SIZE = height //dimension
 
         # Promotion squares for the ne (pawns)
         self.promotion_sq_white = ((0,0), (1,1), (2,2), (3,3), (7,0), (6,1), (5,2), (4,3))
@@ -34,11 +30,11 @@ class Board:
     def drawGameState(self, screen, names_obj, game_over, text, num, *args):
         if game_over:
             Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
-            # Board.drawPieces(self, screen, names_obj)
-            # Board.drawText(self, screen, text, num)
+            Board.drawPieces(self, screen, names_obj)
+            Board.drawText(self, screen, text, num)
         else:
             Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj, args)
+            Board.drawPieces(self, screen, names_obj)
 
     def drawBoard(self, screen, args):
         # Red check; darkolivegreen moves
@@ -54,14 +50,11 @@ class Board:
         p.draw.line(screen, p.Color('black'), (0 ,0), (512, 512))
         p.draw.line(screen, p.Color('black'), (0, 512), (512, 0))
 
-        p.draw.rect(screen, p.Color('wheat1'), p.Rect(512, 0, 68, 512))
-        p.draw.rect(screen, p.Color('black'), p.Rect(512, 0, 68, 512),1)
-
         # Check to see if a place has been clicked 
         # Highlight the space and the pieces moves in grey
         if args[0] is not None:
             if type(args[0]) is tuple: 
-                if args[0] in self.loc_names.keys() or args[0] in self.white_set_up_locs or args[0] in self.black_set_up_locs:
+                if args[0] in self.loc_names.keys():
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
                         p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
                     p.draw.rect(screen, p.Color('black'),
@@ -81,22 +74,13 @@ class Board:
                         p.Rect((args[1][1]*self.SQ_SIZE-1), (args[1][0]*self.SQ_SIZE-1), 
                            (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
-    def drawPieces(self, screen, names_obj, args):
+    def drawPieces(self, screen, names_obj):
         # Draw the pieces on the board
         # x and y axis are flipped when drawing the pieces
         for piece in names_obj.values():
             if piece.pos is None:
-                if args[2] == 0:
-                    if piece.color == 'white':
-                        screen.blit(piece.piece_image,
-                            p.Rect(piece.set_up_loc[0], piece.set_up_loc[1], self.SQ_SIZE, self.SQ_SIZE))
-                elif args[2] == 1:
-                    if piece.color == 'black':
-                        screen.blit(piece.piece_image,
-                             p.Rect(piece.set_up_loc[0], piece.set_up_loc[1], self.SQ_SIZE, self.SQ_SIZE))
-                else:
-                    pass
+                continue
             else:
                 screen.blit(piece.piece_image, 
-                        p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
+                    p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
                             self.SQ_SIZE, self.SQ_SIZE))
