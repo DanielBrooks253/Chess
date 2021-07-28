@@ -241,7 +241,6 @@ class Shah(Pieces):
 
         :return Null (Nothing)
         '''
-        self.checking_pos = {None}
         self.in_check = False
         super().__init__(start_pos, piece_name, piece_image, IMAGES, color)
 
@@ -269,12 +268,11 @@ class Shah(Pieces):
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
-        rm_checks = rm_same_color - self.checking_pos
         
-        if len(rm_checks) == 0:
+        if len(rm_same_color) == 0:
             return None
         else:
-            return rm_checks
+            return rm_same_color
 
     def check_check(self, opp_objs, same_locs, opp_locs):
         '''

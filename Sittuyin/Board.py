@@ -31,6 +31,126 @@ class Board:
         self.promotion_sq_white = ((0,0), (1,1), (2,2), (3,3), (7,0), (6,1), (5,2), (4,3))
         self.promotion_sq_black = ((4,4), (5,5), (6,6), (7,7), (3,4), (2,5), (1,6), (0,7))
 
+    def game_over_chkmt_stlmt_check(self, color_name_obj, num_turns):
+        '''
+        Cheks to see if the game is over via a stalemate or a checkmate
+
+        :param color_name_obj (dict): a dictionary containing the objeccts of the color pieces
+            that did not make a move.
+            ex) If white just moved, color_name_obj would be a dict of the black pieces. Checking
+                to see if the white move resulted in a checkmate or stalemate for the black king.
+
+            :key: piece name
+            :value: the class associated with the piece
+        :param num_turns (int): The number of turns that have been taken in the game. This is used
+                to determine which moves to check 
+
+            num_turns % 2 == 0: blacks moves
+            num_turns % 2 != 0: whites moves
+
+        :return Bool
+            :True means stalemate or checkmate
+            :False means there are available moves for the king and other pieces
+        '''
+        for i in color_name_obj.values():
+            if i.pos is None:
+                continue
+            else:
+                if num_turns % 2 == 0: # White move
+                    moves = i.Available_Moves(
+                        self.x_dim,
+                        self.y_dim,
+                        self.black_piece_loc,
+                        self.white_piece_loc
+                    )
+                    if moves is None:
+                        continue
+                    else:
+                        invalid_moves = i.avail_move_check_check(moves, self)
+
+                    # Check if the pieces have any available moves to get out
+                    # of check. If there are you are not in checkmate; break
+                    # out of the loop.
+                    if len(moves - invalid_moves) != 0:
+                        return False
+                    else:
+                        continue
+
+                else: # Black Move
+                    moves = i.Available_Moves(
+                        self.x_dim,
+                        self.y_dim,
+                        self.white_piece_loc,
+                        self.black_piece_loc
+                    )
+                    
+                    if moves is None:
+                        continue
+                    else:
+                        invalid_moves = i.avail_move_check_check(moves, self)
+
+                    if len(moves - invalid_moves) != 0:
+                        return False
+                    else:
+                        continue
+        return True
+    
+    def update_locs(self, color, old_move, new_move, is_captured=False, captured_piece=None):
+        '''
+        Once a move is made, all of the dictionaries will update with the new locations and
+        objects will updated their positions if there was a capture (Change pos to None if captured)
+
+        :param color (str): The color of the piece that is being moved
+        :param old_move (tuple): The location that the piece is currently on (y,x)
+        :param new_move( tuple): The location to which the piece will mvoe to (y,x)
+        
+        :param is_catpured (Bool): Checks to see if the move resulted in a captured piece or not
+            :default value: False
+        :param captured_piece (str): The piece_name/id of of the piece that was captured
+            :defalut value: None
+
+        :return: Null (Nothing)
+        '''
+        self.loc_names[new_move] = self.loc_names[old_move]
+        del self.loc_names[old_move]
+
+        if is_captured: # Remove piece from opposing color and update sets
+            # Change the captured pieces position to None
+            self.name_obj_dict[captured_piece].pos = None
+            
+            if color == 'white':
+                self.black_name_obj_dict[captured_piece].pos = None
+
+                # Remove the captured piece location from the location dictionary
+                self.black_piece_loc -= {new_move}
+
+                # Switch the old and new locations ofr the piece that moved
+                rm_old_move = self.white_piece_loc - {old_move}
+                add_new_move = rm_old_move | {new_move}
+
+                # Update the color locations
+                self.white_piece_loc = add_new_move
+
+            else:
+                self.white_name_obj_dict[captured_piece].pos = None
+                self.white_piece_loc -= {new_move}
+
+                rm_old_move = self.black_piece_loc - {old_move}
+                add_new_move = rm_old_move | {new_move}
+
+                self.black_piece_loc = add_new_move
+        else: # Update sets
+            if color =='white':
+                rm_old_move = self.white_piece_loc - {old_move}
+                add_new_move = rm_old_move | {new_move}
+
+                self.white_piece_loc = add_new_move
+            else:
+                rm_old_move = self.black_piece_loc - {old_move}
+                add_new_move = rm_old_move | {new_move}
+
+                self.black_piece_loc = add_new_move
+
     def drawGameState(self, screen, names_obj, game_over, text, num, *args):
         if game_over:
             Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
