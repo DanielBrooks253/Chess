@@ -304,15 +304,61 @@ while running:
                                 )
 
                                 board.name_obj_dict['wM0'].in_check = board.name_obj_dict['wM0'].check_check(
-                                    board.white_name_obj_dict,
-                                    board.white_piece_loc,
-                                    board.black_piece_loc
+                                    board.black_name_obj_dict,
+                                    board.black_piece_loc,
+                                    board.white_piece_loc
                                 )
-                            num_turns += 1
+
+                                if num_turns % 2 == 0:
+                                    if board.game_over_chkmt_stlmt_check(
+                                        board.black_name_obj_dict,
+                                        num_turns
+                                    ) and bM.in_check:
+
+                                        text = 'Checkmate!! White Wins'
+                                        game_over = True
+                                        break
+
+                                    elif board.game_over_chkmt_stlmt_check(
+                                        board.black_name_obj_dict,
+                                        num_turns
+                                    ) and not bM.in_check:
+
+                                        text = 'Stalemate!! Darw Game'
+                                        game_over = True
+                                        break
+                                    else:
+                                        pass
+                                else:
+                                    if board.game_over_chkmt_stlmt_check(
+                                        board.white_name_obj_dict,
+                                        num_turns
+                                    ) and wM.in_check:
+
+                                        text = 'Checkmate!! Black Wins'
+                                        game_over = True
+                                        break
+
+                                    elif board.game_over_chkmt_stlmt_check(
+                                        board.white_name_obj_dict,
+                                        num_turns
+                                    ) and not wM.in_check:
+
+                                        text = 'Stalemate!! Draw Game'
+                                        game_over = True
+                                        break
+
+                                    else:
+                                        pass
+
+                                num_turns += 1
+                            
+                            else:
+                                break
 
     if board.name_obj_dict['wM0'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                                board.name_obj_dict['wS0'].pos, num_turns)
+                                board.name_obj_dict['wM0'].pos, num_turns)
         clock.tick(MAX_FPS)
         p.display.flip()
 

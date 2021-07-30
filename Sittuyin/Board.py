@@ -154,7 +154,7 @@ class Board:
     def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, turns):
         if game_over:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj)
+            Board.drawPieces(self, screen, names_obj, turns)
             Board.drawText(self, screen, text, num)
         else:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
@@ -264,3 +264,31 @@ class Board:
                 count += 1
             else:
                 count += 1
+    def drawText(self, screen, text, num):
+        '''
+        Responsible for drawing the end of the game text across the screen
+
+        :param screen (pygame obj): Pygame game object that houses all of the "drawings" and images
+            rendered for the chess game (Basically the pygame window and board)
+        :param text (str): The text that will show once the game is over
+        :param num (int): The size of the font to show on the screen
+
+        :return Null (Nothing)
+        '''
+        # Draw the text at the end of the game
+        p.font.init()
+
+        if num == 1:
+            size = 32
+        else:
+            size = 22
+
+
+        font = p.font.SysFont('Comic Sans MS', size, True, False)
+        textObject = font.render(text, 0, p.Color('white'))
+        textLocation = p.Rect(0,0, self.WIDTH, self.HEIGHT) \
+                        .move(self.WIDTH//2-textObject.get_width()//2, 
+                              self.HEIGHT//2-textObject.get_height()//2)
+        screen.blit(textObject, textLocation)
+        textObject = font.render(text, 0, p.Color('gray2'))
+        screen.blit(textObject, textLocation.move(2,2))
