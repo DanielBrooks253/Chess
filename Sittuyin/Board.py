@@ -31,6 +31,8 @@ class Board:
         self.promotion_sq_white = ((0,0), (1,1), (2,2), (3,3), (0,7), (1,6), (2,5), (3,4))
         self.promotion_sq_black = ((4,4), (5,5), (6,6), (7,7), (4,3), (5,2), (6,1), (7,0))
 
+        self.promotion_selection = False
+
     def game_over_chkmt_stlmt_check(self, color_name_obj, num_turns):
         '''
         Cheks to see if the game is over via a stalemate or a checkmate
@@ -151,11 +153,17 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, turns):
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, turns, promotion=False):
         if game_over:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj, turns)
             Board.drawText(self, screen, text, num)
+
+        elif promotion:
+            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+            Board.drawPieces(self, screen, names_obj, turns)
+            Board.drawMessgaeBox(self, screen, turns)
+            
         else:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj, turns)
@@ -264,6 +272,7 @@ class Board:
                 count += 1
             else:
                 count += 1
+
     def drawText(self, screen, text, num):
         '''
         Responsible for drawing the end of the game text across the screen
@@ -292,3 +301,59 @@ class Board:
         screen.blit(textObject, textLocation)
         textObject = font.render(text, 0, p.Color('gray2'))
         screen.blit(textObject, textLocation.move(2,2))
+
+    def drawMessgaeBox(self, screen, turns):
+        mouse = p.mouse.get_pos()
+
+        font = p.font.SysFont('Comic Sans MS', 18, True, False)
+        font_2 = p.font.SysFont('Comic Sans MS', 10, True, False)
+
+        text_1 = 'Would You like to promote pawn?'
+        text_2 = '(This counts as your turn)'
+        
+        textObject_1 = font.render(text_1, 0, p.Color('black'))
+        textObject_2 = font.render(text_2, 0, p.Color('black'))
+
+        textObject_3 = font.render('Yes!', 0, p.Color('black'))
+        textObject_4 = font.render('No! ', 0, p.Color('black'))
+
+        if turns % 2 == 0:
+            textLocation_1 = p.Rect(100, 30, 100, 18)
+            textLocation_2 = p.Rect(125, 50, 100, 18)
+
+            yesLocation = p.Rect(155, 90, 50, 30)
+            noLocation = p.Rect(285, 90, 50, 30)
+
+            p.draw.rect(screen, p.Color('wheat1'), p.Rect(90, 20, 310, 100))
+
+            # Yes and No Buttong
+            p.draw.rect(screen, p.Color('black'), p.Rect(150, 90, 50, 30), 1)
+            p.draw.rect(screen, p.Color('black'), p.Rect(275, 90, 50, 30), 1)
+
+            screen.blit(textObject_1, textLocation_1)
+            screen.blit(textObject_2, textLocation_2)
+            
+            screen.blit(textObject_3, yesLocation)
+            screen.blit(textObject_4, noLocation)
+        else:
+            textLocation_1 = p.Rect(100, 300, 100, 18)
+            textLocation_2 = p.Rect(125, 320, 100, 18)
+
+            yesLocation = p.Rect(155, 350, 50, 30)
+            noLocation = p.Rect(285, 350, 50, 30)
+
+            p.draw.rect(screen, p.Color('wheat1'), p.Rect(90, 290, 310, 100))
+
+            # Yes and No Buttons
+            p.draw.rect(screen, p.Color('black'), p.Rect(150, 350, 50, 30), 1)
+            p.draw.rect(screen, p.Color('black'), p.Rect(275, 350, 50, 30), 1)
+
+            screen.blit(textObject_1, textLocation_1)
+            screen.blit(textObject_2, textLocation_2)
+
+            screen.blit(textObject_3, yesLocation)
+            screen.blit(textObject_4, noLocation)
+        
+
+        
+

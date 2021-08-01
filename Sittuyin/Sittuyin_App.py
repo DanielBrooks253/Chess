@@ -106,6 +106,8 @@ high_squares = None
 black_queen = {'bS0': bS.pos}
 white_queen = {'wS0': wS.pos}
 
+promotion = False
+
 while running:
     if num_turns == 2:
         board.HEIGHT = 512
@@ -324,12 +326,14 @@ while running:
                                         if board.name_obj_dict[pawns].pos in board.promotion_sq_black]
                                     
                                     if len(black_promoted_pawns) == 0:
-                                        pass
+                                        promotion = False
                                     else:
                                         # Need to loop through all the pawns later on
                                         # Change the promoted flag to True
                                         # Change the image
                                         # Update the queen dictionary
+                                        promotion = True
+
                                         board.name_obj_dict[black_promoted_pawns[0]].Promote_pawn()
                                         board.name_obj_dict[black_promoted_pawns[0]].piece_image = IMAGES['bS']
                                         black_queen = {black_promoted_pawns[0]: board.black_name_obj_dict[black_promoted_pawns[0]].pos}
@@ -337,6 +341,7 @@ while running:
                                 else:
                                     if board.name_obj_dict[list(black_queen.keys())[0]].pos is None:
                                         black_queen = {}
+                                        promotion = False
                                     else:
                                         pass
 
@@ -346,14 +351,17 @@ while running:
                                         if board.name_obj_dict[pawns].pos in board.promotion_sq_white]
 
                                     if len(white_promoted_pawns) == 0:
-                                        pass
+                                        promotion = False
                                     else:
+                                        promotion = True
+
                                         board.name_obj_dict[white_promoted_pawns[0]].Promote_pawn()
                                         board.name_obj_dict[white_promoted_pawns[0]].piece_image = IMAGES['wS']
                                         white_queen = {white_promoted_pawns[0]: board.white_name_obj_dict[white_promoted_pawns[0]].pos}
                                 else:
                                     if board.name_obj_dict[list(white_queen.keys())[0]].pos is None:
                                         white_queen = {}
+                                        promotion = False
                                     else:
                                         pass
 
@@ -417,6 +425,6 @@ while running:
         p.display.flip()
 
     else:
-        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, num_turns)
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, num_turns, promotion)
         clock.tick(MAX_FPS)
         p.display.flip()
