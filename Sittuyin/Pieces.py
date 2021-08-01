@@ -232,10 +232,7 @@ class MinGyi(Pieces):
         self.in_check = False
         super().__init__(start_pos, set_up_coord, piece_name, piece_image, set_up_loc, color)
 
-    def Get_Moves(self):
-        if self.pos is None:
-            return {(10,10)}
-            
+    def Get_Moves(self):           
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
@@ -280,9 +277,6 @@ class Yahhta(Pieces):
     '''
 
     def Get_Moves(self):
-        if self.pos is None:
-            return {(10,10)}
-
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in list(zip([1,2,3,4,5,6,7], [0,0,0,0,0,0,0])) + \
                                                                   list(zip([-1,-2,-3,-4,-5,-6,-7], [0,0,0,0,0,0,0])) + \
                                                                   list(zip([0,0,0,0,0,0,0], [1,2,3,4,5,6,7])) + \
@@ -322,9 +316,6 @@ class Yahhta(Pieces):
             return all_spots - same_color_locs
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
-        if self.pos is None:
-            return None
-
         all_moves = Yahhta.Get_Moves(self)
         orth_moves_beyond_pieces = Yahhta.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
 
@@ -426,9 +417,6 @@ class Myin(Pieces):
     '''
 
     def Get_Moves(self):
-        if self.pos is None:
-            return {(10,10)}
-
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([2,2,1,1,-2,-2,-1,-1], [1,-1,2,-2,1,-1,2,-2])])
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
@@ -485,22 +473,12 @@ class Ne(Pieces):
         '''
         move = set()
         if self.color == 'black':
-            if self.pos is None:
-                return {(10,10)}
-            else:
-                pass
-
             if self.pos[0] == 7:
                 self.promoted = True
                 # self.piece_image = self.IMAGES['bF']
             else:
                 pass
         else:
-            if self.pos is None:
-                return {(10,10)}
-            else:
-                pass
-            
             if self.pos[0] == 0:
                 self.promoted = True 
                 # self.piece_image = self.IMAGES['wF']
@@ -511,6 +489,7 @@ class Ne(Pieces):
             return SitKe.Get_Moves(self)
         else:
             if self.color =='black':
+
                 if (self.pos[0]+1, self.pos[1]) not in same_color_locs|args[0]:
                     move |= {(self.pos[0]+1, self.pos[1])}
                 else:
@@ -542,6 +521,12 @@ class Ne(Pieces):
                     pass
         return move
     
+    def Promote_pawn(self):
+        '''
+            Promote pawn to a queen
+        '''
+        self.promoted = True
+
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
         '''
         Filter out all of the moves that are off of the board and on a space occupied by
@@ -574,9 +559,6 @@ class SitKe(Pieces):
     '''
 
     def Get_Moves(self):
-        if self.pos is None:
-            return {(10,10)}
-
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,1,-1,-1], [1,-1,1,-1])])
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
@@ -612,9 +594,6 @@ class Sin(Pieces):
         ** Move for each appendage (Diagonally for each leg and forward for the trunk)
     '''
     def Get_Moves(self):
-        if self.pos is None:
-            return {(10,10)}
-
         if self.color =='black':
             return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,1,-1,-1,0], [1,-1,1,-1,1])])
         else:

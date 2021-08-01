@@ -28,8 +28,8 @@ class Board:
         self.SQ_SIZE = (width-70) //dimension
 
         # Promotion squares for the ne (pawns)
-        self.promotion_sq_white = ((0,0), (1,1), (2,2), (3,3), (7,0), (6,1), (5,2), (4,3))
-        self.promotion_sq_black = ((4,4), (5,5), (6,6), (7,7), (3,4), (2,5), (1,6), (0,7))
+        self.promotion_sq_white = ((0,0), (1,1), (2,2), (3,3), (0,7), (1,6), (2,5), (3,4))
+        self.promotion_sq_black = ((4,4), (5,5), (6,6), (7,7), (4,3), (5,2), (6,1), (7,0))
 
     def game_over_chkmt_stlmt_check(self, color_name_obj, num_turns):
         '''

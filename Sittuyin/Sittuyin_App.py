@@ -22,6 +22,9 @@ text = ''
 player_clicks = []
 num_placed_pieces = 0
 
+black_queen = {}
+white_queen = {}
+
 for pieces in [('wn', 'hh-lance-w1'), ('bn', 'hh-lance-b1'),
                ('wy', 'talia-w1'), ('by', 'talia-b1'),
                ('wm', 'knight-w1'), ('bm', 'knight-b1'),
@@ -40,50 +43,50 @@ running = True
 # Inititalize all the pieces
 # Ne (Pawns or soliders)
 wn0 = Ne((5,0), set_up_coord = None, piece_name = 'wn0', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn1 = Ne((5,1), set_up_coord = None, piece_name = 'wn1', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn2 = Ne((5,2), set_up_coord = None, piece_name = 'wn2', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn3 = Ne((5,3), set_up_coord = None, piece_name = 'wn3', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn4 = Ne((4,4), set_up_coord = None, piece_name = 'wn4', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn5 = Ne((4,5), set_up_coord = None, piece_name = 'wn5', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn6 = Ne((4,6), set_up_coord = None, piece_name = 'wn6', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn7 = Ne((4,7), set_up_coord = None, piece_name = 'wn7', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wn1 = Ne((5,1),  set_up_coord = None, piece_name = 'wn1', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wn2 = Ne((5,2),  set_up_coord = None, piece_name = 'wn2', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wn3 = Ne((5,3),  set_up_coord = None, piece_name = 'wn3', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wn4 = Ne((4,4),  set_up_coord = None, piece_name = 'wn4', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wn5 = Ne((4,5),  set_up_coord = None, piece_name = 'wn5', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wn6 = Ne((4,6),  set_up_coord = None, piece_name = 'wn6', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wn7 = Ne((4,7),  set_up_coord = None, piece_name = 'wn7', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
 
-bn0 = Ne((3,0), set_up_coord = None, piece_name = 'bn0', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn1 = Ne((3,1), set_up_coord = None, piece_name = 'bn1', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn2 = Ne((3,2), set_up_coord = None, piece_name = 'bn2', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn3 = Ne((3,3), set_up_coord = None, piece_name = 'bn3', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn4 = Ne((2,4), set_up_coord = None, piece_name = 'bn4', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn5 = Ne((2,5), set_up_coord = None, piece_name = 'bn5', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn6 = Ne((2,6), set_up_coord = None, piece_name = 'bn6', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn7 = Ne((2,7), set_up_coord = None, piece_name = 'bn7', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bn0 = Ne((3,0),  set_up_coord = None, piece_name = 'bn0', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bn1 = Ne((3,1),  set_up_coord = None, piece_name = 'bn1', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bn2 = Ne((3,2),  set_up_coord = None, piece_name = 'bn2', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bn3 = Ne((3,3),  set_up_coord = None, piece_name = 'bn3', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bn4 = Ne((2,4),  set_up_coord = None, piece_name = 'bn4', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bn5 = Ne((2,5),  set_up_coord = None, piece_name = 'bn5', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bn6 = Ne((2,6),  set_up_coord = None, piece_name = 'bn6', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bn7 = Ne((2,7),  set_up_coord = None, piece_name = 'bn7', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
 
 # The pawns are the only pieces on the board at the start of the game.
 # All other pieces are placed by the player at the start
 
 # Yahhta (Rooks)
-wy0 = Yahhta(None, set_up_coord = (0,8), piece_name='wy0', piece_image=IMAGES['wy'], set_up_loc = (HEIGHT+10, 10), color='white')
-wy1 = Yahhta(None, set_up_coord = (1,8), piece_name='wy1', piece_image=IMAGES['wy'], set_up_loc = (HEIGHT+10, SQ_SIZE+10), color='white')
+wy0 = Yahhta(None,  set_up_coord = (0,8), piece_name='wy0', piece_image=IMAGES['wy'], set_up_loc = (HEIGHT+10, 10), color='white')
+wy1 = Yahhta(None,  set_up_coord = (1,8), piece_name='wy1', piece_image=IMAGES['wy'], set_up_loc = (HEIGHT+10, SQ_SIZE+10), color='white')
 
-by0 = Yahhta(None, set_up_coord = (0,8), piece_name='by0', piece_image=IMAGES['by'], set_up_loc = (HEIGHT+10, 10), color='black')
-by1 = Yahhta(None, set_up_coord = (1,8), piece_name='by1', piece_image=IMAGES['by'], set_up_loc = (HEIGHT+10, SQ_SIZE+10), color='black')
+by0 = Yahhta(None,  set_up_coord = (0,8), piece_name='by0', piece_image=IMAGES['by'], set_up_loc = (HEIGHT+10, 10), color='black')
+by1 = Yahhta(None,  set_up_coord = (1,8), piece_name='by1', piece_image=IMAGES['by'], set_up_loc = (HEIGHT+10, SQ_SIZE+10), color='black')
 
 # Myin (Horse or knight)
-wm0 = Myin(None, set_up_coord = (2,8), piece_name='wm0', piece_image=IMAGES['wm'], set_up_loc = (HEIGHT+10, SQ_SIZE*2+10), color='white')
-wm1 = Myin(None, set_up_coord = (3,8), piece_name='wm1', piece_image=IMAGES['wm'], set_up_loc = (HEIGHT+10, SQ_SIZE*3+10), color='white')
+wm0 = Myin(None,  set_up_coord = (2,8), piece_name='wm0', piece_image=IMAGES['wm'], set_up_loc = (HEIGHT+10, SQ_SIZE*2+10), color='white')
+wm1 = Myin(None,  set_up_coord = (3,8), piece_name='wm1', piece_image=IMAGES['wm'], set_up_loc = (HEIGHT+10, SQ_SIZE*3+10), color='white')
 
-bm0 = Myin(None, set_up_coord = (2,8), piece_name='bm0', piece_image=IMAGES['bm'], set_up_loc = (HEIGHT+10, SQ_SIZE*2+10),  color='black')
-bm1 = Myin(None, set_up_coord = (3,8), piece_name='bm1', piece_image=IMAGES['bm'], set_up_loc = (HEIGHT+10, SQ_SIZE*3+10), color='black')
+bm0 = Myin(None,  set_up_coord = (2,8), piece_name='bm0', piece_image=IMAGES['bm'], set_up_loc = (HEIGHT+10, SQ_SIZE*2+10),  color='black')
+bm1 = Myin(None,  set_up_coord = (3,8), piece_name='bm1', piece_image=IMAGES['bm'], set_up_loc = (HEIGHT+10, SQ_SIZE*3+10), color='black')
 
 # Sin (Bishop)
-ws0 = Sin(None, set_up_coord = (4,8), piece_name='ws0', piece_image=IMAGES['ws'], set_up_loc = (HEIGHT+10, SQ_SIZE*4+10), color='white')
-ws1 = Sin(None, set_up_coord = (5,8), piece_name='ws1', piece_image=IMAGES['ws'], set_up_loc = (HEIGHT+10, SQ_SIZE*5+10), color='white')
+ws0 = Sin(None,  set_up_coord = (4,8), piece_name='ws0', piece_image=IMAGES['ws'], set_up_loc = (HEIGHT+10, SQ_SIZE*4+10), color='white')
+ws1 = Sin(None,  set_up_coord = (5,8), piece_name='ws1', piece_image=IMAGES['ws'], set_up_loc = (HEIGHT+10, SQ_SIZE*5+10), color='white')
 
-bs0 = Sin(None, set_up_coord = (4,8), piece_name='bs0', piece_image=IMAGES['bs'], set_up_loc = (HEIGHT+10, SQ_SIZE*4+10), color='black')
-bs1 = Sin(None, set_up_coord = (5,8), piece_name='bs1', piece_image=IMAGES['bs'], set_up_loc = (HEIGHT+10, SQ_SIZE*5+10), color='black')
+bs0 = Sin(None,  set_up_coord = (4,8), piece_name='bs0', piece_image=IMAGES['bs'], set_up_loc = (HEIGHT+10, SQ_SIZE*4+10), color='black')
+bs1 = Sin(None,  set_up_coord = (5,8), piece_name='bs1', piece_image=IMAGES['bs'], set_up_loc = (HEIGHT+10, SQ_SIZE*5+10), color='black')
 
 # Min-Gyi (King)
-wM = MinGyi(None, set_up_coord = (6,8), piece_name='wM0', piece_image=IMAGES['wM'], set_up_loc = (HEIGHT+10, SQ_SIZE*6+10), color='white')
-bM = MinGyi(None, set_up_coord = (6,8), piece_name='bM0', piece_image=IMAGES['bM'], set_up_loc = (HEIGHT+10, SQ_SIZE*6+10), color='black')
+wM = MinGyi(None,  set_up_coord = (6,8), piece_name='wM0', piece_image=IMAGES['wM'], set_up_loc = (HEIGHT+10, SQ_SIZE*6+10), color='white')
+bM = MinGyi(None,  set_up_coord = (6,8), piece_name='bM0', piece_image=IMAGES['bM'], set_up_loc = (HEIGHT+10, SQ_SIZE*6+10), color='black')
 
 # Sit-Ke (queen or general)
 wS = SitKe(None, set_up_coord = (7,8), piece_name='wS0', piece_image=IMAGES['wS'], set_up_loc = (HEIGHT+10, SQ_SIZE*7+10), color='white')
@@ -99,6 +102,9 @@ board = Board([wn0, wn1, wn2, wn3,
                bs0, bs1, bM, bS], HEIGHT, WIDTH, DIMENSION)
 
 high_squares = None
+
+black_queen = {'bS0': bS.pos}
+white_queen = {'wS0': wS.pos}
 
 while running:
     if num_turns == 2:
@@ -203,6 +209,7 @@ while running:
                             num_placed_pieces = 0
                         else:
                             pass
+
             # Normal game play
             else:
                 # Clean up items that are not needed anymore
@@ -308,6 +315,47 @@ while running:
                                     board.black_piece_loc,
                                     board.white_piece_loc
                                 )
+
+                                # If there is no queen on the board, check to see if
+                                # any of the pawns are on the promotion squares.
+                                if len(black_queen) == 0:
+                                    black_promoted_pawns = [board.name_obj_dict[pawns].piece_name for pawns in \
+                                        ['bn0', 'bn1', 'bn2', 'bn3', 'bn4', 'bn5', 'bn6', 'bn7'] \
+                                        if board.name_obj_dict[pawns].pos in board.promotion_sq_black]
+                                    
+                                    if len(black_promoted_pawns) == 0:
+                                        pass
+                                    else:
+                                        # Need to loop through all the pawns later on
+                                        # Change the promoted flag to True
+                                        # Change the image
+                                        # Update the queen dictionary
+                                        board.name_obj_dict[black_promoted_pawns[0]].Promote_pawn()
+                                        board.name_obj_dict[black_promoted_pawns[0]].piece_image = IMAGES['bS']
+                                        black_queen = {black_promoted_pawns[0]: board.black_name_obj_dict[black_promoted_pawns[0]].pos}
+                                
+                                else:
+                                    if board.name_obj_dict[list(black_queen.keys())[0]].pos is None:
+                                        black_queen = {}
+                                    else:
+                                        pass
+
+                                if len(white_queen) == 0:
+                                    white_promoted_pawns = [board.name_obj_dict[pawns].piece_name for pawns in  \
+                                        ['wn0', 'wn1', 'wn2', 'wn3', 'wn4', 'wn5', 'wn6', 'wn7'] \
+                                        if board.name_obj_dict[pawns].pos in board.promotion_sq_white]
+
+                                    if len(white_promoted_pawns) == 0:
+                                        pass
+                                    else:
+                                        board.name_obj_dict[white_promoted_pawns[0]].Promote_pawn()
+                                        board.name_obj_dict[white_promoted_pawns[0]].piece_image = IMAGES['wS']
+                                        white_queen = {white_promoted_pawns[0]: board.white_name_obj_dict[white_promoted_pawns[0]].pos}
+                                else:
+                                    if board.name_obj_dict[list(white_queen.keys())[0]].pos is None:
+                                        white_queen = {}
+                                    else:
+                                        pass
 
                                 if num_turns % 2 == 0:
                                     if board.game_over_chkmt_stlmt_check(
