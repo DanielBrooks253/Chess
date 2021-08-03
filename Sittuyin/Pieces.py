@@ -465,6 +465,7 @@ class Ne(Pieces):
         :return Null (Nothing)
         '''
         self.promoted = False
+        self.promotion_count = 0
         super().__init__(start_pos, set_up_coord, piece_name, piece_image, set_up_loc, color)
 
     def Get_Moves(self, same_color_locs, args):

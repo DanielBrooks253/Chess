@@ -1,4 +1,5 @@
 import pygame as p
+from pygame.constants import WINDOWHITTEST
 
 from Pieces import MinGyi, Yahhta, Myin, Ne, SitKe, Sin
 from Board import Board
@@ -106,7 +107,15 @@ high_squares = None
 black_queen = {'bS0': bS.pos}
 white_queen = {'wS0': wS.pos}
 
-promotion = False
+# Flags to move the messgae boxes around depending on which turn it is
+white_promote = False 
+black_promote = False
+
+# Keep track of the number of pawns that had been ask for promotion
+white_promotion_count = 0
+black_promotion_count = 0
+
+did_pawn_promote = False # Chek to see if a pawn promotion went through or not
 
 while running:
     if num_turns == 2:
@@ -119,12 +128,123 @@ while running:
         clock = p.time.Clock()
         screen.fill(p.Color('white'))
 
+        board = Board([wn0, wn1, wn2, wn3,
+                    wn4, wn5, wn6, wn7,
+                    ws0, ws1, wm0, wm1,
+                    wy0, wy1, wM, wS],
+                    [bn0, bn1, bn2, bn3,
+                    bn4, bn5, bn6, bn7,
+                    bs0, bs1, bm0, bm1,
+                    by0, by1, bM, bS], 
+                    HEIGHT, WIDTH, DIMENSION)
+
+        # Clean up items that are not needed anymore
+        del board.white_set_up_locs
+        del board.black_set_up_locs
+
+        # Check to see if paw can promote
+        # if pawn cannot promote continue with logic
+        # else promotion equals true and promotion logic ensues
+
+    # Odd turns check for white promote
+    if num_turns % 2 == 0 and not did_pawn_promote:
+        if len(white_queen) == 0:
+            white_prom_pawns = [board.name_obj_dict[pawns].piece_name for pawns in  \
+                            ['wn0', 'wn1', 'wn2', 'wn3', 'wn4', 'wn5', 'wn6', 'wn7'] \
+                            if board.name_obj_dict[pawns].pos in board.promotion_sq_white and \
+                                board.name_obj_dict[pawns].promoted == False]
+            if len(white_prom_pawns) == 0: # See if any pawns are able to promote
+                white_promote = False
+            else:
+                for pawns in white_prom_pawns: # Loop through available pawns
+                    # Promotion takes a turn, so the piece has to be on the square for
+                    # at least 1 turn in order to promote
+                    if board.name_obj_dict[pawns].promotion_count == 0 and \
+                        board.name_obj_dict[pawns].promoted == False:
+                        board.name_obj_dict[pawns].promotion_count += 1
+                    else:
+                        # Chnage the promotion flag to print out the message box
+                        white_promote = True
+                        high_squares = board.name_obj_dict[pawns].pos
+
+                        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, num_turns, 
+                            white_promote, black_promote)
+                        clock.tick(MAX_FPS)
+                        p.display.flip()
+
+                        # Get the click event for the message box
+                        for e in p.event.get():
+                            if e.type == p.QUIT:
+                                running = False
+                                break
+
+                            if e.type == p.MOUSEBUTTONDOWN:
+                                location = p.mouse.get_pos()
+
+                                raw_row = location[0]
+                                raw_col = location[1]
+
+                                # Click the yes button
+                                if 150 <= raw_row <= 200 and 350 <= raw_col <= 380:
+                                    board.promotion_selection = True
+                                    high_squares = {}
+                                    break
+                                # Click the no button
+                                elif 275 <= raw_row <= 325 and 350 <= raw_col <= 380:
+                                    board.promotion_selection = False
+                                    high_squares = {}
+                                    break
+                                else:
+                                     pass
+                            else:
+                                continue # Look for a click/quit action
+
+                        # If yes is selected, change promotion flag, piece image 
+                        # and update the queen dictionary
+                        if board.promotion_selection:
+                            board.name_obj_dict[pawns].Promote_pawn()
+                            board.name_obj_dict[pawns].piece_image = IMAGES['wS']
+                            white_queen = {pawns: board.white_name_obj_dict[pawns].pos}
+
+                            # Move onto the next turn 
+                            white_promote = False
+                            did_pawn_promote = True
+                            num_turns += 1
+                        # If no selected, change the did_pawn_promotion flag to True
+                        # This will allow white to continue on with their turn as usual
+                        elif board.promotion_selection == False:
+                            if len(white_prom_pawns) == 1:
+                                white_promote = False
+                                board.promotion_selection = None
+                                did_pawn_promote = True
+                            else:
+                                if white_promotion_count == len(white_prom_pawns):
+                                    white_promote = False
+                                    board.promotion_selection = None
+                                    did_pawn_promote = True
+                                else:
+                                    board.promotion_selection = None
+                                    white_promotion_count += 1
+                        else:
+                            pass
+                
+     
+        # white promotion check
+        else:
+            if board.name_obj_dict[list(white_queen.keys())[0]].pos is None:
+                white_queen = {}
+            else:
+                pass
+    else:
+        pass
+
     for e in p.event.get():
         if e.type == p.QUIT:
             running = False
 
         if e.type == p.MOUSEBUTTONDOWN:
             location = p.mouse.get_pos()
+
             row = location[0]//SQ_SIZE
             col = location[1]//SQ_SIZE
 
@@ -214,20 +334,6 @@ while running:
 
             # Normal game play
             else:
-                # Clean up items that are not needed anymore
-                del board.white_set_up_locs
-                del board.black_set_up_locs
-
-                board = Board([wn0, wn1, wn2, wn3,
-                               wn4, wn5, wn6, wn7,
-                               ws0, ws1, wm0, wm1,
-                               wy0, wy1, wM, wS],
-                              [bn0, bn1, bn2, bn3,
-                               bn4, bn5, bn6, bn7,
-                               bs0, bs1, bm0, bm1,
-                               by0, by1, bM, bS], 
-                            HEIGHT, WIDTH, DIMENSION)
-
                 if not game_over:
                     # First click
                     if len(player_clicks) == 0:
@@ -318,53 +424,6 @@ while running:
                                     board.white_piece_loc
                                 )
 
-                                # If there is no queen on the board, check to see if
-                                # any of the pawns are on the promotion squares.
-                                if len(black_queen) == 0:
-                                    black_promoted_pawns = [board.name_obj_dict[pawns].piece_name for pawns in \
-                                        ['bn0', 'bn1', 'bn2', 'bn3', 'bn4', 'bn5', 'bn6', 'bn7'] \
-                                        if board.name_obj_dict[pawns].pos in board.promotion_sq_black]
-                                    
-                                    if len(black_promoted_pawns) == 0:
-                                        promotion = False
-                                    else:
-                                        # Need to loop through all the pawns later on
-                                        # Change the promoted flag to True
-                                        # Change the image
-                                        # Update the queen dictionary
-                                        promotion = True
-
-                                        board.name_obj_dict[black_promoted_pawns[0]].Promote_pawn()
-                                        board.name_obj_dict[black_promoted_pawns[0]].piece_image = IMAGES['bS']
-                                        black_queen = {black_promoted_pawns[0]: board.black_name_obj_dict[black_promoted_pawns[0]].pos}
-                                
-                                else:
-                                    if board.name_obj_dict[list(black_queen.keys())[0]].pos is None:
-                                        black_queen = {}
-                                        promotion = False
-                                    else:
-                                        pass
-
-                                if len(white_queen) == 0:
-                                    white_promoted_pawns = [board.name_obj_dict[pawns].piece_name for pawns in  \
-                                        ['wn0', 'wn1', 'wn2', 'wn3', 'wn4', 'wn5', 'wn6', 'wn7'] \
-                                        if board.name_obj_dict[pawns].pos in board.promotion_sq_white]
-
-                                    if len(white_promoted_pawns) == 0:
-                                        promotion = False
-                                    else:
-                                        promotion = True
-
-                                        board.name_obj_dict[white_promoted_pawns[0]].Promote_pawn()
-                                        board.name_obj_dict[white_promoted_pawns[0]].piece_image = IMAGES['wS']
-                                        white_queen = {white_promoted_pawns[0]: board.white_name_obj_dict[white_promoted_pawns[0]].pos}
-                                else:
-                                    if board.name_obj_dict[list(white_queen.keys())[0]].pos is None:
-                                        white_queen = {}
-                                        promotion = False
-                                    else:
-                                        pass
-
                                 if num_turns % 2 == 0:
                                     if board.game_over_chkmt_stlmt_check(
                                         board.black_name_obj_dict,
@@ -380,7 +439,7 @@ while running:
                                         num_turns
                                     ) and not bM.in_check:
 
-                                        text = 'Stalemate!! Darw Game'
+                                        text = 'Stalemate!! Draw Game'
                                         game_over = True
                                         break
                                     else:
@@ -403,11 +462,12 @@ while running:
                                         text = 'Stalemate!! Draw Game'
                                         game_over = True
                                         break
-
                                     else:
                                         pass
 
                                 num_turns += 1
+                                # Change flag back to False to look for promotion again
+                                did_pawn_promote = False
                             
                             else:
                                 break
@@ -425,6 +485,7 @@ while running:
         p.display.flip()
 
     else:
-        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, num_turns, promotion)
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, num_turns, 
+                            white_promote, black_promote)
         clock.tick(MAX_FPS)
         p.display.flip()

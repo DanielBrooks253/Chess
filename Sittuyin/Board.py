@@ -31,7 +31,7 @@ class Board:
         self.promotion_sq_white = ((0,0), (1,1), (2,2), (3,3), (0,7), (1,6), (2,5), (3,4))
         self.promotion_sq_black = ((4,4), (5,5), (6,6), (7,7), (4,3), (5,2), (6,1), (7,0))
 
-        self.promotion_selection = False
+        self.promotion_selection = None
 
     def game_over_chkmt_stlmt_check(self, color_name_obj, num_turns):
         '''
@@ -153,16 +153,17 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, turns, promotion=False):
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, turns, 
+                      white_promote=False, black_promote=False):
         if game_over:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj, turns)
             Board.drawText(self, screen, text, num)
 
-        elif promotion:
+        elif white_promote or black_promote:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj, turns)
-            Board.drawMessgaeBox(self, screen, turns)
+            Board.drawMessgaeBox(self, screen, turns, white_promote, black_promote)
             
         else:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
@@ -302,11 +303,8 @@ class Board:
         textObject = font.render(text, 0, p.Color('gray2'))
         screen.blit(textObject, textLocation.move(2,2))
 
-    def drawMessgaeBox(self, screen, turns):
-        mouse = p.mouse.get_pos()
-
+    def drawMessgaeBox(self, screen, turns, white_promote, black_promote):
         font = p.font.SysFont('Comic Sans MS', 18, True, False)
-        font_2 = p.font.SysFont('Comic Sans MS', 10, True, False)
 
         text_1 = 'Would You like to promote pawn?'
         text_2 = '(This counts as your turn)'
@@ -317,7 +315,7 @@ class Board:
         textObject_3 = font.render('Yes!', 0, p.Color('black'))
         textObject_4 = font.render('No! ', 0, p.Color('black'))
 
-        if turns % 2 == 0:
+        if black_promote:
             textLocation_1 = p.Rect(100, 30, 100, 18)
             textLocation_2 = p.Rect(125, 50, 100, 18)
 
