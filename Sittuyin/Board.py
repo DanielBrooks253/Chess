@@ -37,7 +37,7 @@ class Board:
         '''
         Cheks to see if the game is over via a stalemate or a checkmate
 
-        :param color_name_obj (dict): a dictionary containing the objeccts of the color pieces
+        :param color_name_obj (dict): a dictionary containing the objects of the color pieces
             that did not make a move.
             ex) If white just moved, color_name_obj would be a dict of the black pieces. Checking
                 to see if the white move resulted in a checkmate or stalemate for the black king.
