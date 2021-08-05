@@ -31,11 +31,12 @@ class Board:
         self.promotion_sq_white = ((0,0), (1,1), (2,2), (3,3), (0,7), (1,6), (2,5), (3,4))
         self.promotion_sq_black = ((4,4), (5,5), (6,6), (7,7), (4,3), (5,2), (6,1), (7,0))
 
-        self.promotion_selection = None
+        self.promotion_selection_white = None
+        self.promotion_selection_black = None
 
-    def game_over_chkmt_stlmt_check(self, color_name_obj, num_turns):
+    def game_over_check(self, color_name_obj, num_turns):
         '''
-        Cheks to see if the game is over via a stalemate or a checkmate
+        Checks to see if the game is over (No available moves)
 
         :param color_name_obj (dict): a dictionary containing the objects of the color pieces
             that did not make a move.
@@ -51,7 +52,7 @@ class Board:
             num_turns % 2 != 0: whites moves
 
         :return Bool
-            :True means stalemate or checkmate
+            :True means there are no available moves to make
             :False means there are available moves for the king and other pieces
         '''
         for i in color_name_obj.values():
@@ -324,7 +325,7 @@ class Board:
 
             p.draw.rect(screen, p.Color('wheat1'), p.Rect(90, 20, 310, 100))
 
-            # Yes and No Buttong
+            # Yes and No Buttons
             p.draw.rect(screen, p.Color('black'), p.Rect(150, 90, 50, 30), 1)
             p.draw.rect(screen, p.Color('black'), p.Rect(275, 90, 50, 30), 1)
 

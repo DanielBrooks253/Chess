@@ -104,9 +104,6 @@ board = Board([wn0, wn1, wn2, wn3,
 
 high_squares = None
 
-black_queen = {'bS0': bS.pos}
-white_queen = {'wS0': wS.pos}
-
 # Flags to move the messgae boxes around depending on which turn it is
 white_promote = False 
 black_promote = False
@@ -115,7 +112,8 @@ black_promote = False
 white_promotion_count = 0
 black_promotion_count = 0
 
-did_pawn_promote = False # Check to see if a pawn promotion went through or not
+did_pawn_promote_white = False # Check to see if a pawn promotion went through or not
+did_pawn_promote_black = False # Check to see if a pawn promotion went through or not
 
 while running:
     if num_turns == 2:
@@ -142,12 +140,15 @@ while running:
         del board.white_set_up_locs
         del board.black_set_up_locs
 
+        black_queen = {'bS0': bS.pos}
+        white_queen = {'wS0': wS.pos}
+
         # Check to see if paw can promote
         # if pawn cannot promote continue with logic
         # else promotion equals true and promotion logic ensues
 
     # Odd turns check for white promote
-    if num_turns % 2 == 0 and not did_pawn_promote:
+    if num_turns % 2 == 0 and not did_pawn_promote_white:
         if len(white_queen) == 0:
             white_prom_pawns = [board.name_obj_dict[pawns].piece_name for pawns in  \
                             ['wn0', 'wn1', 'wn2', 'wn3', 'wn4', 'wn5', 'wn6', 'wn7'] \
@@ -181,12 +182,12 @@ while running:
 
                             # Click the yes button
                             if 150 <= raw_row <= 200 and 350 <= raw_col <= 380:
-                                board.promotion_selection = True
+                                board.promotion_selection_white = True
                                 high_squares = {}
                                 break
                             # Click the no button
                             elif 275 <= raw_row <= 325 and 350 <= raw_col <= 380:
-                                board.promotion_selection = False
+                                board.promotion_selection_white = False
                                 high_squares = {}
                                 break
                             else:
@@ -196,36 +197,36 @@ while running:
 
                     # If yes is selected, change promotion flag, piece image 
                     # and update the queen dictionary
-                    if board.promotion_selection:
+                    if board.promotion_selection_white:
                         board.name_obj_dict[pawns].Promote_pawn()
                         board.name_obj_dict[pawns].piece_image = IMAGES['wS']
                         white_queen = {pawns: board.white_name_obj_dict[pawns].pos}
 
                         # Move onto the next turn 
                         white_promote = False
-                        did_pawn_promote = True
-                        pawn_counter = 0
+                        did_pawn_promote_white = True
+                        board.promotion_selection_white = None
                         num_turns += 1
                         
                     # If no selected, change the did_pawn_promotion flag to True
                     # This will allow white to continue on with their turn as usual
-                    elif board.promotion_selection == False:
+                    elif board.promotion_selection_white == False:
                         if len(white_prom_pawns) == 1:
                             white_promote = False
-                            board.promotion_selection = None
-                            did_pawn_promote = True
+                            board.promotion_selection_white = None
+                            did_pawn_promote_white = True
                             white_promotion_count = 0
                         else:
                             # Once all the pawns have been exhausted, reset all the flags
                             # an continue on with the game
                             if white_promotion_count == (len(white_prom_pawns)-1):
                                 white_promote = False
-                                did_pawn_promote = True
-                                board.promotion_selection = None
+                                did_pawn_promote_white = True
+                                board.promotion_selection_white = None
                                 white_promotion_count = 0
                                 continue
                             else: # add to the index for each pawn
-                                board.promotion_selection = None
+                                board.promotion_selection_white = None
                                 white_promotion_count += 1
                     else:
                         pass
@@ -233,8 +234,101 @@ while running:
      
         # white promotion check
         else:
-            if board.name_obj_dict[list(white_queen.keys())[0]].pos is None:
+            if board.name_obj_dict[list(white_queen.keys())[0]].pos is None and \
+                num_turns > 2:
                 white_queen = {}
+            else:
+                pass
+
+    elif num_turns % 2 != 0 and not did_pawn_promote_black:
+        if len(black_queen) == 0:
+            black_prom_pawns = [board.name_obj_dict[pawns].piece_name for pawns in  \
+                            ['bn0', 'bn1', 'bn2', 'bn3', 'bn4', 'bn5', 'bn6', 'bn7'] \
+                            if board.name_obj_dict[pawns].pos in board.promotion_sq_black and \
+                                board.name_obj_dict[pawns].promoted == False]
+            if len(black_prom_pawns) == 0: # See if any pawns are able to promote
+                black_promote = False
+            else:
+                # For loops do not work while in pygame, so need to index the list instead.
+                pawns = black_prom_pawns[black_promotion_count]
+
+                if board.name_obj_dict[pawns].promotion_count == 0 and \
+                    board.name_obj_dict[pawns].promoted == False:
+                    board.name_obj_dict[pawns].promotion_count += 1
+                else:
+                    # Change the promotion flag to print out the message box
+                    black_promote = True
+                    high_squares = board.name_obj_dict[pawns].pos
+
+                    # Get the click event for the message box
+                    for e in p.event.get():
+                        if e.type == p.QUIT:
+                            running = False
+                            break
+
+                        if e.type == p.MOUSEBUTTONDOWN:
+                            location = p.mouse.get_pos()
+
+                            raw_row = location[0]
+                            raw_col = location[1]
+
+                            # Click the yes button
+                            if 150 <= raw_row <= 200 and 90 <= raw_col <= 120:
+                                board.promotion_selection_black = True
+                                high_squares = {}
+                                break
+                            # Click the no button
+                            elif 275 <= raw_row <= 325 and 90 <= raw_col <= 120:
+                                board.promotion_selection_black = False
+                                high_squares = {}
+                                break
+                            else:
+                                    pass
+                        else:
+                            continue # Look for a click/quit action
+
+                    # If yes is selected, change promotion flag, piece image 
+                    # and update the queen dictionary
+                    if board.promotion_selection_black:
+                        board.name_obj_dict[pawns].Promote_pawn()
+                        board.name_obj_dict[pawns].piece_image = IMAGES['bS']
+                        black_queen = {pawns: board.black_name_obj_dict[pawns].pos}
+
+                        # Move onto the next turn 
+                        black_promote = False
+                        did_pawn_promote_black = True
+                        board.promotion_selection_black = None
+                        num_turns += 1
+                        
+                    # If no selected, change the did_pawn_promotion flag to True
+                    # This will allow black to continue on with their turn as usual
+                    elif board.promotion_selection_black == False:
+                        if len(black_prom_pawns) == 1:
+                            black_promote = False
+                            board.promotion_selection_black = None
+                            did_pawn_promote_black = True
+                            black_promotion_count = 0
+                        else:
+                            # Once all the pawns have been exhausted, reset all the flags
+                            # an continue on with the game
+                            if black_promotion_count == (len(black_prom_pawns)-1):
+                                black_promote = False
+                                did_pawn_promote_black = True
+                                board.promotion_selection_black = None
+                                black_promotion_count = 0
+                                continue
+                            else: # add to the index for each pawn
+                                board.promotion_selection_black = None
+                                black_promotion_count += 1
+                    else:
+                        pass
+                
+     
+        # black promotion check
+        else:
+            if board.name_obj_dict[list(black_queen.keys())[0]].pos is None \
+                and num_turns > 2:
+                black_queen = {}
             else:
                 pass
     else:
@@ -427,7 +521,7 @@ while running:
                                 )
 
                                 if num_turns % 2 == 0:
-                                    if board.game_over_chkmt_stlmt_check(
+                                    if board.game_over_check(
                                         board.black_name_obj_dict,
                                         num_turns
                                     ) and bM.in_check:
@@ -436,7 +530,7 @@ while running:
                                         game_over = True
                                         break
 
-                                    elif board.game_over_chkmt_stlmt_check(
+                                    elif board.game_over_check(
                                         board.black_name_obj_dict,
                                         num_turns
                                     ) and not bM.in_check:
@@ -447,7 +541,7 @@ while running:
                                     else:
                                         pass
                                 else:
-                                    if board.game_over_chkmt_stlmt_check(
+                                    if board.game_over_check(
                                         board.white_name_obj_dict,
                                         num_turns
                                     ) and wM.in_check:
@@ -456,7 +550,7 @@ while running:
                                         game_over = True
                                         break
 
-                                    elif board.game_over_chkmt_stlmt_check(
+                                    elif board.game_over_check(
                                         board.white_name_obj_dict,
                                         num_turns
                                     ) and not wM.in_check:
@@ -469,7 +563,8 @@ while running:
 
                                 num_turns += 1
                                 # Change flag back to False to look for promotion again
-                                did_pawn_promote = False
+                                did_pawn_promote_white = False
+                                did_pawn_promote_black = False 
                             
                             else:
                                 break

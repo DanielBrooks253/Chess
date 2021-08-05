@@ -50,7 +50,7 @@ class Pieces:
 
         # Change the position to the new location
         self.pos = new_loc
-    
+
     def avail_move_check_check(self, available_moves, board_obj):
         '''
         This is used to filter out any moves that would result in a check for your king
@@ -220,6 +220,7 @@ class Pieces:
                 else:
                     black_loc_copy -= {i}
                     black_loc_copy |= {self.pos}
+
             return checks
 
 class MinGyi(Pieces):
@@ -473,18 +474,6 @@ class Ne(Pieces):
         Gets all available moves based off of the pieces position
         '''
         move = set()
-        if self.color == 'black':
-            if self.pos[0] == 7:
-                self.promoted = True
-                # self.piece_image = self.IMAGES['bF']
-            else:
-                pass
-        else:
-            if self.pos[0] == 0:
-                self.promoted = True 
-                # self.piece_image = self.IMAGES['wF']
-            else:
-                pass
 
         if self.promoted:
             return SitKe.Get_Moves(self)
