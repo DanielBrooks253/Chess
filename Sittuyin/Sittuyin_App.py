@@ -468,6 +468,8 @@ while running:
                         else:
                             invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
                                 moves, board)
+                            stalemate_moves = board.name_obj_dict[piece_name].stalemate_check(
+                                moves, board, num_turns)
 
                             # Removes all the moves that will not get you out
                             # of check

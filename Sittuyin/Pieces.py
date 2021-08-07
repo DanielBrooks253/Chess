@@ -10,6 +10,17 @@ class Pieces:
         self.set_up_coord = set_up_coord
 
     def place_piece(self, same_color_locs, *args):
+        '''
+        Return the places where a piece can be placed at the bgeinning of the game
+
+        :param same_color_locs (set): Location of all of the piece the same color
+            as the current piece.
+        :param args (tuple): Extra space to be used by other pieces when they are being
+            placed. (If needed)
+
+        :return (set): all available places froma  piec to be placed.
+        '''
+
         # all other pieces can be placed on the 2nd or third rows
         # There are no special restrictions
         if self.color == 'white':
@@ -284,9 +295,21 @@ class Yahhta(Pieces):
                                                                   list(zip([0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7]))])
     
     def place_piece(self, same_color_locs, opp_color_locs, opp_king_obj):
-        # Rooks must be placed on back rank
-        # cannot be placed opposite king on same file 
-        # if there are no other pieces between (besides pawn) between them
+        '''
+        Yahhta have specific rules when it comes to being palced at the beggining of the 
+        game.
+            1) Must be placed on the back rank
+            2) Cannot be placed oposite of king if there are no othe pieces besides
+                pawns. (Must have at least three piece on the file of the opposite king to
+                        be able to place a rook)
+
+        :param same_color_locs (set): location of same color pieces on the board
+        :param opp_color_locs (set): location of opposite color pieces on the board
+        :param opp_king_obj (object type MinGyi): opposing king object. Used for checking
+            if there is the proper amount of piece between the rook and king.
+
+        :return (set): All available sport for the king to be placed.
+        '''
 
         # All locations the rook can be placed
         if self.color == 'white':

@@ -66,6 +66,7 @@ class Board:
                         self.black_piece_loc,
                         self.white_piece_loc
                     )
+                
                     if moves is None:
                         continue
                     else:
@@ -74,6 +75,7 @@ class Board:
                     # Check if the pieces have any available moves to get out
                     # of check. If there are you are not in checkmate; break
                     # out of the loop.
+
                     if len(moves - invalid_moves) != 0:
                         return False
                     else:
@@ -255,6 +257,9 @@ class Board:
                                 self.SQ_SIZE, self.SQ_SIZE))
 
     def Header_Text(self, screen, names_obj, turns):
+        '''
+        Draw the names above the side bar when placing pieces
+        '''
         count = 0
         if turns == 0:
             side_locs = [i.set_up_coord for i in names_obj.values() if i.color == 'white']
@@ -305,6 +310,10 @@ class Board:
         screen.blit(textObject, textLocation.move(2,2))
 
     def drawMessgaeBox(self, screen, turns, white_promote, black_promote):
+        '''
+        Draw the promotion message box. Asking the player if they want to promote a pawn 
+            or not
+        '''
         font = p.font.SysFont('Comic Sans MS', 18, True, False)
 
         text_1 = 'Would You like to promote pawn?'
