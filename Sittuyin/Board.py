@@ -3,6 +3,22 @@ import pygame as p
 class Board:
 
     def __init__(self, white_pieces, black_pieces, height, width, dimension, y_dim=8, x_dim=8):
+        '''
+        Initializes the board
+
+        :param white_pieces (list): list of all the white piece objects on the board
+        :param black_pieces (list): list of all the black piece objects on the board
+        :param height (int): height of the game board (pixels)
+        :param width (int): width of the game board (pixels)
+        :param dimension (int): number of squares
+
+        :param y_dim (int): number of sqaures in the y direction (up and down)
+            defalut value: 8
+        :param x_dim (int): number of sqaures in the x direction (left and right)
+            defalut value: 8
+
+        :return Null (Nothing)
+        '''
         # get all of the location of the white and black pieces
         self.black_piece_loc = set([i.pos for i in black_pieces])
         self.white_piece_loc = set([i.pos for i in white_pieces])
@@ -158,6 +174,26 @@ class Board:
 
     def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, turns, 
                       white_promote=False, black_promote=False):
+        '''
+        Draws the current game state of the board
+
+        :param screen (object): Screen object
+        :param names_obj (dict): Dictionary that maps the piece name to the object
+        :param game_over (Bool): Flag to determine if the game is "over" no more available moves
+            for a certain color
+        :param text (str): Display text
+        :param num (int): Size of the text to be displayed
+        :param high_squares (set): The sqaures that need to be highlighted on the screen
+        :param king_pos (tuple): Location of the king on the board
+        :param turns (int): The number of turns that have passed
+
+        :param white_param (Bool): Flag to see if the white pieces can promote or not
+            defalut value: False
+        :param black_param (Bool): Flag to see if the black pieces can promote or not
+            defalut value: False
+
+        :return Null (Nothing)
+        '''
         if game_over:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj, turns)
@@ -166,7 +202,7 @@ class Board:
         elif white_promote or black_promote:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj, turns)
-            Board.drawMessgaeBox(self, screen, turns, white_promote, black_promote)
+            Board.drawMessgaeBox(self, screen, black_promote)
             
         else:
             Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
@@ -181,6 +217,15 @@ class Board:
                 Board.Header_Text(self, screen,names_obj, turns)
 
     def drawBoard(self, screen, high_squares, king_pos):
+        '''
+        Draw the game board
+
+        :param screen (object): Screen object
+        :param high_squares (set): Set of sqaures that need to be highlighted
+        :param king_pos (tuple): Location of the King
+
+        :return Null (Nothing)
+        '''
         # Red check; darkolivegreen moves
         # Draw the tiles on the board
         for r in range(self.x_dim):
@@ -229,6 +274,15 @@ class Board:
             p.draw.line(screen, p.Color('black'), (0, 512), (512, 0))
 
     def drawPieces(self, screen, names_obj, turns):
+        '''
+        Draw the pieces on the board
+
+        :param screen (object): Screen object
+        :param names_obj (dict): Dictionary that maps piece names to objects
+        :param turns (int): The number of turns that have gone by in the game
+
+        :return Null (Nothing)
+        '''
         # Draw the pieces on the board
         # x and y axis are flipped when drawing the pieces
         if turns == 1:
@@ -259,6 +313,12 @@ class Board:
     def Header_Text(self, screen, names_obj, turns):
         '''
         Draw the names above the side bar when placing pieces
+
+        :param scrren (objec): Screen object
+        :param names_obj (dict): Dictionary that maps piece names to objects
+        :param turns (int): The number of turns that have gone by in the game
+
+        :return NULL (Nothing)
         '''
         count = 0
         if turns == 0:
@@ -309,10 +369,16 @@ class Board:
         textObject = font.render(text, 0, p.Color('gray2'))
         screen.blit(textObject, textLocation.move(2,2))
 
-    def drawMessgaeBox(self, screen, turns, white_promote, black_promote):
+    def drawMessgaeBox(self, screen, black_promote):
         '''
         Draw the promotion message box. Asking the player if they want to promote a pawn 
             or not
+
+        :param screen (object): Screen object
+        :param black_promote (Bool): Flag to determine if black can promote or not
+            Determines where the message boax will be placed on the screen
+
+        :return NULL (Nothing)
         '''
         font = p.font.SysFont('Comic Sans MS', 18, True, False)
 

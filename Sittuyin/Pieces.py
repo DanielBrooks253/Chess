@@ -1,6 +1,22 @@
 ###### Sittuyin (Burmese Chess) ######
 class Pieces:
     def __init__(self, start_pos, set_up_coord, piece_name, piece_image, set_up_loc, color='white'):
+        '''
+        Initializes all the positions of the pieces
+
+        :param start_pos (tuple): Pieces slocation throughout the game
+        :param set_up_coord (tuple): Location for the pieces to be during the setup
+            of the game
+        :param piece_name (str): The name of the piece
+        :param piece_image (image): The image for the piece
+        :param set_up_loc (tuple): Where the image is to be displayed in the sidebar
+            at the start of the game
+
+        :param color (str): The color of the piece
+            default value: white
+
+        :return NULL (Nothing)
+        '''
         self.pos=start_pos
         self.piece_name=piece_name
         self.color = color.lower()
@@ -11,7 +27,7 @@ class Pieces:
 
     def place_piece(self, same_color_locs, *args):
         '''
-        Return the places where a piece can be placed at the bgeinning of the game
+        Return the places where a piece can be placed at the beginning of the game
 
         :param same_color_locs (set): Location of all of the piece the same color
             as the current piece.
@@ -274,6 +290,18 @@ class MinGyi(Pieces):
     def check_check(self, opp_objs, same_locs, opp_locs):
         '''
             See if the king is in check or not
+
+            :param opp_objs (dict): Dictionary containing all the opponents pieces
+                opponents means the color opposite the king whom the check_check is
+                being made
+            :param same_locs (list): Location of all the pieces that are on the same color
+                as the king being checked
+            :param opp_locs (list): Location of all the pieces that are on the opposite color
+                as the king being checked
+
+            :return (Bool)
+                True: King is in check
+                False: King is not in check
         '''
         opp_moves = list(filter(None, [None if i.pos is None else i.Available_Moves(8, 8, same_locs, opp_locs) 
                      for i in opp_objs.values()]))
@@ -340,6 +368,19 @@ class Yahhta(Pieces):
             return all_spots - same_color_locs
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+        '''
+        Get all the available moves for the Yahhta
+
+        :param y_dim (int): Number of squares in the y direction
+        :param x_dim (int): Number of squares in the x direction
+        :param same_color_locs (set): List of the location of all the same color pieces
+        :param opp_color_locs (set): List of the location of all the opposite color pieces
+
+        return (set or None):
+            None: There are no available moves
+            set: If there are moves
+
+        '''
         all_moves = Yahhta.Get_Moves(self)
         orth_moves_beyond_pieces = Yahhta.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
 
