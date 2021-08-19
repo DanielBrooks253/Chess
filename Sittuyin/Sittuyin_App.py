@@ -43,64 +43,64 @@ running = True
 
 # Inititalize all the pieces
 # Ne (Pawns or soliders)
-wn0 = Ne((5,0), set_up_coord = None, piece_name = 'wn0', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn1 = Ne((5,1),  set_up_coord = None, piece_name = 'wn1', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn2 = Ne((5,2),  set_up_coord = None, piece_name = 'wn2', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn3 = Ne((5,3),  set_up_coord = None, piece_name = 'wn3', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn4 = Ne((4,4),  set_up_coord = None, piece_name = 'wn4', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn5 = Ne((4,5),  set_up_coord = None, piece_name = 'wn5', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn6 = Ne((4,6),  set_up_coord = None, piece_name = 'wn6', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
-wn7 = Ne((4,7),  set_up_coord = None, piece_name = 'wn7', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wne0 = Ne((5,0), set_up_coord = None, piece_name = 'wn0', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wne1 = Ne((5,1),  set_up_coord = None, piece_name = 'wn1', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wne2 = Ne((5,2),  set_up_coord = None, piece_name = 'wn2', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wne3 = Ne((5,3),  set_up_coord = None, piece_name = 'wn3', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wne4 = Ne((4,4),  set_up_coord = None, piece_name = 'wn4', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wne5 = Ne((4,5),  set_up_coord = None, piece_name = 'wn5', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wne6 = Ne((4,6),  set_up_coord = None, piece_name = 'wn6', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
+wne7 = Ne((4,7),  set_up_coord = None, piece_name = 'wn7', piece_image=IMAGES['wn'], set_up_loc = None, color='white')
 
-bn0 = Ne((3,0),  set_up_coord = None, piece_name = 'bn0', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn1 = Ne((3,1),  set_up_coord = None, piece_name = 'bn1', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn2 = Ne((3,2),  set_up_coord = None, piece_name = 'bn2', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn3 = Ne((3,3),  set_up_coord = None, piece_name = 'bn3', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn4 = Ne((2,4),  set_up_coord = None, piece_name = 'bn4', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn5 = Ne((2,5),  set_up_coord = None, piece_name = 'bn5', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn6 = Ne((2,6),  set_up_coord = None, piece_name = 'bn6', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
-bn7 = Ne((2,7),  set_up_coord = None, piece_name = 'bn7', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bne0 = Ne((3,0),  set_up_coord = None, piece_name = 'bn0', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bne1 = Ne((3,1),  set_up_coord = None, piece_name = 'bn1', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bne2 = Ne((3,2),  set_up_coord = None, piece_name = 'bn2', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bne3 = Ne((3,3),  set_up_coord = None, piece_name = 'bn3', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bne4 = Ne((2,4),  set_up_coord = None, piece_name = 'bn4', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bne5 = Ne((2,5),  set_up_coord = None, piece_name = 'bn5', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bne6 = Ne((2,6),  set_up_coord = None, piece_name = 'bn6', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
+bne7 = Ne((2,7),  set_up_coord = None, piece_name = 'bn7', piece_image=IMAGES['bn'], set_up_loc = None, color='black')
 
 # The pawns are the only pieces on the board at the start of the game.
 # All other pieces are placed by the player at the start
 
 # Yahhta (Rooks)
-wy0 = Yahhta(None,  set_up_coord = (0,8), piece_name='wy0', piece_image=IMAGES['wy'], set_up_loc = (HEIGHT+10, 10), color='white')
-wy1 = Yahhta(None,  set_up_coord = (1,8), piece_name='wy1', piece_image=IMAGES['wy'], set_up_loc = (HEIGHT+10, SQ_SIZE+10), color='white')
+wyahhta0 = Yahhta(None,  set_up_coord = (0,8), piece_name='wy0', piece_image=IMAGES['wy'], set_up_loc = (HEIGHT+10, 10), color='white')
+wyahhta1 = Yahhta(None,  set_up_coord = (1,8), piece_name='wy1', piece_image=IMAGES['wy'], set_up_loc = (HEIGHT+10, SQ_SIZE+10), color='white')
 
-by0 = Yahhta(None,  set_up_coord = (0,8), piece_name='by0', piece_image=IMAGES['by'], set_up_loc = (HEIGHT+10, 10), color='black')
-by1 = Yahhta(None,  set_up_coord = (1,8), piece_name='by1', piece_image=IMAGES['by'], set_up_loc = (HEIGHT+10, SQ_SIZE+10), color='black')
+byahhta0 = Yahhta(None,  set_up_coord = (0,8), piece_name='by0', piece_image=IMAGES['by'], set_up_loc = (HEIGHT+10, 10), color='black')
+byahhta1 = Yahhta(None,  set_up_coord = (1,8), piece_name='by1', piece_image=IMAGES['by'], set_up_loc = (HEIGHT+10, SQ_SIZE+10), color='black')
 
 # Myin (Horse or knight)
-wm0 = Myin(None,  set_up_coord = (2,8), piece_name='wm0', piece_image=IMAGES['wm'], set_up_loc = (HEIGHT+10, SQ_SIZE*2+10), color='white')
-wm1 = Myin(None,  set_up_coord = (3,8), piece_name='wm1', piece_image=IMAGES['wm'], set_up_loc = (HEIGHT+10, SQ_SIZE*3+10), color='white')
+wmyin0 = Myin(None,  set_up_coord = (2,8), piece_name='wm0', piece_image=IMAGES['wm'], set_up_loc = (HEIGHT+10, SQ_SIZE*2+10), color='white')
+wmyin1 = Myin(None,  set_up_coord = (3,8), piece_name='wm1', piece_image=IMAGES['wm'], set_up_loc = (HEIGHT+10, SQ_SIZE*3+10), color='white')
 
-bm0 = Myin(None,  set_up_coord = (2,8), piece_name='bm0', piece_image=IMAGES['bm'], set_up_loc = (HEIGHT+10, SQ_SIZE*2+10),  color='black')
-bm1 = Myin(None,  set_up_coord = (3,8), piece_name='bm1', piece_image=IMAGES['bm'], set_up_loc = (HEIGHT+10, SQ_SIZE*3+10), color='black')
+bmyin0 = Myin(None,  set_up_coord = (2,8), piece_name='bm0', piece_image=IMAGES['bm'], set_up_loc = (HEIGHT+10, SQ_SIZE*2+10),  color='black')
+bmyin1 = Myin(None,  set_up_coord = (3,8), piece_name='bm1', piece_image=IMAGES['bm'], set_up_loc = (HEIGHT+10, SQ_SIZE*3+10), color='black')
 
 # Sin (Bishop)
-ws0 = Sin(None,  set_up_coord = (4,8), piece_name='ws0', piece_image=IMAGES['ws'], set_up_loc = (HEIGHT+10, SQ_SIZE*4+10), color='white')
-ws1 = Sin(None,  set_up_coord = (5,8), piece_name='ws1', piece_image=IMAGES['ws'], set_up_loc = (HEIGHT+10, SQ_SIZE*5+10), color='white')
+wsin0 = Sin(None,  set_up_coord = (4,8), piece_name='ws0', piece_image=IMAGES['ws'], set_up_loc = (HEIGHT+10, SQ_SIZE*4+10), color='white')
+wsin1 = Sin(None,  set_up_coord = (5,8), piece_name='ws1', piece_image=IMAGES['ws'], set_up_loc = (HEIGHT+10, SQ_SIZE*5+10), color='white')
 
-bs0 = Sin(None,  set_up_coord = (4,8), piece_name='bs0', piece_image=IMAGES['bs'], set_up_loc = (HEIGHT+10, SQ_SIZE*4+10), color='black')
-bs1 = Sin(None,  set_up_coord = (5,8), piece_name='bs1', piece_image=IMAGES['bs'], set_up_loc = (HEIGHT+10, SQ_SIZE*5+10), color='black')
+bsin0 = Sin(None,  set_up_coord = (4,8), piece_name='bs0', piece_image=IMAGES['bs'], set_up_loc = (HEIGHT+10, SQ_SIZE*4+10), color='black')
+bsin1 = Sin(None,  set_up_coord = (5,8), piece_name='bs1', piece_image=IMAGES['bs'], set_up_loc = (HEIGHT+10, SQ_SIZE*5+10), color='black')
 
 # Min-Gyi (King)
-wM = MinGyi(None,  set_up_coord = (6,8), piece_name='wM0', piece_image=IMAGES['wM'], set_up_loc = (HEIGHT+10, SQ_SIZE*6+10), color='white')
-bM = MinGyi(None,  set_up_coord = (6,8), piece_name='bM0', piece_image=IMAGES['bM'], set_up_loc = (HEIGHT+10, SQ_SIZE*6+10), color='black')
+wMinGyi = MinGyi(None,  set_up_coord = (6,8), piece_name='wM0', piece_image=IMAGES['wM'], set_up_loc = (HEIGHT+10, SQ_SIZE*6+10), color='white')
+bMinGyi = MinGyi(None,  set_up_coord = (6,8), piece_name='bM0', piece_image=IMAGES['bM'], set_up_loc = (HEIGHT+10, SQ_SIZE*6+10), color='black')
 
 # Sit-Ke (queen or general)
-wS = SitKe(None, set_up_coord = (7,8), piece_name='wS0', piece_image=IMAGES['wS'], set_up_loc = (HEIGHT+10, SQ_SIZE*7+10), color='white')
-bS = SitKe(None, set_up_coord = (7,8), piece_name='bS0', piece_image=IMAGES['bS'], set_up_loc = (HEIGHT+10, SQ_SIZE*7+10), color='black')
+wSitKe = SitKe(None, set_up_coord = (7,8), piece_name='wS0', piece_image=IMAGES['wS'], set_up_loc = (HEIGHT+10, SQ_SIZE*7+10), color='white')
+bSitKe = SitKe(None, set_up_coord = (7,8), piece_name='bS0', piece_image=IMAGES['bS'], set_up_loc = (HEIGHT+10, SQ_SIZE*7+10), color='black')
 
-board = Board([wn0, wn1, wn2, wn3,
-               wn4, wn5, wn6, wn7,
-               wy0, wy1, wm0, wm1,
-               ws0, ws1, wM, wS],
-              [bn0, bn1, bn2, bn3,
-               bn4, bn5, bn6, bn7,
-               by0, by1, bm0, bm1,
-               bs0, bs1, bM, bS], HEIGHT, WIDTH, DIMENSION)
+board = Board([wne0, wne1, wne2, wne3,
+               wne4, wne5, wne6, wne7,
+               wyahhta0, wyahhta1, wmyin0, wmyin1,
+               wsin0, wsin1, wMinGyi, wSitKe],
+              [bne0, bne1, bne2, bne3,
+               bne4, bne5, bne6, bne7,
+               byahhta0, byahhta1, bmyin0, bmyin1,
+               bsin0, bsin1, bMinGyi, bSitKe], HEIGHT, WIDTH, DIMENSION)
 
 high_squares = None
 
@@ -126,22 +126,22 @@ while running:
         clock = p.time.Clock()
         screen.fill(p.Color('white'))
 
-        board = Board([wn0, wn1, wn2, wn3,
-                    wn4, wn5, wn6, wn7,
-                    ws0, ws1, wm0, wm1,
-                    wy0, wy1, wM, wS],
-                    [bn0, bn1, bn2, bn3,
-                    bn4, bn5, bn6, bn7,
-                    bs0, bs1, bm0, bm1,
-                    by0, by1, bM, bS], 
+        board = Board([wne0, wne1, wne2, wne3,
+               wne4, wne5, wne6, wne7,
+               wyahhta0, wyahhta1, wmyin0, wmyin1,
+               wsin0, wsin1, wMinGyi, wSitKe],
+              [bne0, bne1, bne2, bne3,
+               bne4, bne5, bne6, bne7,
+               byahhta0, byahhta1, bmyin0, bmyin1,
+               bsin0, bsin1, bMinGyi, bSitKe], 
                     HEIGHT, WIDTH, DIMENSION)
 
         # Clean up items that are not needed anymore
         del board.white_set_up_locs
         del board.black_set_up_locs
 
-        black_queen = {'bS0': bS.pos}
-        white_queen = {'wS0': wS.pos}
+        black_queen = {'bS0': bSitKe.pos}
+        white_queen = {'wS0': wSitKe.pos}
 
         # Check to see if paw can promote
         # if pawn cannot promote continue with logic
@@ -524,7 +524,7 @@ while running:
                                     if board.game_over_check(
                                         board.black_name_obj_dict,
                                         num_turns
-                                    ) and bM.in_check:
+                                    ) and bMinGyi.in_check:
 
                                         text = 'Checkmate!! White Wins'
                                         game_over = True
@@ -533,7 +533,7 @@ while running:
                                     elif board.game_over_check(
                                         board.black_name_obj_dict,
                                         num_turns
-                                    ) and not bM.in_check:
+                                    ) and not bMinGyi.in_check:
 
                                         text = 'Stalemate!! Draw Game'
                                         game_over = True
@@ -544,7 +544,7 @@ while running:
                                     if board.game_over_check(
                                         board.white_name_obj_dict,
                                         num_turns
-                                    ) and wM.in_check:
+                                    ) and wMinGyi.in_check:
 
                                         text = 'Checkmate!! Black Wins'
                                         game_over = True
@@ -553,7 +553,7 @@ while running:
                                     elif board.game_over_check(
                                         board.white_name_obj_dict,
                                         num_turns
-                                    ) and not wM.in_check:
+                                    ) and not wMinGyi.in_check:
 
                                         text = 'Stalemate!! Draw Game'
                                         game_over = True

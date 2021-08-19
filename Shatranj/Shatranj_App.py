@@ -39,61 +39,61 @@ player_Clicks = [] # keep track of the number of clicks the user does
 
 # Initialize all of the pieces on the board
 # Pujada (Pawns)
-wp0 = Pujada((6,0), piece_name='wp0', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
-wp1 = Pujada((6,1), piece_name='wp1', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
-wp2 = Pujada((6,2), piece_name='wp2', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
-wp3 = Pujada((6,3), piece_name='wp3', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
-wp4 = Pujada((6,4), piece_name='wp4', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
-wp5 = Pujada((6,5), piece_name='wp5', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
-wp6 = Pujada((6,6), piece_name='wp6', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
-wp7 = Pujada((6,7), piece_name='wp7', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
+wpujada0 = Pujada((6,0), piece_name='wp0', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
+wpujada1 = Pujada((6,1), piece_name='wp1', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
+wpujada2 = Pujada((6,2), piece_name='wp2', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
+wpujada3 = Pujada((6,3), piece_name='wp3', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
+wpujada4 = Pujada((6,4), piece_name='wp4', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
+wpujada5 = Pujada((6,5), piece_name='wp5', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
+wpujada6 = Pujada((6,6), piece_name='wp6', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
+wpujada7 = Pujada((6,7), piece_name='wp7', piece_image = IMAGES['wp'], IMAGES = IMAGES, color='white')
 
-bp0 = Pujada((1,0), piece_name='bp0', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
-bp1 = Pujada((1,1), piece_name='bp1', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
-bp2 = Pujada((1,2), piece_name='bp2', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
-bp3 = Pujada((1,3), piece_name='bp3', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
-bp4 = Pujada((1,4), piece_name='bp4', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
-bp5 = Pujada((1,5), piece_name='bp5', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
-bp6 = Pujada((1,6), piece_name='bp6', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
-bp7 = Pujada((1,7), piece_name='bp7', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
+bpujada0 = Pujada((1,0), piece_name='bp0', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
+bpujada1 = Pujada((1,1), piece_name='bp1', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
+bpujada2 = Pujada((1,2), piece_name='bp2', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
+bpujada3 = Pujada((1,3), piece_name='bp3', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
+bpujada4 = Pujada((1,4), piece_name='bp4', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
+bpujada5 = Pujada((1,5), piece_name='bp5', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
+bpujada6 = Pujada((1,6), piece_name='bp6', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
+bpujada7 = Pujada((1,7), piece_name='bp7', piece_image = IMAGES['bp'], IMAGES = IMAGES, color='black')
 
 # Rukh (Rooks)
-wr0 = Rukh((7,0), piece_name='wr0', piece_image = IMAGES['wr'], IMAGES = IMAGES, color='white')
-wr1 = Rukh((7,7), piece_name='wr1', piece_image = IMAGES['wr'], IMAGES = IMAGES, color='white')
+wrukh0 = Rukh((7,0), piece_name='wr0', piece_image = IMAGES['wr'], IMAGES = IMAGES, color='white')
+wrukh1 = Rukh((7,7), piece_name='wr1', piece_image = IMAGES['wr'], IMAGES = IMAGES, color='white')
 
-br0 = Rukh((0,0), piece_name='br0', piece_image = IMAGES['br'], IMAGES = IMAGES, color='black')
-br1 = Rukh((0,7), piece_name='br1', piece_image = IMAGES['br'], IMAGES = IMAGES, color='black')
+brukh0 = Rukh((0,0), piece_name='br0', piece_image = IMAGES['br'], IMAGES = IMAGES, color='black')
+brukh1 = Rukh((0,7), piece_name='br1', piece_image = IMAGES['br'], IMAGES = IMAGES, color='black')
 
 # Asp (Horses)
-wa0 = Asp((7,1), piece_name='wa0', piece_image = IMAGES['wa'], IMAGES = IMAGES, color='white')
-wa1 = Asp((7,6), piece_name='wa1', piece_image = IMAGES['wa'], IMAGES = IMAGES, color='white')
+wasp0 = Asp((7,1), piece_name='wa0', piece_image = IMAGES['wa'], IMAGES = IMAGES, color='white')
+wasp1 = Asp((7,6), piece_name='wa1', piece_image = IMAGES['wa'], IMAGES = IMAGES, color='white')
 
-ba0 = Asp((0,1), piece_name='ba0', piece_image = IMAGES['ba'], IMAGES = IMAGES, color='black')
-ba1 = Asp((0,6), piece_name='ba1', piece_image = IMAGES['ba'], IMAGES = IMAGES, color='black')
+basp0 = Asp((0,1), piece_name='ba0', piece_image = IMAGES['ba'], IMAGES = IMAGES, color='black')
+basp1 = Asp((0,6), piece_name='ba1', piece_image = IMAGES['ba'], IMAGES = IMAGES, color='black')
 
 # Pil (Elephants)
-we0 = Pil((7,2), piece_name='we0', piece_image = IMAGES['we'], IMAGES = IMAGES, color='white')
-we1 = Pil((7,5), piece_name='we1', piece_image = IMAGES['we'], IMAGES = IMAGES, color='white')
+welephant0 = Pil((7,2), piece_name='we0', piece_image = IMAGES['we'], IMAGES = IMAGES, color='white')
+welephant1 = Pil((7,5), piece_name='we1', piece_image = IMAGES['we'], IMAGES = IMAGES, color='white')
 
-be0 = Pil((0,2), piece_name='be0', piece_image = IMAGES['be'], IMAGES = IMAGES, color='black')
-be1 = Pil((0,5), piece_name='be1', piece_image = IMAGES['be'], IMAGES = IMAGES, color='black')
+belephant0 = Pil((0,2), piece_name='be0', piece_image = IMAGES['be'], IMAGES = IMAGES, color='black')
+belephant1 = Pil((0,5), piece_name='be1', piece_image = IMAGES['be'], IMAGES = IMAGES, color='black')
 
 # Shah (King) and Farzin (Queen)
-wS = Shah((7,3), piece_name='wS0', piece_image = IMAGES['wS'], IMAGES = IMAGES, color='white')
-wF = Farzin((7,4), piece_name='wF0', piece_image = IMAGES['wF'], IMAGES = IMAGES, color='white')
+wShah = Shah((7,3), piece_name='wS0', piece_image = IMAGES['wS'], IMAGES = IMAGES, color='white')
+wFarzin = Farzin((7,4), piece_name='wF0', piece_image = IMAGES['wF'], IMAGES = IMAGES, color='white')
 
-bS = Shah((0,3), piece_name='bS0', piece_image = IMAGES['bS'], IMAGES = IMAGES, color='black')
-bF = Farzin((0,4), piece_name='bF0', piece_image = IMAGES['bF'], IMAGES = IMAGES, color='black')
+bShah = Shah((0,3), piece_name='bS0', piece_image = IMAGES['bS'], IMAGES = IMAGES, color='black')
+bFarzin = Farzin((0,4), piece_name='bF0', piece_image = IMAGES['bF'], IMAGES = IMAGES, color='black')
 
 # Set the pieces on the board for the start of the match
-board = Board([wp0, wp1, wp2, wp3,
-                wp4, wp5, wp6, wp7,
-                wr0, wr1, wa0, wa1,
-                we0, we1, wS, wF], 
-              [bp0, bp1, bp2, bp3,
-                bp4, bp5, bp6, bp7,
-                br0, br1, ba0, ba1,
-                be0, be1, bS, bF], HEIGHT, WIDTH, DIMENSION)
+board = Board([wpujada0, wpujada1, wpujada2, wpujada3,
+                wpujada4, wpujada5, wpujada6, wpujada7,
+                wrukh0, wrukh1, wasp0, wasp1,
+                welephant0, welephant1, wShah, wFarzin], 
+              [bpujada0, bpujada1, bpujada2, bpujada3,
+                bpujada4, bpujada5, bpujada6, bpujada7,
+                brukh0, brukh1, basp0, basp1,
+                belephant0, belephant1, bShah, bFarzin], HEIGHT, WIDTH, DIMENSION)
 
 high_squares = None
 while running:
@@ -196,7 +196,7 @@ while running:
                                 if board.game_over_chkmt_stlmt_check(
                                     board.black_name_obj_dict,
                                     num_turns
-                                ) and bS.in_check:
+                                ) and bShah.in_check:
 
                                     text = 'Checkmate!! White Wins'
                                     game_over = True
@@ -205,7 +205,7 @@ while running:
                                 elif board.game_over_chkmt_stlmt_check(
                                     board.black_name_obj_dict,
                                     num_turns
-                                ) and not bS.in_check:
+                                ) and not bShah.in_check:
 
                                     text = 'Stalemate!! White Wins'
                                     game_over = True
@@ -219,7 +219,7 @@ while running:
                                 if board.game_over_chkmt_stlmt_check(
                                     board.white_name_obj_dict,
                                     num_turns
-                                ) and wS.in_check:
+                                ) and wShah.in_check:
 
                                     text = '!! Checkmate Black Wins !!'
                                     game_over = True
@@ -228,7 +228,7 @@ while running:
                                 elif board.game_over_chkmt_stlmt_check(
                                     board.white_name_obj_dict,
                                     num_turns
-                                ) and not wS.in_check:
+                                ) and not wShah.in_check:
 
                                     text = '!! Stalemate Black Wins !!'
                                     game_over=True

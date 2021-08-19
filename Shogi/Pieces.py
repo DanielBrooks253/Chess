@@ -1,4 +1,23 @@
 ###### Shogi (Japanese Chess) ######
+class Pieces:
+    def __init__(self, start_pos, piece_name, piece_image, promoted_image, color='white'):
+        '''
+        Initalize the pieces class
+
+        :param start_pos (tuple): The position of the piece on the board (y,x)
+        :param piece_name (str): The name given to the piece
+        :param piece_image (array pixels): The image to be displayed for the piece
+
+        :param color (str): The color of the piece
+            :default value: white
+
+        :return Null (Nothing)
+        '''
+        self.promoted_image = promoted_image
+        self.pos=start_pos
+        self.piece_name=piece_name
+        self.color = color.lower()
+        self.piece_image = piece_image
 
 class Kaku(Pieces):
     '''
@@ -7,9 +26,9 @@ class Kaku(Pieces):
         1) When promoted, can move one space orthogonally
     '''
 
-    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+    def __init__(self, start_pos, piece_name, piece_image, promoted_image, color='white', promoted=False):
         self.promoted=promoted
-        super().__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_name, piece_image, promoted_image, color)
 
     def Get_Moves(self):
         if self.promoted:
@@ -38,9 +57,9 @@ class Hisha(Pieces):
         1) When promoted, can move one space diagonally
     '''
 
-    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+    def __init__(self, start_pos, piece_name, piece_image, promoted_image, color='white', promoted=False):
         self.promoted=promoted
-        super().__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_name, piece_image, promoted_image, color)
 
     def Get_Moves(self):
         if self.promoted:
@@ -76,9 +95,9 @@ class GinSho(Pieces):
         2) Promotes to a gold general
     '''
 
-    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+    def __init__(self, start_pos, piece_name, piece_image, promoted_image, color='white', promoted=False):
         self.promoted=promoted
-        super().__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_name, piece_image, promoted_image, color)
 
     def Get_Moves(self):
         if self.promoted:
@@ -98,9 +117,9 @@ class KeiMa(Pieces):
         3) Promotes to a gold general
     '''
 
-    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+    def __init__(self, start_pos, piece_name, piece_image, promoted_image, color='white', promoted=False):
         self.promoted=promoted
-        super().__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_name, piece_image, promoted_image, color)
 
     def Get_Moves(self):
         if self.promoted:
@@ -118,9 +137,9 @@ class Kyosha(Pieces):
         1) Can move as many spaces as it wants straight forward
         2) Promotes to a gold general
     '''
-    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+    def __init__(self, start_pos, piece_name, piece_image, promoted_image, color='white', promoted=False):
         self.promoted=promoted
-        super().__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_name, piece_image, promoted_image, color)
 
     def Get_Moves(self):
         if self.promoted:
@@ -139,9 +158,9 @@ class Fuhyo(Pieces):
         2) Promotes to gold general
     '''
 
-    def __init__(self, start_pos, piece_name, color='white', promoted=False):
+    def __init__(self, start_pos, piece_name, piece_image, promoted_image, color='white', promoted=False):
         self.promoted=promoted
-        super().__init__(start_pos, piece_name, color)
+        super().__init__(start_pos, piece_name, piece_image, promoted_image, color)
 
     def Get_Moves(self):
         if self.promoted:
