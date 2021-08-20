@@ -41,7 +41,135 @@ class Board:
         self.WIDTH = width
         self.SQ_SIZE = height //dimension
 
-    def drawGameState(self, screen, names_obj, game_over, text, num, *args):
+        # House the number of each piece type that has been captured.
+        self.white_capture_counts_dict = {'fuhyo':0, 'kaku':0, 'hisha':0, 'kyosha':0,
+                                   'keima':0, 'ginsho':0, 'kinsho':0}
+        self.black_capture_counts_dict = {'fuhyo':0, 'kaku':0, 'hisha':0, 'kyosha':0,
+                                   'keima':0, 'ginsho':0, 'kinsho':0}
+    
+    def game_over_check(self, color_name_obj, num_turns):
+        '''
+        Checks to see if the game is over (No available moves)
+
+        :param color_name_obj (dict): a dictionary containing the objects of the color pieces
+            that did not make a move.
+            ex) If white just moved, color_name_obj would be a dict of the black pieces. Checking
+                to see if the white move resulted in a checkmate or stalemate for the black king.
+
+            :key: piece name
+            :value: the class associated with the piece
+        :param num_turns (int): The number of turns that have been taken in the game. This is used
+                to determine which moves to check 
+
+            num_turns % 2 == 0: blacks moves
+            num_turns % 2 != 0: whites moves
+
+        :return Bool
+            :True means there are no available moves to make
+            :False means there are available moves for the king and other pieces
+        '''
+        for i in color_name_obj.values():
+            if i.pos is None:
+                continue
+            else:
+                if num_turns % 2 == 0: # White move
+                    moves = i.Available_Moves(
+                        self.x_dim,
+                        self.y_dim,
+                        self.black_piece_loc,
+                        self.white_piece_loc
+                    )
+                
+                    if moves is None:
+                        continue
+                    else:
+                        invalid_moves = i.avail_move_check_check(moves, self)
+
+                    # Check if the pieces have any available moves to get out
+                    # of check. If there are you are not in checkmate; break
+                    # out of the loop.
+
+                    if len(moves - invalid_moves) != 0:
+                        return False
+                    else:
+                        continue
+
+                else: # Black Move
+                    moves = i.Available_Moves(
+                        self.x_dim,
+                        self.y_dim,
+                        self.white_piece_loc,
+                        self.black_piece_loc
+                    )
+                    
+                    if moves is None:
+                        continue
+                    else:
+                        invalid_moves = i.avail_move_check_check(moves, self)
+
+                    if len(moves - invalid_moves) != 0:
+                        return False
+                    else:
+                        continue
+        return True
+    
+    def update_locs(self, color, old_move, new_move, is_captured=False, captured_piece=None):
+        '''
+        Once a move is made, all of the dictionaries will update with the new locations and
+        objects will updated their positions if there was a capture (Change pos to None if captured)
+
+        :param color (str): The color of the piece that is being moved
+        :param old_move (tuple): The location that the piece is currently on (y,x)
+        :param new_move( tuple): The location to which the piece will mvoe to (y,x)
+        
+        :param is_catpured (Bool): Checks to see if the move resulted in a captured piece or not
+            :default value: False
+        :param captured_piece (str): The piece_name/id of of the piece that was captured
+            :defalut value: None
+
+        :return: Null (Nothing)
+        '''
+        self.loc_names[new_move] = self.loc_names[old_move]
+        del self.loc_names[old_move]
+
+        if is_captured: # Remove piece from opposing color and update sets
+            # Change the captured pieces position to None
+            self.name_obj_dict[captured_piece].pos = None
+            
+            if color == 'white':
+                self.black_name_obj_dict[captured_piece].pos = None
+
+                # Remove the captured piece location from the location dictionary
+                self.black_piece_loc -= {new_move}
+
+                # Switch the old and new locations ofr the piece that moved
+                rm_old_move = self.white_piece_loc - {old_move}
+                add_new_move = rm_old_move | {new_move}
+
+                # Update the color locations
+                self.white_piece_loc = add_new_move
+
+            else:
+                self.white_name_obj_dict[captured_piece].pos = None
+                self.white_piece_loc -= {new_move}
+
+                rm_old_move = self.black_piece_loc - {old_move}
+                add_new_move = rm_old_move | {new_move}
+
+                self.black_piece_loc = add_new_move
+        else: # Update sets
+            if color =='white':
+                rm_old_move = self.white_piece_loc - {old_move}
+                add_new_move = rm_old_move | {new_move}
+
+                self.white_piece_loc = add_new_move
+            else:
+                rm_old_move = self.black_piece_loc - {old_move}
+                add_new_move = rm_old_move | {new_move}
+
+                self.black_piece_loc = add_new_move
+
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos):
         '''
         Responsible for drawing the game board, pieces and end of game text
 
@@ -67,21 +195,20 @@ class Board:
         return: Null (Nothing)
         '''
         if game_over:
-            Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
+            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj)
             Board.drawText(self, screen, text, num)
         else:
-            Board.drawBoard(self, screen, args) # Draw board first so pieces do not get overwritten
+            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
             Board.drawPieces(self, screen, names_obj)
 
-    def drawBoard(self, screen, args):
+    def drawBoard(self, screen, high_squares, king_pos):
         # Red check; darkolivegreen moves
         # Draw the tiles on the board
-        colors = [p.Color("wheat1"), p.Color("darkkhaki")]
 
         for r in range(self.x_dim):
             for c in range(self.y_dim):
-                p.draw.rect(screen, 'wheat1', 
+                p.draw.rect(screen, p.Color('wheat1'), 
                    p.Rect(r*self.SQ_SIZE, c*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
                 p.draw.rect(screen, p.Color('black'),
                    p.Rect((r*self.SQ_SIZE-1), (c*self.SQ_SIZE-1), 
@@ -89,26 +216,26 @@ class Board:
 
         # Check to see if a place has been clicked 
         # Highlight the space and the pieces moves in grey
-        if args[0] is not None:
-            if type(args[0]) is tuple: 
-                if args[0] in self.loc_names.keys():
+        if high_squares is not None:
+            if type(high_squares) is tuple: 
+                if high_squares in self.loc_names.keys() or high_squares in self.white_set_up_locs or high_squares in self.black_set_up_locs:
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
-                        p.Rect(args[0][1]*self.SQ_SIZE, args[0][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                        p.Rect(high_squares[1]*self.SQ_SIZE, high_squares[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
                     p.draw.rect(screen, p.Color('black'),
-                        p.Rect((args[0][1]*self.SQ_SIZE-1), (args[0][0]*self.SQ_SIZE-1), 
+                        p.Rect((high_squares[1]*self.SQ_SIZE-1), (high_squares[0]*self.SQ_SIZE-1), 
                                 (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
             else:
-                for i in args[0]:
+                for i in high_squares:
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
                        p.Rect(i[1]*self.SQ_SIZE, i[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
                     p.draw.rect(screen, p.Color('black'),
                        p.Rect((i[1]*self.SQ_SIZE-1), (i[0]*self.SQ_SIZE-1), 
                                (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
-        if args[1] is not None:
+        if king_pos is not None:
             p.draw.rect(screen, p.Color('red'), 
-                        p.Rect(args[1][1]*self.SQ_SIZE, args[1][0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+                        p.Rect(king_pos[1]*self.SQ_SIZE, king_pos[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
             p.draw.rect(screen, p.Color('black'),
-                        p.Rect((args[1][1]*self.SQ_SIZE-1), (args[1][0]*self.SQ_SIZE-1), 
+                        p.Rect((king_pos[1]*self.SQ_SIZE-1), (king_pos[0]*self.SQ_SIZE-1), 
                            (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
     def drawPieces(self, screen, names_obj):
@@ -129,9 +256,14 @@ class Board:
             if piece.pos is None:
                 continue
             else:
-                screen.blit(piece.piece_image, 
-                    p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
-                            self.SQ_SIZE, self.SQ_SIZE))
+                if piece.promoted:
+                    screen.blit(piece.promoted_image, 
+                        p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
+                                self.SQ_SIZE, self.SQ_SIZE))
+                else:
+                    screen.blit(piece.piece_image, 
+                        p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
+                                self.SQ_SIZE, self.SQ_SIZE))
                 
     def drawText(self, screen, text, num):
         '''
