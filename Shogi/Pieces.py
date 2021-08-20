@@ -234,7 +234,7 @@ class Kaku(Pieces):
         1) When promoted, can move one space orthogonally
     '''
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
         '''
         Filter out all of the moves that are off of the board and on a space occupied by
             the same color
@@ -337,7 +337,7 @@ class Hisha(Pieces):
         1) When promoted, can move one space diagonally
     '''
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
         '''
         Filter out all of the moves that are off of the board and on a space occupied by
             the same color
@@ -352,14 +352,16 @@ class Hisha(Pieces):
             checks)
         '''
         all_moves = Hisha.Get_Moves(self)
+        orth_moves_beyon_pieces = Hisha.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
+        rm_over_pieces = rm_same_color - orth_moves_beyon_pieces
         
         if len(rm_same_color) == 0:
             return None
         else:
-            return rm_same_color
+            return rm_over_pieces
 
     def Get_Moves(self):
         if self.promoted:
@@ -372,6 +374,88 @@ class Hisha(Pieces):
                                                                       list(zip([-1,-2,-3,-4,-5,-6,-7,-8], [0,0,0,0,0,0,0,0])) + \
                                                                       list(zip([0,0,0,0,0,0,0,0], [1,2,3,4,5,6,7,8])) + \
                                                                       list(zip([0,0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7,-8]))])
+
+    def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim):
+        '''
+        Rooks cannot jump over other pieces, therefore the moves the rook can make is limited
+        by the closest piece in each direction orthogonally.
+
+        This function finds the closest orthogonal pieces (If there are any) and creates a set of
+        unavailable moves accordingly
+
+        :param same_color_locs (list): locations of all the pieces that share the same color
+            as the selected piece
+        :param opp_color_locs (list):locations of all the pieces that have a differnet color
+            as the selected piece
+        :param y_dim (int): number of squares in the y direction (up/down)
+        :param x_dim (int): number of squares in the x direction (right/left)
+
+        :return (set): all of the moves the rook cannot take due to there being a 
+            piece in the way. Used to filter all of the available moves.
+        '''
+        # Get the locations pf all the pieces on the board
+        combine_locs = same_color_locs | opp_color_locs
+
+        combine_locs = list(filter(None, combine_locs))
+
+        # Set flags for the orthogonal locations to see if the same color
+        # piece is closest in any of the four directions
+        same_color_up = False
+        same_color_down = False
+        same_color_left = False
+        same_color_right = False
+
+        # Get a list of pieces that are ont he same file as the current piece
+        closest_up = list(filter(lambda x: x[1] == self.pos[1] and x[0] < self.pos[0], combine_locs))
+        closest_down = list(filter(lambda x: x[1] == self.pos[1] and x[0] > self.pos[0], combine_locs))
+        closest_left = list(filter(lambda x: x[0] == self.pos[0] and x[1] < self.pos[1], combine_locs))
+        closest_right = list(filter(lambda x: x[0] == self.pos[0] and x[1] > self.pos[1], combine_locs))
+
+        # Find the closest piece out of the list of same file candidates
+        closest_up = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
+        closest_down = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]
+        closest_left = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]
+        closest_right = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[0]
+
+        # Check to see if the closest piece is the same color or not as the current peice
+        if len({closest_up} & same_color_locs) != 0: same_color_up = True
+        if len({closest_down} & same_color_locs) != 0: same_color_down = True
+        if len({closest_left} & same_color_locs) != 0: same_color_left = True
+        if len({closest_right} & same_color_locs) != 0: same_color_right = True
+
+        # If the closest piece is of the same color, you can move to the 
+        # space one unit before. If it is of a different color, you can move
+        # onto the same piece and capture.
+        if same_color_up and closest_up is not None:
+            up_no = set(zip(range(closest_up[0], -1, -1), [closest_up[1]]*(closest_up[0]+1)))
+        elif not same_color_up and closest_up is not None:
+            up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*(closest_up[0]+1)))
+        else:
+            up_no = set()
+
+        if same_color_down and closest_down is not None:
+            down_no = set(zip(range((closest_down[0]), y_dim), [closest_down[1]] * (((y_dim-1) - closest_down[0]) + closest_down[0]+1)))
+        elif not same_color_down and closest_down is not None:
+            down_no = set(zip(range((closest_down[0]+1), y_dim), [closest_down[1]] * ((y_dim - closest_down[0]) + closest_down[0]+1)))
+        else:
+            down_no = set()
+
+        if same_color_left and closest_left is not None:
+            left_no = set(zip([closest_left[0]]*(closest_left[1]+1), range((closest_left[1]), -1, -1)))
+        elif not same_color_left and closest_left is not None:
+            left_no = set(zip([closest_left[0]]*(closest_left[1]+1), range((closest_left[1]-1), -1, -1)))
+        else:
+            left_no = set()
+
+        if same_color_right and closest_right is not None:
+            right_no = set(zip([closest_right[0]] * (((x_dim-1)-closest_right[1]+1) + closest_right[1]), range((closest_right[1]), x_dim)))
+        elif not same_color_right and closest_right is not None:
+            right_no = set(zip([closest_right[0]] * ((x_dim-closest_right[1]+1) + closest_right[1]), range((closest_right[1]+1), x_dim)))
+        else:
+            right_no = set()
+
+        # Return the union of the four directions
+        return up_no|down_no|left_no|right_no
 
 class KinSho(Pieces):
     '''
@@ -432,7 +516,11 @@ class GinSho(Pieces):
         :return rm_checks (set): All possible moves a piece can make (Does not take into account
             checks)
         '''
-        all_moves = GinSho.Get_Moves(self)
+        if self.promoted: # promotes to a gold general move set
+            all_moves = KinSho.Get_Moves(self)
+        else:
+            all_moves = GinSho.Get_Moves(self)
+
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
@@ -474,8 +562,16 @@ class KeiMa(Pieces):
         :return rm_checks (set): All possible moves a piece can make (Does not take into account
             checks)
         '''
-        all_moves = KeiMa.Get_Moves(self)
-        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+        # An unpromoted knight cannot mvoe to the end of the board.
+        # This is because it would have no available moves once it gets there.
+        # The pawn must promote or not move at all
+
+        if self.promoted: # promotes to gold general move set
+            all_moves = KinSho.Get_Moves(self)
+            on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+        else:
+            all_moves = KeiMa.Get_Moves(self)
+            on_board = set(filter(lambda x: x[0]<(y_dim-2) and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
         
@@ -501,7 +597,7 @@ class Kyosha(Pieces):
         2) Promotes to a gold general
     '''
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
         '''
         Filter out all of the moves that are off of the board and on a space occupied by
             the same color
@@ -515,15 +611,31 @@ class Kyosha(Pieces):
         :return rm_checks (set): All possible moves a piece can make (Does not take into account
             checks)
         '''
-        all_moves = Kyosha.Get_Moves(self)
-        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+        if self.promoted:
+            all_moves = KinSho.Get_Moves(self)
+            on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
-        rm_same_color = on_board - same_color_locs
-        
-        if len(rm_same_color) == 0:
-            return None
+            rm_same_color = on_board - same_color_locs
+            if len(rm_same_color) == 0:
+                return None
+            else:
+                return rm_same_color
         else:
-            return rm_same_color
+            # An unpromoted lance cannot move to the end of the board.
+            # This is because it would have no available moves once it gets there.
+            # The pawn must promote or not move at all
+
+            all_moves = Kyosha.Get_Moves(self)
+            on_board = set(filter(lambda x: x[0]<(y_dim-1) and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+            orth_moves_beyong_pieces = Kyosha.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, (y_dim-1), x_dim)
+
+            rm_same_color = on_board - same_color_locs
+            rm_over_pieces = rm_same_color - orth_moves_beyong_pieces
+            
+            if len(rm_same_color) == 0:
+                return None
+            else:
+                return rm_over_pieces
 
     def Get_Moves(self):
         if self.promoted:
@@ -533,6 +645,55 @@ class Kyosha(Pieces):
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,0,0,0,0,0,0], range(1,9))])
             else:
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,0,0,0,0,0,0], range(-8,0))])
+
+    def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim):
+        '''
+        Rooks cannot jump over other pieces, therefore the moves the rook can make is limited
+        by the closest piece in each direction orthogonally.
+
+        This function finds the closest orthogonal pieces (If there are any) and creates a set of
+        unavailable moves accordingly
+
+        :param same_color_locs (list): locations of all the pieces that share the same color
+            as the selected piece
+        :param opp_color_locs (list):locations of all the pieces that have a differnet color
+            as the selected piece
+        :param y_dim (int): number of squares in the y direction (up/down)
+        :param x_dim (int): number of squares in the x direction (right/left)
+
+        :return (set): all of the moves the rook cannot take due to there being a 
+            piece in the way. Used to filter all of the available moves.
+        '''
+        # Get the locations pf all the pieces on the board
+        combine_locs = same_color_locs | opp_color_locs
+
+        combine_locs = list(filter(None, combine_locs))
+
+        # Set flags for the orthogonal locations to see if the same color
+        # piece is closest in any of the four directions
+        same_color_up = False
+
+        # Get a list of pieces that are ont he same file as the current piece
+        closest_up = list(filter(lambda x: x[1] == self.pos[1] and x[0] < self.pos[0], combine_locs))
+        
+        # Find the closest piece out of the list of same file candidates
+        closest_up = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
+        
+        # Check to see if the closest piece is the same color or not as the current peice
+        if len({closest_up} & same_color_locs) != 0: same_color_up = True
+
+        # If the closest piece is of the same color, you can move to the 
+        # space one unit before. If it is of a different color, you can move
+        # onto the same piece and capture.
+        if same_color_up and closest_up is not None:
+            up_no = set(zip(range(closest_up[0], -1, -1), [closest_up[1]]*(closest_up[0]+1)))
+        elif not same_color_up and closest_up is not None:
+            up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*(closest_up[0]+1)))
+        else:
+            up_no = set()
+
+        # Return the union of the four directions
+        return up_no
 
 class Fuhyo(Pieces):
     '''
@@ -556,8 +717,17 @@ class Fuhyo(Pieces):
         :return rm_checks (set): All possible moves a piece can make (Does not take into account
             checks)
         '''
-        all_moves = Fuhyo.Get_Moves(self)
-        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+
+        # An unpromoted pawn cannot move to the end of the board.
+        # This is because it would have no available moves once it gets there.
+        # The pawn must promote or not move at all
+
+        if self.promoted:
+            all_moves = KinSho.Get_Moves(self)
+            on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+        else:
+            all_moves = Fuhyo.Get_Moves(self)
+            on_board = set(filter(lambda x: x[0]<(y_dim-1) and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
         

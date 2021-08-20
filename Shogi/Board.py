@@ -214,6 +214,12 @@ class Board:
                    p.Rect((r*self.SQ_SIZE-1), (c*self.SQ_SIZE-1), 
                            (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
+        # Promotion dots on the board
+        p.draw.circle(screen, p.Color('black'), (174, 174), 3, width=0)
+        p.draw.circle(screen, p.Color('black'), (348, 174), 3, width=0)
+        p.draw.circle(screen, p.Color('black'), (174, 348), 3, width=0)
+        p.draw.circle(screen, p.Color('black'), (348, 348), 3, width=0)
+
         # Check to see if a place has been clicked 
         # Highlight the space and the pieces moves in grey
         if high_squares is not None:
