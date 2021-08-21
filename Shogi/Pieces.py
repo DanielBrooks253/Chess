@@ -37,13 +37,23 @@ class Pieces:
         if self.color == 'white':
             piece_insct = [key for key, values in board_obj.black_name_obj_dict.items()
                             if new_loc == values.pos]
-            capture_check= (True, piece_insct[0]) if len(piece_insct) != 0 \
-                            else (False, None)
+
+            if len(piece_insct) != 0:
+                capture_check = (True, piece_insct[0])
+                board_obj.white_capture_counts_dict[ \
+                    board_obj.black_name_obj_dict[piece_insct[0]].capture_name][0] += 1
+            else:
+                capture_check = (False, None)
         else:
             piece_insct = [key for key, values in board_obj.white_name_obj_dict.items()
                              if new_loc == values.pos]
-            capture_check = (True, piece_insct[0]) if len(piece_insct) != 0 \
-                        else (False, None)
+
+            if len(piece_insct) != 0:
+                capture_check = (True, piece_insct[0])
+                board_obj.black_capture_counts_dict[ \
+                    board_obj.white_name_obj_dict[piece_insct[0]].capture_name][0] += 1
+            else:
+                capture_check = (False, None) 
                         
             # Update the dictionaries within the board
         board_obj.update_locs(self.color,

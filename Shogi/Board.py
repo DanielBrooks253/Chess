@@ -4,7 +4,7 @@ class Board:
     '''
         Class to define the chess board
     '''
-    def __init__(self, white_pieces, black_pieces, height, width, dimension, y_dim=9, x_dim=9):
+    def __init__(self, white_pieces, black_pieces, height, width, dimension, images, y_dim=9, x_dim=9):
         '''
         Initializes the Board class
 
@@ -39,13 +39,17 @@ class Board:
 
         self.HEIGHT = height
         self.WIDTH = width
-        self.SQ_SIZE = height //dimension
+        self.SQ_SIZE = (width-64) //dimension
 
         # House the number of each piece type that has been captured.
-        self.white_capture_counts_dict = {'fuhyo':0, 'kaku':0, 'hisha':0, 'kyosha':0,
-                                   'keima':0, 'ginsho':0, 'kinsho':0}
-        self.black_capture_counts_dict = {'fuhyo':0, 'kaku':0, 'hisha':0, 'kyosha':0,
-                                   'keima':0, 'ginsho':0, 'kinsho':0}
+        self.white_capture_counts_dict = {'fuhyo':[0, images['Pawn']], 'kaku': [0, images['Bishop']], 
+                                          'hisha':[0, images['Rook']], 'kyosha':[0, images['Lance']],
+                                          'keima':[0, images['Knight']], 'ginsho':[0, images['Silver_General']], 
+                                          'kinsho':[0, images['Gold_General']]}
+        self.black_capture_counts_dict = {'fuhyo':[0, images['Pawn']], 'kaku': [0, images['Bishop']], 
+                                          'hisha':[0, images['Rook']], 'kyosha':[0, images['Lance']],
+                                          'keima':[0, images['Knight']], 'ginsho':[0, images['Silver_General']], 
+                                          'kinsho':[0, images['Gold_General']]}
     
     def game_over_check(self, color_name_obj, num_turns):
         '''
@@ -169,7 +173,7 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos):
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, num_turns):
         '''
         Responsible for drawing the game board, pieces and end of game text
 
@@ -199,8 +203,14 @@ class Board:
             Board.drawPieces(self, screen, names_obj)
             Board.drawText(self, screen, text, num)
         else:
-            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj)
+            if num_turns % 2 == 0:
+                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj)
+                Board.drawCapturedPieces(self, screen, self.white_capture_counts_dict)
+            else:
+                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj)
+                Board.drawCapturedPieces(self, screen, self.black_capture_counts_dict)
 
     def drawBoard(self, screen, high_squares, king_pos):
         # Red check; darkolivegreen moves
@@ -219,6 +229,9 @@ class Board:
         p.draw.circle(screen, p.Color('black'), (348, 174), 3, width=0)
         p.draw.circle(screen, p.Color('black'), (174, 348), 3, width=0)
         p.draw.circle(screen, p.Color('black'), (348, 348), 3, width=0)
+
+        p.draw.rect(screen, p.Color('wheat1'), p.Rect(522, 0, 64, 522))
+        p.draw.rect(screen, p.Color('black'), p.Rect(522, 0, 64, 522), 1)
 
         # Check to see if a place has been clicked 
         # Highlight the space and the pieces moves in grey
@@ -297,5 +310,20 @@ class Board:
                         .move(self.WIDTH//2-textObject.get_width()//2, 
                               self.HEIGHT//2-textObject.get_height()//2)
         screen.blit(textObject, textLocation)
+
         textObject = font.render(text, 0, p.Color('gray2'))
         screen.blit(textObject, textLocation.move(2,2))
+
+    def drawCapturedPieces(self, screen, captured_dict):
+
+        font = p.font.SysFont('Comic Sans MS', 9, True, False)
+        header_font = p.font.SysFont('Comic Sans MS', 12, True, False)
+
+        # Draw the pieces on the side of the board
+        for idx, pieces in enumerate(captured_dict.values()):
+            screen.blit(pieces[1],
+                p.Rect(self.HEIGHT+8, idx*self.SQ_SIZE+10, self.SQ_SIZE, self.SQ_SIZE))
+
+            textLocation = p.Rect(self.WIDTH-10, (idx+1)*self.SQ_SIZE-10, 8, 8)
+            textObject = font.render(str(pieces[0]), 0, p.Color('Red'))
+            screen.blit(textObject, textLocation)

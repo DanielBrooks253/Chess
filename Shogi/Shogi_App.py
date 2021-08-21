@@ -5,10 +5,11 @@ from Pieces import OSho, GinSho, Kyosha, KeiMa, Fuhyo, KinSho, Hisha, Kaku
 
 p.init()
 
-WIDTH = HEIGHT = 522
+WIDTH = 586 # 3 pixels available on each side (6 in total)
+HEIGHT = 522
 DIMENSION = 9
 MAX_FPS = 15
-SQ_SIZE = HEIGHT//DIMENSION
+SQ_SIZE = HEIGHT//DIMENSION # 58 pixels 
 PCT_SHRINK = .75
 
 IMAGES = {} 
@@ -109,155 +110,156 @@ board = Board([wfuhyo0, wfuhyo1, wfuhyo2, wfuhyo3,
               [bfuhyo0, bfuhyo1, bfuhyo2, bfuhyo3,
                 bfuhyo4, bfuhyo5, bfuhyo6, bfuhyo7, bfuhyo8,
                 bkyosha0, bkyosha1, bkeima0, bkeima1, bginsho0, bginsho1,
-                bkinsho0, bkinsho1, bkaku, bhisha, bosho], HEIGHT, WIDTH, DIMENSION)
+                bkinsho0, bkinsho1, bkaku, bhisha, bosho], 
+                HEIGHT, WIDTH, DIMENSION, IMAGES)
 
 high_squares = None
 
 while running:
-    for e in p.event.get():
-        if e.type == p.QUIT:
-            running = False
+  for e in p.event.get():
+    if e.type == p.QUIT:
+        running = False
 
-        if e.type == p.MOUSEBUTTONDOWN:
-          location = p.mouse.get_pos()
+    if e.type == p.MOUSEBUTTONDOWN:
+      location = p.mouse.get_pos()
 
-          row = location[0]//SQ_SIZE
-          col = location[1]//SQ_SIZE     
+      row = location[0]//SQ_SIZE
+      col = location[1]//SQ_SIZE     
 
-          if not game_over:
-            # First Click
-            if len(player_clicks) == 0:
-              # Check to make sure that is is a valid move (piece is on square)
-              # Get available moves
-              # Highlight moves
-              if (col, row) not in board.loc_names.keys():
-                break
-              else:
-                piece_name = board.loc_names[(col, row)]
+      if not game_over:
+        # First Click
+        if len(player_clicks) == 0:
+          # Check to make sure that is is a valid move (piece is on square)
+          # Get available moves
+          # Highlight moves
+          if (col, row) not in board.loc_names.keys():
+            break
+          else:
+            piece_name = board.loc_names[(col, row)]
 
-                if board.name_obj_dict[piece_name].color == 'white' and  \
-                      num_turns % 2 == 0:
-                  moves = board.name_obj_dict[piece_name].Available_Moves(
-                      board.x_dim,
-                      board.y_dim,
-                      board.white_piece_loc,
-                      board.black_piece_loc
-                  )
-                elif board.name_obj_dict[piece_name].color == 'black' and  \
-                    num_turns % 2 != 0:
-                  moves = board.name_obj_dict[piece_name].Available_Moves(
-                      board.x_dim,
-                      board.y_dim,
-                      board.black_piece_loc,
-                      board.white_piece_loc)
-                else:
-                  # Do not highlight anything if the place they click 
-                  # doesn't have any piece or a piece of their color 
-                  break
-              
-              if moves is None:
-                player_clicks.append((col, row))
-                high_squares = ((col, row))
-              else:
-                invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
-                  moves, board)
-
-                # Removes all the moves that will not get you out
-                # of check
-                valid_moves = moves - invalid_moves
-
-                # If there are no valid moves, return none
-                if len(valid_moves) == 0:
-                  moves = None
-                  player_clicks.append((row, col))
-                else:
-                  moves = valid_moves.copy()
-                  player_clicks.append((col, row))
-
-                high_squares = {(col, row)} | valid_moves
-
-            # second click
+            if board.name_obj_dict[piece_name].color == 'white' and  \
+                  num_turns % 2 == 0:
+              moves = board.name_obj_dict[piece_name].Available_Moves(
+                  board.x_dim,
+                  board.y_dim,
+                  board.white_piece_loc,
+                  board.black_piece_loc
+              )
+            elif board.name_obj_dict[piece_name].color == 'black' and  \
+                num_turns % 2 != 0:
+              moves = board.name_obj_dict[piece_name].Available_Moves(
+                  board.x_dim,
+                  board.y_dim,
+                  board.black_piece_loc,
+                  board.white_piece_loc)
             else:
-              if (col, row) in player_clicks:
-                # If the player selects the same square that was previouslly
-                # selected, deselect the piece
-                high_squares = None
-                player_clicks = []
-              else:
-                # If the piece has no available moves,
-                # ignore the click
+              # Do not highlight anything if the place they click 
+              # doesn't have any piece or a piece of their color 
+              break
+          
+          if moves is None:
+            player_clicks.append((col, row))
+            high_squares = ((col, row))
+          else:
+            invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
+              moves, board)
 
-                if moves is None:
-                  break
-                # If the second click is in the pieces available moves,
-                # make the move and update everything
-                elif (col, row) in moves:
-                  board.name_obj_dict[piece_name].Make_Move(
-                    (col, row),
-                    board
-                  )
+            # Removes all the moves that will not get you out
+            # of check
+            valid_moves = moves - invalid_moves
 
-                  high_squares = None
-                  player_clicks = []
+            # If there are no valid moves, return none
+            if len(valid_moves) == 0:
+              moves = None
+              player_clicks.append((row, col))
+            else:
+              moves = valid_moves.copy()
+              player_clicks.append((col, row))
 
-                  # Check to see if the move as resulted in the king being in 
-                  # check or not
-                  board.name_obj_dict['bO'].in_check = board.name_obj_dict['bO'].check_check(
-                      board.white_name_obj_dict,
-                      board.white_piece_loc,
-                      board.black_piece_loc
-                  )
+            high_squares = {(col, row)} | valid_moves
 
-                  board.name_obj_dict['wO'].in_check = board.name_obj_dict['wO'].check_check(
+        # second click
+        else:
+          if (col, row) in player_clicks:
+            # If the player selects the same square that was previouslly
+            # selected, deselect the piece
+            high_squares = None
+            player_clicks = []
+          else:
+            # If the piece has no available moves,
+            # ignore the click
+
+            if moves is None:
+              break
+            # If the second click is in the pieces available moves,
+            # make the move and update everything
+            elif (col, row) in moves:
+              board.name_obj_dict[piece_name].Make_Move(
+                (col, row),
+                board
+              )
+
+              high_squares = None
+              player_clicks = []
+
+              # Check to see if the move as resulted in the king being in 
+              # check or not
+              board.name_obj_dict['bO'].in_check = board.name_obj_dict['bO'].check_check(
+                  board.white_name_obj_dict,
+                  board.white_piece_loc,
+                  board.black_piece_loc
+              )
+
+              board.name_obj_dict['wO'].in_check = board.name_obj_dict['wO'].check_check(
+                  board.black_name_obj_dict,
+                  board.black_piece_loc,
+                  board.white_piece_loc
+              )
+
+              if num_turns % 2 == 0:
+                  if board.game_over_check(
                       board.black_name_obj_dict,
-                      board.black_piece_loc,
-                      board.white_piece_loc
-                  )
+                      num_turns
+                  ) and bosho.in_check:
 
-                  if num_turns % 2 == 0:
-                      if board.game_over_check(
-                          board.black_name_obj_dict,
-                          num_turns
-                      ) and bosho.in_check:
+                      text = 'Checkmate!! White Wins'
+                      game_over = True
+                      break
 
-                          text = 'Checkmate!! White Wins'
-                          game_over = True
-                          break
+                  elif board.game_over_check(
+                      board.black_name_obj_dict,
+                      num_turns
+                  ) and not bosho.in_check:
 
-                      elif board.game_over_check(
-                          board.black_name_obj_dict,
-                          num_turns
-                      ) and not bosho.in_check:
-
-                          text = 'Stalemate!! Draw Game'
-                          game_over = True
-                          break
-                      else:
-                          pass
+                      text = 'Stalemate!! Draw Game'
+                      game_over = True
+                      break
                   else:
-                      if board.game_over_check(
-                          board.white_name_obj_dict,
-                          num_turns
-                      ) and wosho.in_check:
+                      pass
+              else:
+                  if board.game_over_check(
+                      board.white_name_obj_dict,
+                      num_turns
+                  ) and wosho.in_check:
 
-                          text = 'Checkmate!! Black Wins'
-                          game_over = True
-                          break
+                      text = 'Checkmate!! Black Wins'
+                      game_over = True
+                      break
 
-                      elif board.game_over_check(
-                          board.white_name_obj_dict,
-                          num_turns
-                      ) and not wosho.in_check:
+                  elif board.game_over_check(
+                      board.white_name_obj_dict,
+                      num_turns
+                  ) and not wosho.in_check:
 
-                          text = 'Stalemate!! Draw Game'
-                          game_over = True
-                          break
-                      else:
-                          pass
+                      text = 'Stalemate!! Draw Game'
+                      game_over = True
+                      break
+                  else:
+                      pass
 
-                  num_turns += 1
+              num_turns += 1
 
-    board.drawGameState(screen, board.name_obj_dict, False, '', 0, high_squares, None)
+  board.drawGameState(screen, board.name_obj_dict, False, '', 0, high_squares, None, num_turns)
 
-    clock.tick(MAX_FPS)
-    p.display.flip()
+  clock.tick(MAX_FPS)
+  p.display.flip()
