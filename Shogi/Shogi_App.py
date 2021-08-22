@@ -52,15 +52,15 @@ wfuhyo6 = Fuhyo((6,6), piece_name='wf6', piece_image = IMAGES['Pawn'], promoted_
 wfuhyo7 = Fuhyo((6,7), piece_name='wf7', piece_image = IMAGES['Pawn'], promoted_image = IMAGES['prom_pawn'], color='white', capture_name = 'fuhyo')
 wfuhyo8 = Fuhyo((6,8), piece_name='wf8', piece_image = IMAGES['Pawn'], promoted_image = IMAGES['prom_pawn'], color='white', capture_name = 'fuhyo')
 
-bfuhyo0 = Fuhyo((2,0), piece_name='bp0', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
-bfuhyo1 = Fuhyo((2,1), piece_name='bp1', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
-bfuhyo2 = Fuhyo((2,2), piece_name='bp2', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
-bfuhyo3 = Fuhyo((2,3), piece_name='bp3', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
-bfuhyo4 = Fuhyo((2,4), piece_name='bp4', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
-bfuhyo5 = Fuhyo((2,5), piece_name='bp5', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
-bfuhyo6 = Fuhyo((2,6), piece_name='bp6', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
-bfuhyo7 = Fuhyo((2,7), piece_name='bp7', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
-bfuhyo8 = Fuhyo((2,8), piece_name='bp8', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
+bfuhyo0 = Fuhyo((2,0), piece_name='bf0', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
+bfuhyo1 = Fuhyo((2,1), piece_name='bf1', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
+bfuhyo2 = Fuhyo((2,2), piece_name='bf2', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
+bfuhyo3 = Fuhyo((2,3), piece_name='bf3', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
+bfuhyo4 = Fuhyo((2,4), piece_name='bf4', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
+bfuhyo5 = Fuhyo((2,5), piece_name='bf5', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
+bfuhyo6 = Fuhyo((2,6), piece_name='bf6', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
+bfuhyo7 = Fuhyo((2,7), piece_name='bf7', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
+bfuhyo8 = Fuhyo((2,8), piece_name='bf8', piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo')
 
 # Kyosha (Lances)
 wkyosha0 = Kyosha((8,0), piece_name='wl0', piece_image = IMAGES['Lance'], promoted_image = IMAGES['prom_lance'], color='white', capture_name = 'kyosha')
@@ -132,7 +132,39 @@ while running:
           # Check to make sure that is is a valid move (piece is on square)
           # Get available moves
           # Highlight moves
-          if (col, row) not in board.loc_names.keys():
+          if row == 9 and col < 7: # Click on the side bar
+            moves = None
+
+            '''
+            Place Piece:
+            1) Determine which piece is selected from sidebar (Done)
+            2) Check to see if there are captured pieces available 
+            3) Highlight available squares where piece can be placed
+            4) Decrease capture_counts
+            
+            After Piece is Placed:
+            4) Create new object for that color
+              a) based on location of sidebar
+              b) piece name
+                i) fill missing gap in piece_names 
+                ii) add number to the end of the name base
+            
+            5) Delete piece from original color objects
+              a) white/black_name_obj_dict
+              b) name_obj_dict
+            6) Add the new piece
+              a) white/black_name_obj_dict
+              b) name_obj_dict
+              c) loc_names
+              d) white/black_piece_loc
+            7) Re-initialize the board
+            '''
+            if num_turns % 2 == 0:
+              captured_item_selected = list(board.white_capture_counts_dict.keys())[col]
+            else:
+              captured_item_selected = list(board.black_capture_counts_dict.keys())[col]
+
+          elif (col, row) not in board.loc_names.keys():
             break
           else:
             piece_name = board.loc_names[(col, row)]
@@ -171,7 +203,7 @@ while running:
             # If there are no valid moves, return none
             if len(valid_moves) == 0:
               moves = None
-              player_clicks.append((row, col))
+              player_clicks.append((col, row))
             else:
               moves = valid_moves.copy()
               player_clicks.append((col, row))
@@ -199,9 +231,33 @@ while running:
                 board
               )
 
-              high_squares = None
-              player_clicks = []
-
+              # If a pawn or lance moves to the end of the board they must promote
+              # If a knight is second to last row of the board, they must promote
+              if num_turns % 2 == 0:
+                if board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha'] and col == 0:
+                  board.name_obj_dict[piece_name].promoted = True
+                  high_squares = None
+                  player_clicks = []
+                elif board.name_obj_dict[piece_name].capture_name == 'keima' and col <= 1:
+                  board.name_obj_dict[piece_name].promoted = True
+                  high_squares = None
+                  player_clicks = []
+                else:
+                  high_squares = None
+                  player_clicks = []
+              else:
+                if board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha'] and col == 8:
+                  board.name_obj_dict[piece_name].promoted = True
+                  high_squares = None
+                  player_clicks = []
+                elif board.name_obj_dict[piece_name].capture_name == 'keima' and col >= 7:
+                  board.name_obj_dict[piece_name].promoted = True
+                  high_squares = None
+                  player_clicks = []
+                else:
+                  high_squares = None
+                  player_clicks = []
+              
               # Check to see if the move as resulted in the king being in 
               # check or not
               board.name_obj_dict['bO'].in_check = board.name_obj_dict['bO'].check_check(
@@ -259,7 +315,22 @@ while running:
 
               num_turns += 1
 
-  board.drawGameState(screen, board.name_obj_dict, False, '', 0, high_squares, None, num_turns)
+            else:
+              break
 
-  clock.tick(MAX_FPS)
-  p.display.flip()
+  if board.name_obj_dict['wO'].in_check:
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
+                                board.name_obj_dict['wO'].pos, num_turns)
+        clock.tick(MAX_FPS)
+        p.display.flip()
+
+  elif board.name_obj_dict['bO'].in_check:
+      board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
+                              board.name_obj_dict['bO'].pos, num_turns)
+      clock.tick(MAX_FPS)
+      p.display.flip()
+
+  else:
+      board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, num_turns)
+      clock.tick(MAX_FPS)
+      p.display.flip()

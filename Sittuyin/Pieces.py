@@ -212,7 +212,6 @@ class Pieces:
                 # Simply moving a piece in the way of the checking piece
                     black_loc_copy -= {self.pos}
                     black_loc_copy |= {i}
-
                 
                 if name_obj_copy['bM0'].check_check(
                     white_name_obj_copy,
@@ -222,7 +221,6 @@ class Pieces:
                     checks |= {i}
                 else:
                     pass
-
 
                 if self.piece_name == 'bM0':
                     self.pos = old_move

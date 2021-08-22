@@ -40,7 +40,7 @@ class Pieces:
 
             if len(piece_insct) != 0:
                 capture_check = (True, piece_insct[0])
-                board_obj.white_capture_counts_dict[ \
+                board_obj.white_capture_counts_dict[ # Add counts to the catpure counts
                     board_obj.black_name_obj_dict[piece_insct[0]].capture_name][0] += 1
             else:
                 capture_check = (False, None)
@@ -170,7 +170,7 @@ class Pieces:
         else:
             for i in available_moves:
                 # If the piece being moved is a king
-                if self.piece_name == 'O':
+                if self.piece_name == 'bO':
                     old_move = self.pos
                     self.pos = i
 
@@ -200,7 +200,6 @@ class Pieces:
                     black_loc_copy -= {self.pos}
                     black_loc_copy |= {i}
 
-                
                 if name_obj_copy['bO'].check_check(
                     white_name_obj_copy,
                     white_loc_copy,
@@ -209,7 +208,6 @@ class Pieces:
                     checks |= {i}
                 else:
                     pass
-
 
                 if self.piece_name == 'bO':
                     self.pos = old_move
@@ -581,7 +579,7 @@ class KeiMa(Pieces):
             on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
         else:
             all_moves = KeiMa.Get_Moves(self)
-            on_board = set(filter(lambda x: x[0]<(y_dim-2) and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+            on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
         
@@ -636,8 +634,8 @@ class Kyosha(Pieces):
             # The pawn must promote or not move at all
 
             all_moves = Kyosha.Get_Moves(self)
-            on_board = set(filter(lambda x: x[0]<(y_dim-1) and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
-            orth_moves_beyong_pieces = Kyosha.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, (y_dim-1), x_dim)
+            on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+            orth_moves_beyong_pieces = Kyosha.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim)
 
             rm_same_color = on_board - same_color_locs
             rm_over_pieces = rm_same_color - orth_moves_beyong_pieces
@@ -656,7 +654,7 @@ class Kyosha(Pieces):
             else:
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,0,0,0,0,0,0], range(-8,0))])
 
-    def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim):
+    def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim):
         '''
         Rooks cannot jump over other pieces, therefore the moves the rook can make is limited
         by the closest piece in each direction orthogonally.
@@ -674,7 +672,7 @@ class Kyosha(Pieces):
         :return (set): all of the moves the rook cannot take due to there being a 
             piece in the way. Used to filter all of the available moves.
         '''
-        # Get the locations pf all the pieces on the board
+         # Get the locations pf all the pieces on the board
         combine_locs = same_color_locs | opp_color_locs
 
         combine_locs = list(filter(None, combine_locs))
@@ -682,15 +680,19 @@ class Kyosha(Pieces):
         # Set flags for the orthogonal locations to see if the same color
         # piece is closest in any of the four directions
         same_color_up = False
+        same_color_down = False
 
         # Get a list of pieces that are ont he same file as the current piece
         closest_up = list(filter(lambda x: x[1] == self.pos[1] and x[0] < self.pos[0], combine_locs))
+        closest_down = list(filter(lambda x: x[1] == self.pos[1] and x[0] > self.pos[0], combine_locs))
         
         # Find the closest piece out of the list of same file candidates
         closest_up = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
+        closest_down = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]
         
         # Check to see if the closest piece is the same color or not as the current peice
         if len({closest_up} & same_color_locs) != 0: same_color_up = True
+        if len({closest_down} & same_color_locs) != 0: same_color_down = True
 
         # If the closest piece is of the same color, you can move to the 
         # space one unit before. If it is of a different color, you can move
@@ -702,8 +704,15 @@ class Kyosha(Pieces):
         else:
             up_no = set()
 
+        if same_color_down and closest_down is not None:
+            down_no = set(zip(range((closest_down[0]), y_dim), [closest_down[1]] * (((y_dim-1) - closest_down[0]) + closest_down[0]+1)))
+        elif not same_color_down and closest_down is not None:
+            down_no = set(zip(range((closest_down[0]+1), y_dim), [closest_down[1]] * ((y_dim - closest_down[0]) + closest_down[0]+1)))
+        else:
+            down_no = set()
+
         # Return the union of the four directions
-        return up_no
+        return up_no|down_no
 
 class Fuhyo(Pieces):
     '''
@@ -737,7 +746,7 @@ class Fuhyo(Pieces):
             on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
         else:
             all_moves = Fuhyo.Get_Moves(self)
-            on_board = set(filter(lambda x: x[0]<(y_dim-1) and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+            on_board = set(filter(lambda x: x[0]< y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
         

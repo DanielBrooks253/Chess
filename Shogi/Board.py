@@ -237,7 +237,7 @@ class Board:
         # Highlight the space and the pieces moves in grey
         if high_squares is not None:
             if type(high_squares) is tuple: 
-                if high_squares in self.loc_names.keys() or high_squares in self.white_set_up_locs or high_squares in self.black_set_up_locs:
+                if high_squares in self.loc_names.keys() or high_squares[1] == 9 or high_squares[0] < 7:
                     p.draw.rect(screen, p.Color('darkolivegreen'), 
                         p.Rect(high_squares[1]*self.SQ_SIZE, high_squares[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
                     p.draw.rect(screen, p.Color('black'),

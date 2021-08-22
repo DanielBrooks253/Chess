@@ -485,6 +485,7 @@ while running:
                     
                     # second click
                     else:
+                        print(num_turns)
                         if (col, row) in player_clicks:
                             # If the player selects the same square that was previously
                             # selected, deselect the piece.
