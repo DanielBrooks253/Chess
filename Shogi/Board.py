@@ -32,6 +32,7 @@ class Board:
 
         self.loc_names = {i.pos:i.piece_name for i in white_pieces + black_pieces}
         self.name_obj_dict = {i.piece_name:i for i in white_pieces + black_pieces}
+        self.capture_name_obj_dict = {i.capture_name: i for i in white_pieces}
 
         # Dimensions of the chess board
         self.y_dim=y_dim

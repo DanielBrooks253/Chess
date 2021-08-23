@@ -114,6 +114,9 @@ board = Board([wfuhyo0, wfuhyo1, wfuhyo2, wfuhyo3,
                 HEIGHT, WIDTH, DIMENSION, IMAGES)
 
 high_squares = None
+# Highlighted squares that show where the captured pieces cpuld be placed
+# on the board.
+capture_high_squares = None
 
 while running:
   for e in p.event.get():
@@ -161,8 +164,12 @@ while running:
             '''
             if num_turns % 2 == 0:
               captured_item_selected = list(board.white_capture_counts_dict.keys())[col]
+              capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
+                                  .Place_Pieces(board.name_obj_dict, board.y_dim, num_turns)
             else:
               captured_item_selected = list(board.black_capture_counts_dict.keys())[col]
+              capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
+                                  .Place_Pieces(board.name_obj_dict, board.y_dim, num_turns)
 
           elif (col, row) not in board.loc_names.keys():
             break
@@ -190,8 +197,12 @@ while running:
               break
           
           if moves is None:
-            player_clicks.append((col, row))
-            high_squares = ((col, row))
+            if capture_high_squares is not None:
+              player_clicks.append((col, row))
+              high_squares = capture_high_squares | {(col, row)}
+            else:
+              player_clicks.append((col, row))
+              high_squares = ((col, row))
           else:
             invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
               moves, board)
@@ -216,6 +227,7 @@ while running:
             # If the player selects the same square that was previouslly
             # selected, deselect the piece
             high_squares = None
+            capture_high_squares = None
             player_clicks = []
           else:
             # If the piece has no available moves,
@@ -237,25 +249,31 @@ while running:
                 if board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha'] and col == 0:
                   board.name_obj_dict[piece_name].promoted = True
                   high_squares = None
+                  capture_high_squares = None
                   player_clicks = []
                 elif board.name_obj_dict[piece_name].capture_name == 'keima' and col <= 1:
                   board.name_obj_dict[piece_name].promoted = True
                   high_squares = None
+                  capture_high_squares = None
                   player_clicks = []
                 else:
                   high_squares = None
+                  capture_high_squares = None
                   player_clicks = []
               else:
                 if board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha'] and col == 8:
                   board.name_obj_dict[piece_name].promoted = True
                   high_squares = None
+                  capture_high_squares = None
                   player_clicks = []
                 elif board.name_obj_dict[piece_name].capture_name == 'keima' and col >= 7:
                   board.name_obj_dict[piece_name].promoted = True
                   high_squares = None
+                  capture_high_squares = None
                   player_clicks = []
                 else:
                   high_squares = None
+                  capture_high_squares = None
                   player_clicks = []
               
               # Check to see if the move as resulted in the king being in 

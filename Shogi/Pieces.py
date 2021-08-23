@@ -22,6 +22,68 @@ class Pieces:
         
         self.promoted = False
         self.capture_name = capture_name
+
+    def Place_Pieces(self, name_obj_dict, y_dim, turns):
+        all_piece_locations = set([i.pos for i in name_obj_dict.values()])
+
+        # Locate the file of all the pawns on the board
+        if turns % 2 == 0:
+            pawn_on_board_locations = set([i.pos[1] for i in name_obj_dict.values() \
+                                               if i.color == 'white' and \
+                                                  i.capture_name == 'fuhyo' and \
+                                                  i.pos is not None])
+        else:
+            pawn_on_board_locations = set([i.pos[1] for i in name_obj_dict.values() \
+                                               if i.color == 'black' and \
+                                                  i.capture_name == 'fuhyo' and \
+                                                  i.pos is not None])
+
+        # Kyosha cannot be placed on the last row of the game board
+        if self.capture_name == 'kyosha':
+            if turns % 2 == 0:
+                return set(sum([[(i,j) for j in range(y_dim)] for i in range(1, 9)], [])) - \
+                           all_piece_locations
+            else:
+                return set(sum([[(i,j) for j in range(y_dim)] for i in range(0, 8)], [])) - \
+                           all_piece_locations
+
+        # Kei-Ma cannot be placed on the last two rows of the game board.
+        # It would not have any available moves once placed, which is illegal
+        elif self.capture_name == 'keima':
+            if turns % 2 == 0:
+                return set(sum([[(i,j) for j in range(y_dim)] for i in range(2, 9)], [])) - \
+                           all_piece_locations
+            else:
+                return set(sum([[(i,j) for j in range(y_dim)] for i in range(0, 7)], [])) - \
+                           all_piece_locations
+
+        # Pawns cannot be placed on the same file as another pawn of the same color.
+        elif self.capture_name == 'fuhyo':
+            if turns % 2 == 0:
+                # Filter out the locations of all the other pieces on the board
+                filter_pieces_on_board = set(sum([[(i,j) for j in range(y_dim)] for i in range(1,9)], [])) - \
+                                             all_piece_locations
+                # Filter out any files that share the same file as another pawn
+                filter_pawn_file = set(list(filter(lambda x: x[1] not in pawn_on_board_locations, 
+                                               filter_pieces_on_board)))
+
+                if len(filter_pawn_file) == 0:
+                    return None
+                else:
+                    return filter_pawn_file
+            else:
+                filter_pieces_on_board = set(sum([[(i,j) for j in range(y_dim)] for i in range(0,8)], [])) - \
+                                             all_piece_locations
+                filter_pawn_file = set(list(filter(lambda x: x[1] not in pawn_on_board_locations, 
+                                               filter_pieces_on_board)))
+
+                if len(filter_pawn_file) == 0:
+                    return None
+                else:
+                    return filter_pawn_file
+        else:
+            return set(sum([[(i,j) for j in range(y_dim)] for i in range(y_dim)], [])) - \
+                      all_piece_locations
         
     def Make_Move(self, new_loc, board_obj):
         '''
