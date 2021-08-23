@@ -91,8 +91,8 @@ bkinsho0 = KinSho((0,3), piece_name='bks0', piece_image = p.transform.rotate(IMA
 bkinsho1 = KinSho((0,5), piece_name='bks1', piece_image = p.transform.rotate(IMAGES['Gold_General'], 180), promoted_image = None, color='black', capture_name = 'kinsho')
 
 # Kaku (Bishop)
-wkaku = Kaku((7,1), piece_name = 'wk', piece_image = IMAGES['Bishop'], promoted_image = IMAGES['prom_bishop'], color='white', capture_name = 'kaku')
-bkaku = Kaku((1,1), piece_name = 'bk', piece_image = p.transform.rotate(IMAGES['Bishop'], 180), promoted_image = p.transform.rotate(IMAGES['prom_bishop'], 180), color='black', capture_name = 'kaku')
+wkaku = Kaku((7,1), piece_name = 'wka', piece_image = IMAGES['Bishop'], promoted_image = IMAGES['prom_bishop'], color='white', capture_name = 'kaku')
+bkaku = Kaku((1,1), piece_name = 'bka', piece_image = p.transform.rotate(IMAGES['Bishop'], 180), promoted_image = p.transform.rotate(IMAGES['prom_bishop'], 180), color='black', capture_name = 'kaku')
 
 # Hisha (Rook)
 whisha = Hisha((7,7), piece_name = 'wh', piece_image = IMAGES['Rook'], promoted_image = IMAGES['prom_rook'], color='white', capture_name = 'hisha')
@@ -114,9 +114,16 @@ board = Board([wfuhyo0, wfuhyo1, wfuhyo2, wfuhyo3,
                 HEIGHT, WIDTH, DIMENSION, IMAGES)
 
 high_squares = None
-# Highlighted squares that show where the captured pieces cpuld be placed
+# Highlighted squares that show where the captured pieces could be placed
 # on the board.
 capture_high_squares = None
+piece_name_numbers = {'fuhyo': ['f', list(range(9, 100))],
+                      'kyosha': ['l', list(range(2, 50))],
+                      'ginsho': ['g', list(range(2, 50))],
+                      'kingsho': ['ks', list(range(2, 50))],
+                      'keima': ['k', list(range(2, 50))],
+                      'kaku': ['ka', list(range(20))],
+                      'hisha': ['h', list(range(20))]}
 
 while running:
   for e in p.event.get():
@@ -138,37 +145,20 @@ while running:
           if row == 9 and col < 7: # Click on the side bar
             moves = None
 
-            '''
-            Place Piece:
-            1) Determine which piece is selected from sidebar (Done)
-            2) Check to see if there are captured pieces available 
-            3) Highlight available squares where piece can be placed
-            4) Decrease capture_counts
-            
-            After Piece is Placed:
-            4) Create new object for that color
-              a) based on location of sidebar
-              b) piece name
-                i) fill missing gap in piece_names 
-                ii) add number to the end of the name base
-            
-            5) Delete piece from original color objects
-              a) white/black_name_obj_dict
-              b) name_obj_dict
-            6) Add the new piece
-              a) white/black_name_obj_dict
-              b) name_obj_dict
-              c) loc_names
-              d) white/black_piece_loc
-            7) Re-initialize the board
-            '''
+            # Highlight the sqaures of the captured piece that is selected
             if num_turns % 2 == 0:
               captured_item_selected = list(board.white_capture_counts_dict.keys())[col]
-              capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
+              if board.white_capture_counts_dict[captured_item_selected][0] == 0:
+                capture_high_squares = None
+              else:
+                capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
                                   .Place_Pieces(board.name_obj_dict, board.y_dim, num_turns)
             else:
               captured_item_selected = list(board.black_capture_counts_dict.keys())[col]
-              capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
+              if board.black_capture_counts_dict[captured_item_selected][0] == 0:
+                captured_item_selected = None
+              else:
+                capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
                                   .Place_Pieces(board.name_obj_dict, board.y_dim, num_turns)
 
           elif (col, row) not in board.loc_names.keys():
@@ -232,9 +222,67 @@ while running:
           else:
             # If the piece has no available moves,
             # ignore the click
-
             if moves is None:
-              break
+              if capture_high_squares is not None:
+                if (col, row) in capture_high_squares:
+                  if num_turns % 2 == 0:
+                    # Create the new piece name for the placed piece
+                    new_name = 'w' + \
+                               piece_name_numbers[captured_item_selected][0] + \
+                               str(piece_name_numbers[captured_item_selected][1][0])
+
+                    # Choose the proper object depending pn which piece is selected
+                    temp = {'fuhyo': Fuhyo((col, row), piece_name = new_name, piece_image = IMAGES['Pawn'], promoted_image = IMAGES['prom_pawn'], color='white', capture_name = 'fuhyo'),
+                            'keima': KeiMa((col, row), piece_name = new_name, piece_image = IMAGES['Knight'], promoted_image = IMAGES['prom_knight'], color='white', capture_name = 'keima'),
+                            'ginsho': GinSho((col, row), piece_name = new_name, piece_image = IMAGES['Silver_General'], promoted_image = IMAGES['prom_silver'], color='white', capture_name = 'ginsho'),
+                            'kinsho': KinSho((col, row), piece_name = new_name, piece_image = IMAGES['Gold_General'], promoted_image = None, color='white', capture_name = 'kinsho'),
+                            'kaku': Kaku((col, row), piece_name = new_name, piece_image = IMAGES['Bishop'], promoted_image = IMAGES['prom_bishop'], color='white', capture_name = 'kaku'),
+                            'hisha': Hisha((col, row), piece_name = new_name, piece_image = IMAGES['Rook'], promoted_image = IMAGES['prom_rook'], color='white', capture_name = 'hisha'),
+                            'kyosha': Kyosha((col, row), piece_name = new_name, piece_image = IMAGES['Lance'], promoted_image = IMAGES['prom_lance'], color='white', capture_name = 'kyosha')}
+
+                    # Update all of the white dictionaries on the board
+                    board.white_piece_loc |= {(col, row)}
+                    board.white_name_obj_dict[temp[captured_item_selected].piece_name] = temp[captured_item_selected]
+                    board.white_capture_counts_dict[captured_item_selected][0] -= 1
+
+                  else:
+                    new_name = 'b' + \
+                               piece_name_numbers[captured_item_selected][0] + \
+                               str(piece_name_numbers[captured_item_selected][1][0])
+
+                    temp = {'fuhyo': Fuhyo((col, row), piece_name = new_name, piece_image = p.transform.rotate(IMAGES['Pawn'], 180), promoted_image = p.transform.rotate(IMAGES['prom_pawn'], 180), color='black', capture_name = 'fuhyo'),
+                            'keima': KeiMa((col, row), piece_name = new_name, piece_image = p.transform.rotate(IMAGES['Knight'], 180), promoted_image = p.transform.rotate(IMAGES['prom_knight'], 180), color='black', capture_name = 'keima'),
+                            'ginsho': GinSho((col, row), piece_name = new_name, piece_image = p.transform.rotate(IMAGES['Silver_General'], 180), promoted_image = p.transform.rotate(IMAGES['prom_silver'], 180), color='black', capture_name = 'ginsho'),
+                            'kinsho': KinSho((col, row), piece_name = new_name, piece_image = p.transform.rotate(IMAGES['Gold_General'], 180), promoted_image = None, color='black', capture_name = 'kinsho'),
+                            'kaku': Kaku((col, row), piece_name = new_name, piece_image = p.transform.rotate(IMAGES['Bishop'], 180), promoted_image = p.transform.rotate(IMAGES['prom_bishop'], 180), color='black', capture_name = 'kaku'),
+                            'hisha': Hisha((col, row), piece_name = new_name, piece_image = p.transform.rotate(IMAGES['Rook'], 180), promoted_image = p.transform.rotate(IMAGES['prom_rook'], 180), color='black', capture_name = 'hisha'),
+                            'kyosha': Kyosha((col, row), piece_name = new_name, piece_image = p.transform.rotate(IMAGES['Lance'], 180), promoted_image = p.transform.rotate(IMAGES['prom_lance'], 180), color='black', capture_name = 'kyosha')}
+ 
+                    # Update all the black dictuinaries on the board
+                    board.black_piece_loc |= {(col, row)}
+                    board.black_name_obj_dict[temp[captured_item_selected].piece_name] = temp[captured_item_selected]
+                    board.black_capture_counts_dict[captured_item_selected][0] -= 1
+
+                  # Update all the general dictionaries on the board
+                  board.loc_names[(col, row)] = new_name
+                  board.name_obj_dict[new_name] = temp[captured_item_selected]
+            
+                  # End of the turn clean up
+                  high_squares = None
+                  capture_high_squares = None
+                  
+                  player_clicks = []
+
+                  # Delete the used number, that is being used for the name
+                  # of the pieces.
+                  piece_name_numbers[captured_item_selected][1].pop(0)
+                  num_turns += 1 
+                  break
+
+                else:
+                  break
+              else:
+                break
             # If the second click is in the pieces available moves,
             # make the move and update everything
             elif (col, row) in moves:
@@ -249,31 +297,25 @@ while running:
                 if board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha'] and col == 0:
                   board.name_obj_dict[piece_name].promoted = True
                   high_squares = None
-                  capture_high_squares = None
                   player_clicks = []
                 elif board.name_obj_dict[piece_name].capture_name == 'keima' and col <= 1:
                   board.name_obj_dict[piece_name].promoted = True
                   high_squares = None
-                  capture_high_squares = None
                   player_clicks = []
                 else:
                   high_squares = None
-                  capture_high_squares = None
                   player_clicks = []
               else:
                 if board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha'] and col == 8:
                   board.name_obj_dict[piece_name].promoted = True
                   high_squares = None
-                  capture_high_squares = None
                   player_clicks = []
                 elif board.name_obj_dict[piece_name].capture_name == 'keima' and col >= 7:
                   board.name_obj_dict[piece_name].promoted = True
                   high_squares = None
-                  capture_high_squares = None
                   player_clicks = []
                 else:
                   high_squares = None
-                  capture_high_squares = None
                   player_clicks = []
               
               # Check to see if the move as resulted in the king being in 
@@ -281,13 +323,17 @@ while running:
               board.name_obj_dict['bO'].in_check = board.name_obj_dict['bO'].check_check(
                   board.white_name_obj_dict,
                   board.white_piece_loc,
-                  board.black_piece_loc
+                  board.black_piece_loc,
+                  board.y_dim,
+                  board.x_dim
               )
 
               board.name_obj_dict['wO'].in_check = board.name_obj_dict['wO'].check_check(
                   board.black_name_obj_dict,
                   board.black_piece_loc,
-                  board.white_piece_loc
+                  board.white_piece_loc,
+                  board.y_dim,
+                  board.x_dim
               )
 
               if num_turns % 2 == 0:

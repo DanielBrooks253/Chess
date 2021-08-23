@@ -196,7 +196,9 @@ class Pieces:
                 if name_obj_copy['wO'].check_check(
                     black_name_obj_copy,
                     black_loc_copy,
-                    white_loc_copy):
+                    white_loc_copy,
+                    board_obj.y_dim,
+                    board_obj.x_dim):
 
                     checks |= {i}
                 else:
@@ -265,7 +267,9 @@ class Pieces:
                 if name_obj_copy['bO'].check_check(
                     white_name_obj_copy,
                     white_loc_copy,
-                    black_loc_copy):
+                    black_loc_copy,
+                    board_obj.y_dim,
+                    board_obj.x_dim):
 
                     checks |= {i}
                 else:
@@ -376,7 +380,7 @@ class OSho(Pieces):
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([0,1,1,1,0,-1,-1,-1], [1,1,0,-1,-1,-1,0,1])])
         
-    def check_check(self, opp_objs, same_locs, opp_locs):
+    def check_check(self, opp_objs, same_locs, opp_locs, y_dim, x_dim):
         '''
             See if the king is in check or not
 
@@ -392,7 +396,7 @@ class OSho(Pieces):
                 True: King is in check
                 False: King is not in check
         '''
-        opp_moves = list(filter(None, [None if i.pos is None else i.Available_Moves(8, 8, same_locs, opp_locs) 
+        opp_moves = list(filter(None, [None if i.pos is None else i.Available_Moves(y_dim, x_dim, same_locs, opp_locs) 
                      for i in opp_objs.values()]))
 
         if self.pos in set().union(*opp_moves):
