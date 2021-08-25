@@ -323,7 +323,11 @@ class Kaku(Pieces):
         :return rm_checks (set): All possible moves a piece can make (Does not take into account
             checks)
         '''
-        all_moves = Kaku.Get_Moves(self)
+        all_moves = Kaku.Get_Moves(self, same_color_locs, opp_color_locs, y_dim, x_dim)
+
+        #difference = all_moves - Kaku.Get_Diangonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
+        #join = Kaku.Get_Diangonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim) | difference
+
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
@@ -333,17 +337,85 @@ class Kaku(Pieces):
         else:
             return rm_same_color
 
-    def Get_Moves(self):
-        if self.promoted:
-            return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in list(zip(range(1,9), range(1,9))) + \
-                                                                      list(zip(range(8,0,-1), range(-8,0))) + \
-                                                                      list(zip(range(-8,0), range(8,0,-1))) + \
-                                                                      list(zip(range(-8,0), range(-8,0)))]) | set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([1,-1,0,0], [0,0,1,-1])])
+    def Get_Moves(self, same_color_locs, opp_color_locs, y_dim, x_dim):
+        combine_locs = same_color_locs | opp_color_locs
+
+        combine_locs = set(filter(None, combine_locs))
+
+        same_color_up_left = False
+        same_color_up_right = False
+        same_color_down_left = False
+        same_color_down_right = False
+
+        all_down_right = set()
+        all_down_left = set()
+        all_up_left = set()
+        all_up_right = set()
+
+        # Calculate all of the diagonal squares in the 4 directions
+        for i in range(1,9):
+            all_down_right |= {((self.pos[0]+i), (self.pos[1]+i))}
+            all_up_left |= {((self.pos[0]-i), (self.pos[1]-i))}
+
+            all_down_left |= {((self.pos[0]+i), (self.pos[1]-i))}
+            all_up_right |= {((self.pos[0]-i), (self.pos[1]+i))}
+
+        # Locate any pieces that are on the diagonal paths
+        pieces_down_right = combine_locs & all_down_right
+        pieces_down_left = combine_locs & all_down_left
+        pieces_up_right = combine_locs & all_up_right
+        pieces_up_left = combine_locs & all_up_left
+
+        # Find the closest piece (Regardless of color) to current piece
+        closest_down_right = None if len(pieces_down_right) == 0 else (sorted(pieces_down_right, key=lambda y:y[0], reverse=False))[0]
+        closest_down_left = None if len(pieces_down_left) == 0 else (sorted(pieces_down_left, key=lambda y:y[0], reverse=False))[0]
+        closest_up_right = None if len(pieces_up_right) == 0 else (sorted(pieces_up_right, key=lambda y:y[0], reverse=True))[0]
+        closest_up_left = None if len(pieces_up_left) == 0 else (sorted(pieces_up_left, key=lambda y:y[0], reverse=True))[0]
+
+        # Check to see if the closest piece is of the same color or not
+        if len({closest_down_right} & same_color_locs) != 0: same_color_down_right = True
+        if len({closest_down_left} & same_color_locs) != 0: same_color_down_left = True
+        if len({closest_up_right} & same_color_locs) != 0: same_color_up_right = True
+        if len({closest_up_left} & same_color_locs) != 0: same_color_up_left = True
+
+        # Places where the piece is allowed to move
+        if same_color_down_right and closest_down_right is not None:
+            distance = abs(closest_down_right[0] - self.pos[0])
+            down_right = set([((self.pos[0]+i), (self.pos[1]+i)) for i in range(1,distance)])
+        elif not same_color_down_right and closest_down_right is not None:
+            distance = abs(closest_down_right[0] - self.pos[0])
+            down_right = set([((self.pos[0]+i), (self.pos[1]+i)) for i in range(1,(distance+1))])
         else:
-            return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in list(zip(range(1,9), range(1,9))) + \
-                                                                      list(zip(range(8,0,-1), range(-8,0))) + \
-                                                                      list(zip(range(-8,0), range(8,0,-1))) + \
-                                                                      list(zip(range(-8,0), range(-8,0)))])
+            down_right = all_down_right
+
+        if same_color_down_left and closest_down_left is not None:
+            distance = abs(closest_down_left[0] - self.pos[0])
+            down_left = set([((self.pos[0]+i), (self.pos[1]-i)) for i in range(1,distance)])
+        elif not same_color_down_left and closest_down_left is not None:
+            distance = abs(closest_down_left[0] - self.pos[0])
+            down_left = set([((self.pos[0]+i), (self.pos[1]-i)) for i in range(1,(distance+1))])
+        else:
+            down_left = all_down_left
+
+        if same_color_up_right and closest_up_right is not None:
+            distance = abs(closest_up_right[0] - self.pos[0])
+            up_right = set([((self.pos[0]-i), (self.pos[1]+i)) for i in range(1,distance)])
+        elif not same_color_up_right and closest_up_right is not None:
+            distance = abs(closest_up_right[0] - self.pos[0])
+            up_right = set([((self.pos[0]-i), (self.pos[1]+i)) for i in range(1,(distance+1))])
+        else:
+            up_right = all_up_right
+
+        if same_color_up_left and closest_up_left is not None:
+            distance = abs(closest_up_left[0] - self.pos[0])
+            up_left = set([((self.pos[0]-i), (self.pos[1]-i)) for i in range(1,distance)])
+        elif not same_color_up_left and closest_up_left is not None:
+            distance = abs(closest_up_left[0] - self.pos[0])
+            up_left = set([((self.pos[0]-i), (self.pos[1]-i)) for i in range(1,(distance+1))])
+        else:
+            up_left = all_up_left
+
+        return down_right|down_left|up_right|up_left
 
 class OSho(Pieces):
     '''
