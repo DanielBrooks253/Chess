@@ -191,7 +191,7 @@ while running:
                                 high_squares = {}
                                 break
                             else:
-                                    pass
+                                pass
                         else:
                             continue # Look for a click/quit action
 
@@ -283,7 +283,7 @@ while running:
                                 high_squares = {}
                                 break
                             else:
-                                    pass
+                                pass
                         else:
                             continue # Look for a click/quit action
 

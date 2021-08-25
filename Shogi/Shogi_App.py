@@ -124,6 +124,8 @@ piece_name_numbers = {'fuhyo': ['f', list(range(9, 100))],
                       'keima': ['k', list(range(2, 50))],
                       'kaku': ['ka', list(range(20))],
                       'hisha': ['h', list(range(20))]}
+black_promotion = False
+white_promotion = False
 
 while running:
   for e in p.event.get():
@@ -165,6 +167,21 @@ while running:
             break
           else:
             piece_name = board.loc_names[(col, row)]
+
+            # If you start off in the promotion zone, increase the promotion
+            # counter. You can promote as long as you start/end in the promotion
+            # zone.
+            if num_turns % 2 == 0 and col <= 2 and \
+              board.name_obj_dict[piece_name].color == 'white':
+              board.name_obj_dict[piece_name].promotion_count += 1
+              board.white_name_obj_dict[piece_name].promotion_count += 1
+
+            elif num_turns % 2 != 0 and col >= 6 and \
+              board.name_obj_dict[piece_name].color == 'black': 
+              board.name_obj_dict[piece_name].promotion_count += 1
+              board.black_name_obj_dict[piece_name].promotion_count += 1
+            else:
+              pass
 
             if board.name_obj_dict[piece_name].color == 'white' and  \
                   num_turns % 2 == 0:
@@ -245,6 +262,16 @@ while running:
                     board.white_name_obj_dict[temp[captured_item_selected].piece_name] = temp[captured_item_selected]
                     board.white_capture_counts_dict[captured_item_selected][0] -= 1
 
+                    # Check to see if the resulting placement ends up in check
+                    # For the opposing side
+                    board.name_obj_dict['bO'].in_check = board.name_obj_dict['bO'].check_check(
+                                          board.white_name_obj_dict,
+                                          board.white_piece_loc,
+                                          board.black_piece_loc,
+                                          board.y_dim,
+                                          board.x_dim
+                                      )
+
                   else:
                     new_name = 'b' + \
                                piece_name_numbers[captured_item_selected][0] + \
@@ -262,6 +289,16 @@ while running:
                     board.black_piece_loc |= {(col, row)}
                     board.black_name_obj_dict[temp[captured_item_selected].piece_name] = temp[captured_item_selected]
                     board.black_capture_counts_dict[captured_item_selected][0] -= 1
+
+                    # Check to see if the resulting placement ends up in check
+                    # For the opposing side
+                    board.name_obj_dict['wO'].in_check = board.name_obj_dict['wO'].check_check(
+                                          board.black_name_obj_dict,
+                                          board.black_piece_loc,
+                                          board.white_piece_loc,
+                                          board.y_dim,
+                                          board.x_dim
+                                      )
 
                   # Update all the general dictionaries on the board
                   board.loc_names[(col, row)] = new_name
@@ -305,6 +342,23 @@ while running:
                 else:
                   high_squares = None
                   player_clicks = []
+
+                if col <= 2 and board.name_obj_dict[piece_name].color == 'white':
+                  board.name_obj_dict[piece_name].promotion_count += 1
+                  board.white_name_obj_dict[piece_name].promotion_count += 1
+                else:
+                  pass
+
+                # Piece promotion for ending up in the promotion zone
+                if board.name_obj_dict[piece_name].promotion_count > 0 and \
+                   not board.name_obj_dict[piece_name].promoted:
+
+                  board.name_obj_dict[piece_name].promoted = True
+                  board.name_obj_dict[piece_name].promotion_count = 0
+                  board.white_name_obj_dict[piece_name].promotion_count = 0
+                else:
+                  pass
+
               else:
                 if board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha'] and col == 8:
                   board.name_obj_dict[piece_name].promoted = True
@@ -317,7 +371,23 @@ while running:
                 else:
                   high_squares = None
                   player_clicks = []
-              
+
+                if col >= 6 and board.name_obj_dict[piece_name].color == 'black':
+                  board.name_obj_dict[piece_name].promotion_count += 1
+                  board.black_name_obj_dict[piece_name].promotion_count += 1
+                else:
+                  pass
+
+                # Piece promotion for ending up in the promotion zone
+                if board.name_obj_dict[piece_name].promotion_count > 0 and \
+                   not board.name_obj_dict[piece_name].promoted:
+
+                   board.name_obj_dict[piece_name].promoted = True
+                   board.name_obj_dict[piece_name].promotion_count = 0
+                   board.black_name_obj_dict[piece_name].promotion_count = 0
+                else:
+                  pass
+
               # Check to see if the move as resulted in the king being in 
               # check or not
               board.name_obj_dict['bO'].in_check = board.name_obj_dict['bO'].check_check(
@@ -384,17 +454,17 @@ while running:
 
   if board.name_obj_dict['wO'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                                board.name_obj_dict['wO'].pos, num_turns)
+                                board.name_obj_dict['wO'].pos, num_turns, False, False)
         clock.tick(MAX_FPS)
         p.display.flip()
 
   elif board.name_obj_dict['bO'].in_check:
       board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                              board.name_obj_dict['bO'].pos, num_turns)
+                              board.name_obj_dict['bO'].pos, num_turns, False, False)
       clock.tick(MAX_FPS)
       p.display.flip()
 
   else:
-      board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, num_turns)
+      board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, num_turns, black_promotion, white_promotion)
       clock.tick(MAX_FPS)
       p.display.flip()

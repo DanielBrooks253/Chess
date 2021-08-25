@@ -1,6 +1,6 @@
 ###### Shogi (Japanese Chess) ######
 class Pieces:
-    def __init__(self, start_pos, piece_name, piece_image, promoted_image, color, capture_name):
+    def __init__(self, start_pos, piece_name, piece_image, promoted_image, color, capture_name, promotion_count = 0):
         '''
         Initalize the pieces class
 
@@ -21,6 +21,7 @@ class Pieces:
         self.color = color.lower()
         
         self.promoted = False
+        self.promotion_count = promotion_count
         self.capture_name = capture_name
 
     def Place_Pieces(self, name_obj_dict, y_dim, turns):

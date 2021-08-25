@@ -174,7 +174,7 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, num_turns):
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, num_turns, black_promotion, white_promotion):
         '''
         Responsible for drawing the game board, pieces and end of game text
 
@@ -205,13 +205,25 @@ class Board:
             Board.drawText(self, screen, text, num)
         else:
             if num_turns % 2 == 0:
-                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
-                Board.drawPieces(self, screen, names_obj)
-                Board.drawCapturedPieces(self, screen, self.white_capture_counts_dict)
+                if white_promotion:
+                    Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                    Board.drawPieces(self, screen, names_obj)
+                    Board.drawCapturedPieces(self, screen, self.white_capture_counts_dict)
+                    Board.drawMessgaeBox(self, screen, black_promotion)
+                else:
+                    Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                    Board.drawPieces(self, screen, names_obj)
+                    Board.drawCapturedPieces(self, screen, self.white_capture_counts_dict)
             else:
-                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
-                Board.drawPieces(self, screen, names_obj)
-                Board.drawCapturedPieces(self, screen, self.black_capture_counts_dict)
+                if black_promotion:
+                    Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                    Board.drawPieces(self, screen, names_obj)
+                    Board.drawCapturedPieces(self, screen, self.black_capture_counts_dict)
+                    Board.drawMessgaeBox(self, screen, black_promotion)
+                else:
+                    Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                    Board.drawPieces(self, screen, names_obj)
+                    Board.drawCapturedPieces(self, screen, self.black_capture_counts_dict)
 
     def drawBoard(self, screen, high_squares, king_pos):
         # Red check; darkolivegreen moves
@@ -276,7 +288,7 @@ class Board:
             if piece.pos is None:
                 continue
             else:
-                if piece.promoted:
+                if piece.promoted and piece.promoted_image is not None:
                     screen.blit(piece.promoted_image, 
                         p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
                                 self.SQ_SIZE, self.SQ_SIZE))
@@ -328,3 +340,62 @@ class Board:
             textLocation = p.Rect(self.WIDTH-10, (idx+1)*self.SQ_SIZE-10, 8, 8)
             textObject = font.render(str(pieces[0]), 0, p.Color('Red'))
             screen.blit(textObject, textLocation)
+    
+    def drawMessgaeBox(self, screen, black_promote):
+        '''
+        Draw the promotion message box. Asking the player if they want to promote a pawn 
+            or not
+
+        :param screen (object): Screen object
+        :param black_promote (Bool): Flag to determine if black can promote or not
+            Determines where the message boax will be placed on the screen
+
+        :return NULL (Nothing)
+        '''
+        font = p.font.SysFont('Comic Sans MS', 18, True, False)
+
+        text_1 = 'Would You like to promote pawn?'
+        text_2 = '(This counts as your turn)'
+        
+        textObject_1 = font.render(text_1, 0, p.Color('black'))
+        textObject_2 = font.render(text_2, 0, p.Color('black'))
+
+        textObject_3 = font.render('Yes!', 0, p.Color('black'))
+        textObject_4 = font.render('No! ', 0, p.Color('black'))
+
+        if black_promote:
+            textLocation_1 = p.Rect(100, 30, 100, 18)
+            textLocation_2 = p.Rect(125, 50, 100, 18)
+
+            yesLocation = p.Rect(155, 90, 50, 30)
+            noLocation = p.Rect(285, 90, 50, 30)
+
+            p.draw.rect(screen, p.Color('wheat1'), p.Rect(90, 20, 310, 100))
+
+            # Yes and No Buttons
+            p.draw.rect(screen, p.Color('black'), p.Rect(150, 90, 50, 30), 1)
+            p.draw.rect(screen, p.Color('black'), p.Rect(275, 90, 50, 30), 1)
+
+            screen.blit(textObject_1, textLocation_1)
+            screen.blit(textObject_2, textLocation_2)
+            
+            screen.blit(textObject_3, yesLocation)
+            screen.blit(textObject_4, noLocation)
+        else:
+            textLocation_1 = p.Rect(100, 300, 100, 18)
+            textLocation_2 = p.Rect(125, 320, 100, 18)
+
+            yesLocation = p.Rect(155, 350, 50, 30)
+            noLocation = p.Rect(285, 350, 50, 30)
+
+            p.draw.rect(screen, p.Color('wheat1'), p.Rect(90, 290, 310, 100))
+
+            # Yes and No Buttons
+            p.draw.rect(screen, p.Color('black'), p.Rect(150, 350, 50, 30), 1)
+            p.draw.rect(screen, p.Color('black'), p.Rect(275, 350, 50, 30), 1)
+
+            screen.blit(textObject_1, textLocation_1)
+            screen.blit(textObject_2, textLocation_2)
+
+            screen.blit(textObject_3, yesLocation)
+            screen.blit(textObject_4, noLocation)
