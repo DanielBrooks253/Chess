@@ -92,11 +92,11 @@ bkinsho1 = KinSho((0,5), piece_name='bks1', piece_image = p.transform.rotate(IMA
 
 # Kaku (Bishop)
 wkaku = Kaku((7,1), piece_name = 'wka', piece_image = IMAGES['Bishop'], promoted_image = IMAGES['prom_bishop'], color='white', capture_name = 'kaku')
-bkaku = Kaku((1,1), piece_name = 'bka', piece_image = p.transform.rotate(IMAGES['Bishop'], 180), promoted_image = p.transform.rotate(IMAGES['prom_bishop'], 180), color='black', capture_name = 'kaku')
+bkaku = Kaku((1,7), piece_name = 'bka', piece_image = p.transform.rotate(IMAGES['Bishop'], 180), promoted_image = p.transform.rotate(IMAGES['prom_bishop'], 180), color='black', capture_name = 'kaku')
 
 # Hisha (Rook)
 whisha = Hisha((7,7), piece_name = 'wh', piece_image = IMAGES['Rook'], promoted_image = IMAGES['prom_rook'], color='white', capture_name = 'hisha')
-bhisha = Hisha((1,7), piece_name = 'bh', piece_image = p.transform.rotate(IMAGES['Rook'], 180), promoted_image = p.transform.rotate(IMAGES['prom_rook'], 180), color='black', capture_name = 'hisha')
+bhisha = Hisha((1,1), piece_name = 'bh', piece_image = p.transform.rotate(IMAGES['Rook'], 180), promoted_image = p.transform.rotate(IMAGES['prom_rook'], 180), color='black', capture_name = 'hisha')
 
 # O-Sho/Gyuk (King)
 wosho = OSho((8,4), piece_name = 'wO', piece_image = IMAGES['King'], promoted_image = None, color='white', capture_name = 'osho')
@@ -126,6 +126,9 @@ piece_name_numbers = {'fuhyo': ['f', list(range(9, 100))],
                       'hisha': ['h', list(range(20))]}
 black_promotion = False
 white_promotion = False
+
+white_prom_flag = False
+black_prom_flag = False
 
 while running:
   for e in p.event.get():
@@ -175,11 +178,13 @@ while running:
               board.name_obj_dict[piece_name].color == 'white':
               board.name_obj_dict[piece_name].promotion_count += 1
               board.white_name_obj_dict[piece_name].promotion_count += 1
+              white_promotion = True
 
             elif num_turns % 2 != 0 and col >= 6 and \
               board.name_obj_dict[piece_name].color == 'black': 
               board.name_obj_dict[piece_name].promotion_count += 1
               board.black_name_obj_dict[piece_name].promotion_count += 1
+              black_promotion = True
             else:
               pass
 
@@ -340,12 +345,12 @@ while running:
                   high_squares = None
                   player_clicks = []
                 else:
-                  high_squares = None
-                  player_clicks = []
+                  pass
 
                 if col <= 2 and board.name_obj_dict[piece_name].color == 'white':
                   board.name_obj_dict[piece_name].promotion_count += 1
                   board.white_name_obj_dict[piece_name].promotion_count += 1
+                  white_promotion = True
                 else:
                   pass
 
@@ -353,9 +358,26 @@ while running:
                 if board.name_obj_dict[piece_name].promotion_count > 0 and \
                    not board.name_obj_dict[piece_name].promoted:
 
-                  board.name_obj_dict[piece_name].promoted = True
-                  board.name_obj_dict[piece_name].promotion_count = 0
-                  board.white_name_obj_dict[piece_name].promotion_count = 0
+                  white_prom_flag = True
+                  raw_row = location[0]
+                  raw_col = location[1]
+
+                  print('Hello World')
+                  # Click the yes button
+                  if 150 <= raw_row <= 200 and 90 <= raw_col <= 120:
+                      print(raw_row, raw_col)
+                      break
+                  # Click the no button
+                  elif 275 <= raw_row <= 325 and 90 <= raw_col <= 120:
+                      print(raw_row, raw_col)
+                      break
+                  else:
+                    print(raw_row, raw_col)
+                    continue
+
+                  # board.name_obj_dict[piece_name].promoted = False
+                  # board.name_obj_dict[piece_name].promotion_count = 0
+                  # board.white_name_obj_dict[piece_name].promotion_count = 0
                 else:
                   pass
 
@@ -375,16 +397,17 @@ while running:
                 if col >= 6 and board.name_obj_dict[piece_name].color == 'black':
                   board.name_obj_dict[piece_name].promotion_count += 1
                   board.black_name_obj_dict[piece_name].promotion_count += 1
+                  black_promotion = True
                 else:
                   pass
 
                 # Piece promotion for ending up in the promotion zone
                 if board.name_obj_dict[piece_name].promotion_count > 0 and \
                    not board.name_obj_dict[piece_name].promoted:
-
-                   board.name_obj_dict[piece_name].promoted = True
-                   board.name_obj_dict[piece_name].promotion_count = 0
-                   board.black_name_obj_dict[piece_name].promotion_count = 0
+                  
+                  board.name_obj_dict[piece_name].promoted = False
+                  board.name_obj_dict[piece_name].promotion_count = 0
+                  board.black_name_obj_dict[piece_name].promotion_count = 0
                 else:
                   pass
 
@@ -447,7 +470,12 @@ while running:
                   else:
                       pass
 
-              num_turns += 1
+              if white_prom_flag or black_prom_flag:
+                print(num_turns)
+              else:
+                high_squares = None
+                player_clicks = []
+                num_turns += 1
 
             else:
               break

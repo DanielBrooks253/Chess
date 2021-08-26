@@ -174,7 +174,8 @@ class Board:
 
                 self.black_piece_loc = add_new_move
 
-    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, num_turns, black_promotion, white_promotion):
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, num_turns, 
+    black_promotion, white_promotion):
         '''
         Responsible for drawing the game board, pieces and end of game text
 
@@ -190,7 +191,7 @@ class Board:
         :param num (int): The size of the font to display the text
 
         :param args (list): THis is the catch all parameter. This is used to color the square for
-            the king in red and highlught the available moves for the pieces. 
+            the king in red and highlight the available moves for the pieces. 
             :args[0]: 
                 list of available moves for the piece
             :args[1]:
@@ -329,8 +330,7 @@ class Board:
 
     def drawCapturedPieces(self, screen, captured_dict):
 
-        font = p.font.SysFont('Comic Sans MS', 9, True, False)
-        header_font = p.font.SysFont('Comic Sans MS', 12, True, False)
+        font = p.font.SysFont('Comic Sans MS', 11, True, False)
 
         # Draw the pieces on the side of the board
         for idx, pieces in enumerate(captured_dict.values()):
@@ -338,7 +338,7 @@ class Board:
                 p.Rect(self.HEIGHT+8, idx*self.SQ_SIZE+10, self.SQ_SIZE, self.SQ_SIZE))
 
             textLocation = p.Rect(self.WIDTH-10, (idx+1)*self.SQ_SIZE-10, 8, 8)
-            textObject = font.render(str(pieces[0]), 0, p.Color('Red'))
+            textObject = font.render(str(pieces[0]), 0, p.Color('black'))
             screen.blit(textObject, textLocation)
     
     def drawMessgaeBox(self, screen, black_promote):
