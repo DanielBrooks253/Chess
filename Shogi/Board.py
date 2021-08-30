@@ -118,6 +118,65 @@ class Board:
                         continue
         return True
     
+    def Placement_Check_Check(self, turns):
+        white_piece_loc_copy = self.white_piece_loc.copy()
+        black_piece_loc_copy = self.black_piece_loc.copy()
+
+        output = set()
+
+        if turns % 2 == 0:
+            for key, value in self.white_capture_counts_dict.items():
+                if value[0] == 0:
+                    continue
+                else:
+                    placement_squares = self.capture_name_obj_dict[key].Place_Pieces(
+                        self.name_obj_dict, self.y_dim, turns
+                    )
+
+                    for i in placement_squares:
+                        white_piece_loc_copy |= {i}
+                        
+                        if self.name_obj_dict['wO'].check_check(
+                            self.black_name_obj_dict,
+                            self.black_piece_loc,
+                            white_piece_loc_copy,
+                            self.y_dim, 
+                            self.x_dim
+                        ):
+                            white_piece_loc_copy.remove(i)
+                            continue
+                        else:
+                            white_piece_loc_copy.remove(i)
+                            output |= {i}
+        else:
+            for key, value in self.black_capture_counts_dict.items():
+                if value[0] == 0:
+                    continue
+                else:
+                    placement_squares = self.capture_name_obj_dict[key].Place_Pieces(
+                        self.name_obj_dict, self.y_dim, turns
+                    )
+
+                    for i in placement_squares:
+                        black_piece_loc_copy |= i
+                        
+                        if self.name_obj_dict['bO'].check_check(
+                            self.white_name_obj_dict,
+                            self.white_piece_loc,
+                            black_piece_loc_copy,
+                            self.y_dim, 
+                            self.x_dim
+                        ):
+                            black_piece_loc_copy.remove(i)
+                            continue
+                        else:
+                            black_piece_loc_copy.remove(i)
+                            output |= {i}
+        if len(output) == 0:
+                return set()
+        else:
+            return output
+
     def update_locs(self, color, old_move, new_move, is_captured=False, captured_piece=None):
         '''
         Once a move is made, all of the dictionaries will update with the new locations and
@@ -125,7 +184,7 @@ class Board:
 
         :param color (str): The color of the piece that is being moved
         :param old_move (tuple): The location that the piece is currently on (y,x)
-        :param new_move( tuple): The location to which the piece will mvoe to (y,x)
+        :param new_move( tuple): The location to which the piece will move to (y,x)
         
         :param is_catpured (Bool): Checks to see if the move resulted in a captured piece or not
             :default value: False
@@ -355,17 +414,14 @@ class Board:
         font = p.font.SysFont('Comic Sans MS', 18, True, False)
 
         text_1 = 'Would You like to promote pawn?'
-        text_2 = '(This counts as your turn)'
         
         textObject_1 = font.render(text_1, 0, p.Color('black'))
-        textObject_2 = font.render(text_2, 0, p.Color('black'))
 
         textObject_3 = font.render('Yes!', 0, p.Color('black'))
         textObject_4 = font.render('No! ', 0, p.Color('black'))
 
         if black_promote:
             textLocation_1 = p.Rect(100, 30, 100, 18)
-            textLocation_2 = p.Rect(125, 50, 100, 18)
 
             yesLocation = p.Rect(155, 90, 50, 30)
             noLocation = p.Rect(285, 90, 50, 30)
@@ -377,13 +433,11 @@ class Board:
             p.draw.rect(screen, p.Color('black'), p.Rect(275, 90, 50, 30), 1)
 
             screen.blit(textObject_1, textLocation_1)
-            screen.blit(textObject_2, textLocation_2)
             
             screen.blit(textObject_3, yesLocation)
             screen.blit(textObject_4, noLocation)
         else:
             textLocation_1 = p.Rect(100, 300, 100, 18)
-            textLocation_2 = p.Rect(125, 320, 100, 18)
 
             yesLocation = p.Rect(155, 350, 50, 30)
             noLocation = p.Rect(285, 350, 50, 30)
@@ -395,7 +449,6 @@ class Board:
             p.draw.rect(screen, p.Color('black'), p.Rect(275, 350, 50, 30), 1)
 
             screen.blit(textObject_1, textLocation_1)
-            screen.blit(textObject_2, textLocation_2)
 
             screen.blit(textObject_3, yesLocation)
             screen.blit(textObject_4, noLocation)

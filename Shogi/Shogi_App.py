@@ -151,19 +151,43 @@ while running:
             moves = None
 
             # Highlight the sqaures of the captured piece that is selected
+            # If the king in in check, show only the squares that would result
+            # in not being in check.
             if num_turns % 2 == 0:
               captured_item_selected = list(board.white_capture_counts_dict.keys())[col]
               if board.white_capture_counts_dict[captured_item_selected][0] == 0:
                 capture_high_squares = None
               else:
-                capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
+                if board.name_obj_dict['wO'].in_check:
+                  avail_places = board.Placement_Check_Check(num_turns)
+                  all_high_squares = board.capture_name_obj_dict[captured_item_selected] \
+                                  .Place_Pieces(board.name_obj_dict, board.y_dim, num_turns)
+                  legal_places = avail_places & all_high_squares
+
+                  if len(legal_places) == 0:
+                    capture_high_squares = None
+                  else:
+                    capture_high_squares = legal_places
+                else:
+                  capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
                                   .Place_Pieces(board.name_obj_dict, board.y_dim, num_turns)
             else:
               captured_item_selected = list(board.black_capture_counts_dict.keys())[col]
               if board.black_capture_counts_dict[captured_item_selected][0] == 0:
                 captured_item_selected = None
               else:
-                capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
+                if board.name_obj_dict['bO'].in_check:
+                  avail_places = board.Placement_Check_Check(num_turns)
+                  all_high_squares = board.capture_name_obj_dict[captured_item_selected] \
+                                  .Place_Pieces(board.name_obj_dict, board.y_dim, num_turns)
+                  legal_places = avail_places & all_high_squares
+
+                  if len(legal_places) == 0:
+                    capture_high_squares = None
+                  else:
+                    capture_high_squares = legal_places
+                else:
+                  capture_high_squares = board.capture_name_obj_dict[captured_item_selected] \
                                   .Place_Pieces(board.name_obj_dict, board.y_dim, num_turns)
 
           elif (col, row) not in board.loc_names.keys():
@@ -349,6 +373,15 @@ while running:
                   board
                 )
 
+                if board.name_obj_dict[piece_name].promotion_count > 0 and num_turns % 2 == 0:
+                  white_promotion = True
+                  board.name_obj_dict[piece_name].promotion_count = 0
+                elif board.name_obj_dict[piece_name].promotion_count > 0 and num_turns % 2 != 0:
+                  black_promotion = True
+                  board.name_obj_dict[piece_name].promotion_count = 0
+                else:
+                  pass
+
               # Check to see if a pawn, knight or lance are at the end of the board.
               # If they are, then they must promote.
               # Checks to see if a piece is able to promote by being in the promotion
@@ -369,6 +402,7 @@ while running:
                 board.name_obj_dict[piece_name].promoted = True
                 high_squares = None
                 player_clicks = []
+
               elif num_turns % 2 == 0 and col <= 2 and not board.name_obj_dict[piece_name].promoted and \
               board.name_obj_dict[piece_name].color == 'white':
                 board.name_obj_dict[piece_name].promotion_count += 1
@@ -455,13 +489,13 @@ while running:
 
   if board.name_obj_dict['wO'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                                board.name_obj_dict['wO'].pos, num_turns, False, False)
+                                board.name_obj_dict['wO'].pos, num_turns, black_promotion, white_promotion)
         clock.tick(MAX_FPS)
         p.display.flip()
 
   elif board.name_obj_dict['bO'].in_check:
       board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                              board.name_obj_dict['bO'].pos, num_turns, False, False)
+                              board.name_obj_dict['bO'].pos, num_turns, black_promotion, white_promotion)
       clock.tick(MAX_FPS)
       p.display.flip()
 

@@ -32,12 +32,14 @@ class Pieces:
             pawn_on_board_locations = set([i.pos[1] for i in name_obj_dict.values() \
                                                if i.color == 'white' and \
                                                   i.capture_name == 'fuhyo' and \
-                                                  i.pos is not None])
+                                                  i.pos is not None and \
+                                                  i.promoted == False])
         else:
             pawn_on_board_locations = set([i.pos[1] for i in name_obj_dict.values() \
                                                if i.color == 'black' and \
                                                   i.capture_name == 'fuhyo' and \
-                                                  i.pos is not None])
+                                                  i.pos is not None and \
+                                                  i.promoted == False])
 
         # Kyosha cannot be placed on the last row of the game board
         if self.capture_name == 'kyosha':
@@ -324,9 +326,10 @@ class Kaku(Pieces):
             checks)
         '''
         all_moves = Kaku.Get_Moves(self, same_color_locs, opp_color_locs, y_dim, x_dim)
-
-        #difference = all_moves - Kaku.Get_Diangonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
-        #join = Kaku.Get_Diangonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim) | difference
+        if self.promoted:
+            all_moves |= Kaku.Get_Promoted_Moves(self)
+        else:
+            pass
 
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -336,6 +339,12 @@ class Kaku(Pieces):
             return None
         else:
             return rm_same_color
+    
+    def Get_Promoted_Moves(self):
+       return  set(((self.pos[0]+1, self.pos[1]),
+                   (self.pos[0]-1, self.pos[1]),
+                   (self.pos[0], self.pos[1]+1),
+                   (self.pos[0], self.pos[1]-1)))
 
     def Get_Moves(self, same_color_locs, opp_color_locs, y_dim, x_dim):
         combine_locs = same_color_locs | opp_color_locs
@@ -499,6 +508,12 @@ class Hisha(Pieces):
             checks)
         '''
         all_moves = Hisha.Get_Moves(self)
+
+        if self.promoted:
+            all_moves |= Hisha.Get_Promoted_Moves(self)
+        else:
+            pass
+
         orth_moves_beyon_pieces = Hisha.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -521,6 +536,12 @@ class Hisha(Pieces):
                                                                       list(zip([-1,-2,-3,-4,-5,-6,-7,-8], [0,0,0,0,0,0,0,0])) + \
                                                                       list(zip([0,0,0,0,0,0,0,0], [1,2,3,4,5,6,7,8])) + \
                                                                       list(zip([0,0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7,-8]))])
+
+    def Get_Promoted_Moves(self):
+       return  set(((self.pos[0]+1, self.pos[1]+1),
+                   (self.pos[0]+1, self.pos[1]-1),
+                   (self.pos[0]-1, self.pos[1]+1),
+                   (self.pos[0]-1, self.pos[1]-1)))
 
     def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim):
         '''
