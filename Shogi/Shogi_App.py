@@ -127,9 +127,6 @@ piece_name_numbers = {'fuhyo': ['f', list(range(9, 100))],
 black_promotion = False
 white_promotion = False
 
-white_prom_flag = False
-black_prom_flag = False
-
 while running:
   for e in p.event.get():
     if e.type == p.QUIT:
@@ -140,6 +137,9 @@ while running:
 
       row = location[0]//SQ_SIZE
       col = location[1]//SQ_SIZE     
+
+      raw_row = location[0]
+      raw_col = location[1]
 
       if not game_over:
         # First Click
@@ -174,17 +174,14 @@ while running:
             # If you start off in the promotion zone, increase the promotion
             # counter. You can promote as long as you start/end in the promotion
             # zone.
-            if num_turns % 2 == 0 and col <= 2 and \
+            if num_turns % 2 == 0 and col <= 2 and not board.name_obj_dict[piece_name].promoted and \
               board.name_obj_dict[piece_name].color == 'white':
               board.name_obj_dict[piece_name].promotion_count += 1
-              board.white_name_obj_dict[piece_name].promotion_count += 1
-              white_promotion = True
+              high_squares = board.name_obj_dict[piece_name].pos
 
-            elif num_turns % 2 != 0 and col >= 6 and \
+            elif num_turns % 2 != 0 and col >= 6 and not board.name_obj_dict[piece_name].promoted and \
               board.name_obj_dict[piece_name].color == 'black': 
               board.name_obj_dict[piece_name].promotion_count += 1
-              board.black_name_obj_dict[piece_name].promotion_count += 1
-              black_promotion = True
             else:
               pass
 
@@ -327,92 +324,68 @@ while running:
                 break
             # If the second click is in the pieces available moves,
             # make the move and update everything
-            elif (col, row) in moves:
-              board.name_obj_dict[piece_name].Make_Move(
-                (col, row),
-                board
-              )
-
-              # If a pawn or lance moves to the end of the board they must promote
-              # If a knight is second to last row of the board, they must promote
-              if num_turns % 2 == 0:
-                if board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha'] and col == 0:
+            elif (col, row) in moves or white_promotion or black_promotion:
+              if white_promotion:
+                if 150 <= raw_row <= 200 and 350 <= raw_col <= 380:
                   board.name_obj_dict[piece_name].promoted = True
-                  high_squares = None
-                  player_clicks = []
-                elif board.name_obj_dict[piece_name].capture_name == 'keima' and col <= 1:
-                  board.name_obj_dict[piece_name].promoted = True
-                  high_squares = None
-                  player_clicks = []
-                else:
-                  pass
-
-                if col <= 2 and board.name_obj_dict[piece_name].color == 'white':
-                  board.name_obj_dict[piece_name].promotion_count += 1
-                  board.white_name_obj_dict[piece_name].promotion_count += 1
-                  white_promotion = True
-                else:
-                  pass
-
-                # Piece promotion for ending up in the promotion zone
-                if board.name_obj_dict[piece_name].promotion_count > 0 and \
-                   not board.name_obj_dict[piece_name].promoted:
-
-                  white_prom_flag = True
-                  raw_row = location[0]
-                  raw_col = location[1]
-
-                  print('Hello World')
-                  # Click the yes button
-                  if 150 <= raw_row <= 200 and 90 <= raw_col <= 120:
-                      print(raw_row, raw_col)
-                      break
-                  # Click the no button
-                  elif 275 <= raw_row <= 325 and 90 <= raw_col <= 120:
-                      print(raw_row, raw_col)
-                      break
-                  else:
-                    print(raw_row, raw_col)
-                    continue
-
-                  # board.name_obj_dict[piece_name].promoted = False
-                  # board.name_obj_dict[piece_name].promotion_count = 0
-                  # board.white_name_obj_dict[piece_name].promotion_count = 0
-                else:
-                  pass
-
-              else:
-                if board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha'] and col == 8:
-                  board.name_obj_dict[piece_name].promoted = True
-                  high_squares = None
-                  player_clicks = []
-                elif board.name_obj_dict[piece_name].capture_name == 'keima' and col >= 7:
-                  board.name_obj_dict[piece_name].promoted = True
-                  high_squares = None
-                  player_clicks = []
-                else:
-                  high_squares = None
-                  player_clicks = []
-
-                if col >= 6 and board.name_obj_dict[piece_name].color == 'black':
-                  board.name_obj_dict[piece_name].promotion_count += 1
-                  board.black_name_obj_dict[piece_name].promotion_count += 1
-                  black_promotion = True
-                else:
-                  pass
-
-                # Piece promotion for ending up in the promotion zone
-                if board.name_obj_dict[piece_name].promotion_count > 0 and \
-                   not board.name_obj_dict[piece_name].promoted:
-                  
-                  board.name_obj_dict[piece_name].promoted = False
                   board.name_obj_dict[piece_name].promotion_count = 0
-                  board.black_name_obj_dict[piece_name].promotion_count = 0
+                  white_promotion = False
+                elif 275 <= raw_row <= 325 and 350 <= raw_col <= 380:
+                  white_promotion = False
                 else:
                   pass
+              elif black_promotion:
+                if 150 <= raw_row <= 200 and 90 <= raw_col <= 120:
+                  board.name_obj_dict[piece_name].promoted = True
+                  board.name_obj_dict[piece_name].promotion_count = 0
+                  black_promotion = False
+                elif 275 <= raw_row <= 325 and 90 <= raw_col <= 120:
+                  black_promotion = False
+                else:
+                  pass
+              else:
+                board.name_obj_dict[piece_name].Make_Move(
+                  (col, row),
+                  board
+                )
+
+              # Check to see if a pawn, knight or lance are at the end of the board.
+              # If they are, then they must promote.
+              # Checks to see if a piece is able to promote by being in the promotion
+              # zone at the start or end of their turn
+              if num_turns % 2 == 0 and col == 0 and board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha']: 
+                board.name_obj_dict[piece_name].promoted = True
+                high_squares = None
+                player_clicks = []
+              elif num_turns % 2 == 0 and board.name_obj_dict[piece_name].capture_name == 'keima' and col <= 1:
+                board.name_obj_dict[piece_name].promoted = True
+                high_squares = None
+                player_clicks = []
+              elif num_turns % 2 != 0 and col == 8 and board.name_obj_dict[piece_name].capture_name in ['fuhyo', 'kyosha']:
+                board.name_obj_dict[piece_name].promoted = True
+                high_squares = None
+                player_clicks = []
+              elif num_turns % 2 != 0 and col <= 7 and board.name_obj_dict[piece_name].capture_name == 'keima':
+                board.name_obj_dict[piece_name].promoted = True
+                high_squares = None
+                player_clicks = []
+              elif num_turns % 2 == 0 and col <= 2 and not board.name_obj_dict[piece_name].promoted and \
+              board.name_obj_dict[piece_name].color == 'white':
+                board.name_obj_dict[piece_name].promotion_count += 1
+                white_promotion = True
+                high_squares = board.name_obj_dict[piece_name].pos
+
+              elif num_turns % 2 != 0 and col >= 6 and not board.name_obj_dict[piece_name].promoted and \
+              board.name_obj_dict[piece_name].color == 'black':
+                board.name_obj_dict[piece_name].promotion_count += 1
+                black_promotion = True
+                high_squares = board.name_obj_dict[piece_name].pos
+              else:
+                pass
 
               # Check to see if the move as resulted in the king being in 
               # check or not
+
               board.name_obj_dict['bO'].in_check = board.name_obj_dict['bO'].check_check(
                   board.white_name_obj_dict,
                   board.white_piece_loc,
@@ -470,8 +443,8 @@ while running:
                   else:
                       pass
 
-              if white_prom_flag or black_prom_flag:
-                print(num_turns)
+              if white_promotion or black_promotion:
+                continue
               else:
                 high_squares = None
                 player_clicks = []
