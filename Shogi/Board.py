@@ -73,6 +73,8 @@ class Board:
             :True means there are no available moves to make
             :False means there are available moves for the king and other pieces
         '''
+        placement_check = self.Placement_Check_Check(num_turns+1)
+
         for i in color_name_obj.values():
             if i.pos is None:
                 continue
@@ -116,7 +118,14 @@ class Board:
                         return False
                     else:
                         continue
-        return True
+
+        if len(placement_check) == 0:
+            print('No More Placements')
+            return True
+        else:
+            print('Placements')
+            return False
+        # return True
     
     def Placement_Check_Check(self, turns):
         white_piece_loc_copy = self.white_piece_loc.copy()
@@ -133,21 +142,28 @@ class Board:
                         self.name_obj_dict, self.y_dim, turns
                     )
 
-                    for i in placement_squares:
-                        white_piece_loc_copy |= {i}
-                        
-                        if self.name_obj_dict['wO'].check_check(
-                            self.black_name_obj_dict,
-                            self.black_piece_loc,
-                            white_piece_loc_copy,
-                            self.y_dim, 
-                            self.x_dim
-                        ):
-                            white_piece_loc_copy.remove(i)
-                            continue
-                        else:
-                            white_piece_loc_copy.remove(i)
-                            output |= {i}
+                    if placement_squares is None:
+                        return set()
+                    else:
+                        for i in placement_squares:
+                            white_piece_loc_copy |= {i}
+                            
+                            if self.name_obj_dict['wO'].check_check(
+                                self.black_name_obj_dict,
+                                self.black_piece_loc,
+                                white_piece_loc_copy,
+                                self.y_dim, 
+                                self.x_dim
+                            ):
+                                white_piece_loc_copy.remove(i)
+                                continue
+                            else:
+                                white_piece_loc_copy.remove(i)
+                                output |= {i}
+            if len(output) == 0:
+                return set()
+            else:
+                return output
         else:
             for key, value in self.black_capture_counts_dict.items():
                 if value[0] == 0:
@@ -157,25 +173,28 @@ class Board:
                         self.name_obj_dict, self.y_dim, turns
                     )
 
-                    for i in placement_squares:
-                        black_piece_loc_copy |= i
-                        
-                        if self.name_obj_dict['bO'].check_check(
-                            self.white_name_obj_dict,
-                            self.white_piece_loc,
-                            black_piece_loc_copy,
-                            self.y_dim, 
-                            self.x_dim
-                        ):
-                            black_piece_loc_copy.remove(i)
-                            continue
-                        else:
-                            black_piece_loc_copy.remove(i)
-                            output |= {i}
-        if len(output) == 0:
+                    if placement_squares is None:
+                        return set()
+                    else:
+                        for i in placement_squares:
+                            black_piece_loc_copy |= {i}
+                            
+                            if self.name_obj_dict['bO'].check_check(
+                                self.white_name_obj_dict,
+                                self.white_piece_loc,
+                                black_piece_loc_copy,
+                                self.y_dim, 
+                                self.x_dim
+                            ):
+                                black_piece_loc_copy.remove(i)
+                                continue
+                            else:
+                                black_piece_loc_copy.remove(i)
+                                output |= {i}
+            if len(output) == 0:
                 return set()
-        else:
-            return output
+            else:
+                return output
 
     def update_locs(self, color, old_move, new_move, is_captured=False, captured_piece=None):
         '''
@@ -249,7 +268,7 @@ class Board:
         :param text (str): The text to display after the game is over
         :param num (int): The size of the font to display the text
 
-        :param args (list): THis is the catch all parameter. This is used to color the square for
+        :param args (list): This is the catch all parameter. This is used to color the square for
             the king in red and highlight the available moves for the pieces. 
             :args[0]: 
                 list of available moves for the piece
@@ -413,7 +432,7 @@ class Board:
         '''
         font = p.font.SysFont('Comic Sans MS', 18, True, False)
 
-        text_1 = 'Would You like to promote pawn?'
+        text_1 = 'Would You like to promote piece?'
         
         textObject_1 = font.render(text_1, 0, p.Color('black'))
 

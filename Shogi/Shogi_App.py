@@ -297,7 +297,14 @@ while running:
                                           board.y_dim,
                                           board.x_dim
                                       )
-
+                    
+                    board.name_obj_dict['wO'].in_check = board.name_obj_dict['wO'].check_check(
+                                          board.black_name_obj_dict,
+                                          board.black_piece_loc,
+                                          board.white_piece_loc,
+                                          board.y_dim,
+                                          board.x_dim
+                                      )
                   else:
                     new_name = 'b' + \
                                piece_name_numbers[captured_item_selected][0] + \
@@ -311,7 +318,7 @@ while running:
                             'hisha': Hisha((col, row), piece_name = new_name, piece_image = p.transform.rotate(IMAGES['Rook'], 180), promoted_image = p.transform.rotate(IMAGES['prom_rook'], 180), color='black', capture_name = 'hisha'),
                             'kyosha': Kyosha((col, row), piece_name = new_name, piece_image = p.transform.rotate(IMAGES['Lance'], 180), promoted_image = p.transform.rotate(IMAGES['prom_lance'], 180), color='black', capture_name = 'kyosha')}
  
-                    # Update all the black dictuinaries on the board
+                    # Update all the black dictionaries on the board
                     board.black_piece_loc |= {(col, row)}
                     board.black_name_obj_dict[temp[captured_item_selected].piece_name] = temp[captured_item_selected]
                     board.black_capture_counts_dict[captured_item_selected][0] -= 1
@@ -326,6 +333,14 @@ while running:
                                           board.x_dim
                                       )
 
+                    board.name_obj_dict['bO'].in_check = board.name_obj_dict['bO'].check_check(
+                                          board.white_name_obj_dict,
+                                          board.white_piece_loc,
+                                          board.black_piece_loc,
+                                          board.y_dim,
+                                          board.x_dim
+                                      )
+
                   # Update all the general dictionaries on the board
                   board.loc_names[(col, row)] = new_name
                   board.name_obj_dict[new_name] = temp[captured_item_selected]
@@ -336,12 +351,39 @@ while running:
                   
                   player_clicks = []
 
+                  # Check to see if placing the piece cause checkmate or not
+                  if board.game_over_check(
+                  board.black_name_obj_dict,
+                  num_turns
+                  ) and bosho.in_check:
+
+                    text = 'Checkmate!! White Wins'
+                    game_over = True
+                    break
+
+                  elif board.game_over_check(
+                      board.black_name_obj_dict,
+                      num_turns
+                  ) and (not bosho.in_check or not wosho.in_check):
+
+                    text = 'Stalemate!! Draw Game'
+                    game_over = True
+                    break
+
+                  elif board.game_over_check(
+                    board.white_name_obj_dict,
+                    num_turns
+                  ) and wosho.in_check:
+                      text = 'Checkmate!! Black Wins'
+                      game_over = True
+                      break
+                  else:
+                    pass
+
                   # Delete the used number, that is being used for the name
                   # of the pieces.
                   piece_name_numbers[captured_item_selected][1].pop(0)
                   num_turns += 1 
-                  break
-
                 else:
                   break
               else:
@@ -398,7 +440,7 @@ while running:
                 board.name_obj_dict[piece_name].promoted = True
                 high_squares = None
                 player_clicks = []
-              elif num_turns % 2 != 0 and col <= 7 and board.name_obj_dict[piece_name].capture_name == 'keima':
+              elif num_turns % 2 != 0 and col >= 7 and board.name_obj_dict[piece_name].capture_name == 'keima':
                 board.name_obj_dict[piece_name].promoted = True
                 high_squares = None
                 player_clicks = []
@@ -436,46 +478,36 @@ while running:
                   board.x_dim
               )
 
-              if num_turns % 2 == 0:
-                  if board.game_over_check(
-                      board.black_name_obj_dict,
-                      num_turns
-                  ) and bosho.in_check:
+              if board.game_over_check(
+                  board.black_name_obj_dict,
+                  num_turns
+              ) and bosho.in_check:
 
-                      text = 'Checkmate!! White Wins'
-                      game_over = True
-                      break
+                  text = 'Checkmate!! White Wins'
+                  game_over = True
+                  high_squares = None
+                  break
 
-                  elif board.game_over_check(
-                      board.black_name_obj_dict,
-                      num_turns
-                  ) and not bosho.in_check:
+              elif board.game_over_check(
+                  board.black_name_obj_dict,
+                  num_turns
+              ) and (not bosho.in_check or not wosho.in_check):
 
-                      text = 'Stalemate!! Draw Game'
-                      game_over = True
-                      break
-                  else:
-                      pass
+                  text = 'Stalemate!! Draw Game'
+                  game_over = True
+                  high_squares = None
+                  break
+
+              elif board.game_over_check(
+                board.white_name_obj_dict,
+                num_turns
+              ) and wosho.in_check:
+                  test = 'Checkmate!! Black Wins'
+                  game_over = True
+                  high_squares = None
+                  break
               else:
-                  if board.game_over_check(
-                      board.white_name_obj_dict,
-                      num_turns
-                  ) and wosho.in_check:
-
-                      text = 'Checkmate!! Black Wins'
-                      game_over = True
-                      break
-
-                  elif board.game_over_check(
-                      board.white_name_obj_dict,
-                      num_turns
-                  ) and not wosho.in_check:
-
-                      text = 'Stalemate!! Draw Game'
-                      game_over = True
-                      break
-                  else:
-                      pass
+                pass
 
               if white_promotion or black_promotion:
                 continue
