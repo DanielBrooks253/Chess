@@ -73,6 +73,8 @@ class Board:
             :True means there are no available moves to make
             :False means there are available moves for the king and other pieces
         '''
+
+        # See if there are any placements that can get the player out of check
         placement_check = self.Placement_Check_Check(num_turns+1)
 
         for i in color_name_obj.values():
@@ -128,16 +130,29 @@ class Board:
         # return True
     
     def Placement_Check_Check(self, turns):
+        '''
+        Checks to see if a piece can be placed from the captured zone to stop a player from being in
+        check.
+
+        :param turns (int): The number of turns in the game
+
+        :returns set: Return all of the places that will get the player out of check. If the player is
+            not in check, then the function will return all of the pieces available places. If the player
+            is in check, it will only return a subset of moves to get the player out of check, If there are
+            no available places to get the player out of check, it will return an empty set.
+        '''
         white_piece_loc_copy = self.white_piece_loc.copy()
         black_piece_loc_copy = self.black_piece_loc.copy()
 
         output = set()
 
         if turns % 2 == 0:
+            # Grab all of the captured piece counts that have one piece in them
             for key, value in self.white_capture_counts_dict.items():
                 if value[0] == 0:
                     continue
                 else:
+                    # Get all of the places the piece can be placed
                     placement_squares = self.capture_name_obj_dict[key].Place_Pieces(
                         self.name_obj_dict, self.y_dim, turns
                     )
@@ -145,6 +160,7 @@ class Board:
                     if placement_squares is None:
                         return set()
                     else:
+                        # Check all the possible places and see which ones get the player out of check
                         for i in placement_squares:
                             white_piece_loc_copy |= {i}
                             
@@ -407,6 +423,15 @@ class Board:
         screen.blit(textObject, textLocation.move(2,2))
 
     def drawCapturedPieces(self, screen, captured_dict):
+        '''
+        Draw the side bar that will show all of the captured pieces and their counts on the 
+        side of the game board
+
+        :param screen (object): Screen object
+        :param captured_dict (dict): Counts of the different pieces that have been captured
+
+        :return NULL (Nothing)
+        '''
 
         font = p.font.SysFont('Comic Sans MS', 11, True, False)
 

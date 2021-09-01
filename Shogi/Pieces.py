@@ -25,6 +25,16 @@ class Pieces:
         self.capture_name = capture_name
 
     def Place_Pieces(self, name_obj_dict, y_dim, turns):
+        '''
+        Place the piieces back on the board after they have been captured
+
+        :param name_obj_dict (dict): Maps the piece name to the object
+        :param y_dim (int): Number of squares in the y direction (up and down)
+        :param turns (int): The number of turns that happend in the game
+
+        :return set: Returns a set of coordinates that indicate where the particular piece
+            is allowed to be placed
+        '''
         all_piece_locations = set([i.pos for i in name_obj_dict.values()])
 
         # Locate the file of all the pawns on the board
@@ -325,7 +335,7 @@ class Kaku(Pieces):
         :return rm_checks (set): All possible moves a piece can make (Does not take into account
             checks)
         '''
-        all_moves = Kaku.Get_Moves(self, same_color_locs, opp_color_locs, y_dim, x_dim)
+        all_moves = Kaku.Get_Moves(self, same_color_locs, opp_color_locs)
         if self.promoted:
             all_moves |= Kaku.Get_Promoted_Moves(self)
         else:
@@ -341,12 +351,26 @@ class Kaku(Pieces):
             return rm_same_color
     
     def Get_Promoted_Moves(self):
-       return  set(((self.pos[0]+1, self.pos[1]),
-                   (self.pos[0]-1, self.pos[1]),
-                   (self.pos[0], self.pos[1]+1),
-                   (self.pos[0], self.pos[1]-1)))
+        '''
+        Returns the promoted moves when the piece is promoted
+        '''
+        return  set(((self.pos[0]+1, self.pos[1]),
+                    (self.pos[0]-1, self.pos[1]),
+                    (self.pos[0], self.pos[1]+1),
+                    (self.pos[0], self.pos[1]-1)))
 
-    def Get_Moves(self, same_color_locs, opp_color_locs, y_dim, x_dim):
+    def Get_Moves(self, same_color_locs, opp_color_locs):
+        '''
+        Get all the moves for the bishop. Looks at the closest pieces in each direction diagonally
+        and determines if the bishop can move onto the square (capture) or right befor it.
+
+        :param same_color_locs (list): List of positions of all the pieces that have the same color
+            as the selected piece
+        :param opp_color_locs (list): List of positions of all the pieces that have a different color
+            as the selected piece
+
+        :return set: Returns all the available moves in each of the four diagonal directions
+        '''
         combine_locs = same_color_locs | opp_color_locs
 
         combine_locs = set(filter(None, combine_locs))
@@ -538,10 +562,13 @@ class Hisha(Pieces):
                                                                       list(zip([0,0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7,-8]))])
 
     def Get_Promoted_Moves(self):
-       return  set(((self.pos[0]+1, self.pos[1]+1),
-                   (self.pos[0]+1, self.pos[1]-1),
-                   (self.pos[0]-1, self.pos[1]+1),
-                   (self.pos[0]-1, self.pos[1]-1)))
+        '''
+        Returns the promoted moves when the piece is promoted
+        '''
+        return  set(((self.pos[0]+1, self.pos[1]+1),
+                    (self.pos[0]+1, self.pos[1]-1),
+                    (self.pos[0]-1, self.pos[1]+1),
+                    (self.pos[0]-1, self.pos[1]-1)))
 
     def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim):
         '''
