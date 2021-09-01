@@ -87,6 +87,8 @@ board = Board([wpawn0, wpawn1, wpawn2, wpawn3,
                HEIGHT, WIDTH, DIMENSION)
 
 high_squares = None
+start_pos = ()
+
 while running:
     for e in p.event.get():
         if e.type == p.QUIT:
@@ -104,6 +106,7 @@ while running:
                         break
                     else:
                         piece_name = board.loc_names[(col, row)]
+                        start_pos = (col, row)
 
                         if board.name_obj_dict[piece_name].color == 'white' and \
                             num_turns % 2 == 0:
@@ -134,6 +137,56 @@ while running:
 
                         valid_moves = moves - invalid_moves
 
+                        # Castling
+                        # Check to see if neight rook or king have moved
+                        # Check to see if all of the pieces are out of the way
+                        # Check tos ee if the kins is not in check
+                        if piece_name[1] == 'K':
+                            if num_turns % 2 == 0:
+                                if not board.name_obj_dict['wr0'].has_moved and \
+                                       (7,1) not in board.loc_names.keys() and \
+                                       (7,2) not in board.loc_names.keys() and \
+                                       (7,3) not in board.loc_names.keys() and \
+                                       not board.name_obj_dict['wK'].has_moved and \
+                                       not board.name_obj_dict['wK'].in_check:
+
+                                    valid_moves |= {(7,2)}
+                                else:
+                                    pass
+
+                                if not board.name_obj_dict['wr1'].has_moved and \
+                                       (7,5) not in board.loc_names.keys() and \
+                                       (7,6) not in board.loc_names.keys() and \
+                                       not board.name_obj_dict['wK'].has_moved and \
+                                       not board.name_obj_dict['wK'].in_check:
+
+                                    valid_moves |= {(7,6)}
+                                else:
+                                    pass
+                            else:
+                                if not board.name_obj_dict['br0'].has_moved and \
+                                       (0,1) not in board.loc_names.keys() and \
+                                       (0,2) not in board.loc_names.keys() and \
+                                       (0,3) not in board.loc_names.keys() and \
+                                       not board.name_obj_dict['bK'].has_moved and \
+                                       not board.name_obj_dict['bK'].in_check:
+
+                                    valid_moves |= {(0,2)}
+                                else:
+                                    pass
+
+                                if not board.name_obj_dict['br1'].has_moved and \
+                                       (0,5) not in board.loc_names.keys() and \
+                                       (0,6) not in board.loc_names.keys() and \
+                                       not board.name_obj_dict['bK'].has_moved and \
+                                       not board.name_obj_dict['bK'].in_check:
+
+                                    valid_moves |= {(0,6)}
+                                else:
+                                    pass
+                        else:
+                            pass
+
                         if len(valid_moves) == 0:
                             moves = None
                             player_clicks.append((col, row))
@@ -156,19 +209,52 @@ while running:
                                 board
                             )
 
+                            if piece_name[1] in ['p', 'K', 'r'] and not board.name_obj_dict[piece_name].has_moved:
+                                board.name_obj_dict[piece_name].has_moved = True
+                                if piece_name[1] == 'p':
+                                    board.name_obj_dict[piece_name].move_count += 1
+                            else:
+                                pass
+
+                            if piece_name[1] == 'p' and not board.name_obj_dict[piece_name].moved_two_spaces:
+                                if abs(board.name_obj_dict[piece_name].pos[0] - start_pos[0]) == 2:
+                                    board.name_obj_dict[piece_name].moved_two_spaces = True
+                                else:
+                                    pass
+                            else:
+                                pass
+
+                            # If the king moves two spaces in the left or the right direction,
+                            # Move the rook next to it. (Castling)
+                            if piece_name[1] == 'K' and abs(start_pos[1] - board.name_obj_dict[piece_name].pos[1]) > 1:
+                                if board.name_obj_dict[piece_name].color == 'white':
+                                    if board.name_obj_dict[piece_name].pos[1] < start_pos[1]:
+                                        board.name_obj_dict['wr0'].Make_Move(
+                                            (7,3), board)
+                                    else:
+                                        board.name_obj_dict['wr1'].Make_Move(
+                                            (7,5), board)
+                                else:
+                                    if board.name_obj_dict[piece_name].pos[1] < start_pos[1]:
+                                        board.name_obj_dict['br0'].Make_Move(
+                                            (0,3), board)
+                                    else:
+                                        board.name_obj_dict['br1'].Make_Move(
+                                            (0,5), board)
+                            
                             high_squares = None
                             player_clicks = []
-
-                            board.name_obj_dict['wK'].in_check = board.name_obj_dict['wK'].check_check(
-                                board.white_name_obj_dict,
-                                board.white_piece_loc,
-                                board.black_piece_loc
-                            )
 
                             board.name_obj_dict['bK'].in_check = board.name_obj_dict['bK'].check_check(
                                 board.white_name_obj_dict,
                                 board.white_piece_loc,
                                 board.black_piece_loc
+                            )
+
+                            board.name_obj_dict['wK'].in_check = board.name_obj_dict['wK'].check_check(
+                                board.black_name_obj_dict,
+                                board.black_piece_loc,
+                                board.white_piece_loc
                             )
 
                             if board.game_over_check(

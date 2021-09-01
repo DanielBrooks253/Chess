@@ -429,8 +429,10 @@ class Pawn(Pieces):
     def __init__(self, start_pos, piece_name, piece_image, color):
 
         self.has_moved = False
+        self.en_passant_flag = False
         self.moved_two_spaces = False
         self.promoted = False
+        self.move_count = 0
 
         super().__init__(start_pos, piece_name, piece_image, color)
 
@@ -463,6 +465,11 @@ class Pawn(Pieces):
                 else:
                     pass
 
+                if (self.pos[0]+1, self.pos[1]) not in same_color_locs|args[0] and not self.has_moved:
+                    move |= {(self.pos[0]+2, self.pos[1])}
+                else:
+                    pass
+
                 if (self.pos[0]+1, self.pos[1]+1) in args[0]:
                     move |= {(self.pos[0]+1, self.pos[1]+1)}    
                 else:
@@ -475,6 +482,11 @@ class Pawn(Pieces):
             else:
                 if (self.pos[0]-1, self.pos[1]) not in same_color_locs|args[0]:
                     move |= {(self.pos[0]-1, self.pos[1])}
+                else:
+                    pass
+
+                if (self.pos[0]-1, self.pos[1]) not in same_color_locs|args[0] and not self.has_moved:
+                    move |= {(self.pos[0]-2, self.pos[1])}
                 else:
                     pass
 
