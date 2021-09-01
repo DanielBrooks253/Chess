@@ -361,10 +361,12 @@ while running:
                     game_over = True
                     break
 
-                  elif board.game_over_check(
+                  elif (board.game_over_check(
                       board.black_name_obj_dict,
                       num_turns
-                  ) and (not bosho.in_check or not wosho.in_check):
+                  ) or  board.game_over_check(
+                      board.white_name_obj_dict,
+                      num_turns)) and (not bosho.in_check or not wosho.in_check):
 
                     text = 'Stalemate!! Draw Game'
                     game_over = True
