@@ -104,6 +104,51 @@ while running:
                 col = location[1]//SQ_SIZE
 
                 if len(player_clicks) == 0:
+                    if white_promotion or black_promotion:
+                        if white_promotion:
+                            if col == 5 and 2 <= row <= 5:
+                                if row == 2:
+                                    board.name_obj_dict[piece_name].promoted_name = 'wk'
+                                    board.name_obj_dict[piece_name].piece_image = IMAGES['wk']
+                                elif row == 3:
+                                    board.name_obj_dict[piece_name].promoted_name = 'wb'
+                                    board.name_obj_dict[piece_name].piece_image = IMAGES['wb']
+                                elif row == 4:
+                                    board.name_obj_dict[piece_name].promoted_name = 'wr'
+                                    board.name_obj_dict[piece_name].piece_image = IMAGES['wr']
+                                else:
+                                    board.name_obj_dict[piece_name].promoted_name = 'wQ'
+                                    board.name_obj_dict[piece_name].piece_image = IMAGES['wQ']
+                                
+                                white_promotion = False
+                                player_clicks = []
+                                high_squares = None
+                                break
+
+                            else:
+                                break
+                        else:
+                            if col == 2 and 2 <= row <= 5:
+                                if row == 2:
+                                    board.name_obj_dict[piece_name].promoted_name = 'bk'
+                                    board.name_obj_dict[piece_name].piece_image = IMAGES['bk']
+                                elif row == 3:
+                                    board.name_obj_dict[piece_name].promoted_name = 'bb'
+                                    board.name_obj_dict[piece_name].piece_image = IMAGES['bb']
+                                elif row == 4:
+                                    board.name_obj_dict[piece_name].promoted_name = 'br'
+                                    board.name_obj_dict[piece_name].piece_image = IMAGES['br']
+                                else:
+                                    board.name_obj_dict[piece_name].promoted_name = 'bQ'
+                                    board.name_obj_dict[piece_name].piece_image = IMAGES['bQ']
+                                
+                                black_promotion = False
+                                player_clicks = []
+                                high_squares = None
+                                break
+
+                            else:
+                                break
 
                     if (col, row) not in board.loc_names.keys():
                         break
@@ -139,7 +184,7 @@ while running:
                         )
 
                         valid_moves = moves - invalid_moves
-
+                        
                         # Castling
                         # Check to see if neight rook or king have moved
                         # Check to see if all of the pieces are out of the way
@@ -192,7 +237,6 @@ while running:
                             en_passant_moves = board.name_obj_dict[piece_name].En_Passant(
                                 board.loc_names, board.name_obj_dict
                             )
-
                             valid_moves |= en_passant_moves
                         else:
                             pass
@@ -235,9 +279,13 @@ while running:
                             else:
                                 pass
 
-                            # En Passant Capture clean up
+                            # En Passant Capture clean up and promotion prep
                             if piece_name[1] == 'p':
                                 if board.name_obj_dict[piece_name].color == 'white':
+                                    if col == 0 and not board.name_obj_dict[piece_name].promoted:
+                                        board.name_obj_dict[piece_name].promoted = True
+                                        white_promotion = True
+
                                     if abs(start_pos[0]-col) + abs(start_pos[1]-row) == 2 and \
                                         (col, row) not in board.black_piece_loc and \
                                         start_pos[0] == 3:
@@ -253,6 +301,10 @@ while running:
                                             board.black_name_obj_dict[board.loc_names[(start_pos[0], start_pos[1]+1)]].pos = None
                                             del board.loc_names[(start_pos[0], start_pos[1]+1)]
                                 else:
+                                    if col == 7 and not board.name_obj_dict[piece_name].promoted:
+                                        board.name_obj_dict[piece_name].promoted = True
+                                        black_promotion = True
+
                                     if abs(start_pos[0]-col) + abs(start_pos[1]-row) == 2 and \
                                     (col, row) not in board.white_piece_loc and \
                                     start_pos[0] == 4:
@@ -290,7 +342,11 @@ while running:
                                         board.name_obj_dict['br1'].Make_Move(
                                             (0,5), board)
                             
-                            high_squares = None
+                            if white_promotion or black_promotion:
+                                high_squares = (col, row)
+                            else:
+                                high_squares = None
+
                             player_clicks = []
 
                             board.name_obj_dict['bK'].in_check = board.name_obj_dict['bK'].check_check(
@@ -346,18 +402,23 @@ while running:
                             break
     
     if board.name_obj_dict['wK'].in_check:
-        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                                board.name_obj_dict['wK'].pos)
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, 
+                                board.name_obj_dict['wK'].pos, white_promotion, black_promotion, {'White': [IMAGES['wk'], IMAGES['wb'], IMAGES['wr'], IMAGES['wQ']],
+                                                                                                  'Black': [IMAGES['bk'], IMAGES['bb'], IMAGES['br'], IMAGES['bQ']]})
         clock.tick(MAX_FPS)
         p.display.flip()
 
     elif board.name_obj_dict['bK'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                                board.name_obj_dict['bK'].pos)
+                                board.name_obj_dict['bK'].pos, white_promotion, black_promotion, {'White': [IMAGES['wk'], IMAGES['wb'], IMAGES['wr'], IMAGES['wQ']],
+                                                                                                  'Black': [IMAGES['bk'], IMAGES['bb'], IMAGES['br'], IMAGES['bQ']]})
         clock.tick(MAX_FPS)
         p.display.flip()
 
     else:
-        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None)
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None, white_promotion, black_promotion, 
+        {'White': [IMAGES['wk'], IMAGES['wb'], IMAGES['wr'], IMAGES['wQ']],                                                                       
+        'Black': [IMAGES['bk'], IMAGES['bb'], IMAGES['br'], IMAGES['bQ']]})
+
         clock.tick(MAX_FPS)
         p.display.flip()

@@ -433,75 +433,72 @@ class Pawn(Pieces):
         self.moved_two_spaces = False
         self.promoted = False
         self.move_count = 0
+        self.promoted_name = None
 
         super().__init__(start_pos, piece_name, piece_image, color)
 
-    def Get_Moves(self, same_color_locs, args):
+    def Get_Moves(self, same_color_locs, opp_color_locs):
         ''' 
         Gets all available moves based off of the pieces position
-
-
         '''
-        move = set()
-        if self.color == 'black':
-            if self.pos[0] == 7:
-                self.promoted = True
-                self.piece_image = self.IMAGES['bF']
-            else:
-                pass
-        else:
-            if self.pos[0] == 0:
-                self.promoted = True 
-                self.piece_image = self.IMAGES['wF']
-            else:
-                pass
 
-        if self.promoted:
-            return Queen.Get_Moves(self)
+        move = set()
+
+        if self.promoted and self.promoted_name is not None:
+            if self.promoted_name[1] == 'k':
+                move = Knight.Available_Moves(self, 8, 8, same_color_locs, opp_color_locs)
+            elif self.promoted_name[1] == 'b':
+                move = Bishop.Available_Moves(self, 8, 8, same_color_locs, opp_color_locs)
+            elif self.promoted_name[1] == 'r':
+                move = Rook.Available_Moves(self, 8, 8, same_color_locs, opp_color_locs)
+            else:
+                move = Queen.Available_Moves(self, 8, 8, same_color_locs, opp_color_locs)
         else:
             if self.color =='black':
-                if (self.pos[0]+1, self.pos[1]) not in same_color_locs|args[0]:
+                if (self.pos[0]+1, self.pos[1]) not in same_color_locs|opp_color_locs:
                     move |= {(self.pos[0]+1, self.pos[1])}
                 else:
                     pass
 
-                if (self.pos[0]+1, self.pos[1]) not in same_color_locs|args[0] and not self.has_moved:
+                if (self.pos[0]+1, self.pos[1]) not in same_color_locs|opp_color_locs and \
+                    (self.pos[0]+2, self.pos[1]) not in same_color_locs|opp_color_locs and not self.has_moved:
                     move |= {(self.pos[0]+2, self.pos[1])}
                 else:
                     pass
 
-                if (self.pos[0]+1, self.pos[1]+1) in args[0]:
+                if (self.pos[0]+1, self.pos[1]+1) in opp_color_locs:
                     move |= {(self.pos[0]+1, self.pos[1]+1)}    
                 else:
                     pass
 
-                if (self.pos[0]+1, self.pos[1]-1) in args[0]:
+                if (self.pos[0]+1, self.pos[1]-1) in opp_color_locs:
                     move |= {(self.pos[0]+1, self.pos[1]-1)}      
                 else:
                     pass
             else:
-                if (self.pos[0]-1, self.pos[1]) not in same_color_locs|args[0]:
+                if (self.pos[0]-1, self.pos[1]) not in same_color_locs|opp_color_locs:
                     move |= {(self.pos[0]-1, self.pos[1])}
                 else:
                     pass
 
-                if (self.pos[0]-1, self.pos[1]) not in same_color_locs|args[0] and not self.has_moved:
+                if (self.pos[0]-1, self.pos[1]) not in same_color_locs|opp_color_locs and \
+                    (self.pos[0]-2, self.pos[1]) not in same_color_locs|opp_color_locs and not self.has_moved:
                     move |= {(self.pos[0]-2, self.pos[1])}
                 else:
                     pass
 
-                if (self.pos[0]-1, self.pos[1]-1) in args[0]:
+                if (self.pos[0]-1, self.pos[1]-1) in opp_color_locs:
                     move |= {(self.pos[0]-1, self.pos[1]-1)}      
                 else:
                     pass
 
-                if (self.pos[0]-1, self.pos[1]+1) in args[0]:
+                if (self.pos[0]-1, self.pos[1]+1) in opp_color_locs:
                     move |= {(self.pos[0]-1, self.pos[1]+1)}      
                 else:
                     pass
         return move
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, *args):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
         '''
         Filter out all of the moves that are off of the board and on a space occupied by
             the same color
@@ -515,7 +512,7 @@ class Pawn(Pieces):
         :return rm_checks (set): All possible moves a piece can make (Does not take into account
             checks)
         '''
-        all_moves = Pawn.Get_Moves(self, same_color_locs, args)
+        all_moves = Pawn.Get_Moves(self, same_color_locs, opp_color_locs)
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs

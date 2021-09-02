@@ -162,7 +162,8 @@ class Board:
                 add_new_move = rm_old_move | {new_move}
 
                 self.black_piece_loc = add_new_move
-    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos):
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, 
+                      white_promotion, black_promotion, images):
         '''
         Responsible for drawing the game board, pieces and end of game text
 
@@ -192,9 +193,14 @@ class Board:
             Board.drawPieces(self, screen, names_obj)
             Board.drawText(self, screen, text, num)
         else:
-            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj)
-                    
+            if white_promotion or black_promotion:
+                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj)
+                Board.DrawPromotionBox(self, screen, black_promotion, images)
+            else:
+                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj)
+
     def drawBoard(self, screen, high_squares, king_pos):
         # Red check; darkolivegreen moves
         # Draw the tiles on the board
@@ -283,5 +289,16 @@ class Board:
 
         textObject = font.render(text, 0, p.Color('gray2'))
         screen.blit(textObject, textLocation.move(2,2))
+    
+    def DrawPromotionBox(self, screen, black_promotion, images):
+        if black_promotion:
+            p.draw.rect(screen, p.Color('wheat2'), p.Rect(128, 128, 256, 64))
+            for idx, i in enumerate(images['Black']):
+                screen.blit(i, p.Rect(128+64*idx+8, 136, self.SQ_SIZE, self.SQ_SIZE))
+        else:
+            p.draw.rect(screen, p.Color('wheat2'), p.Rect(128, 320, 256, 64))
+            for idx, i in enumerate(images['White']):
+                screen.blit(i, p.Rect(128+64*idx+8, 328, self.SQ_SIZE, self.SQ_SIZE))
+
 
     
