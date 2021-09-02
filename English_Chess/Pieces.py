@@ -525,6 +525,58 @@ class Pawn(Pieces):
         else:
             return rm_same_color
 
+    def En_Passant(self, loc_dict, name_dict):
+        '''
+        Seeing if a pawn can be take en passant
+
+        There are 4 things that need to be checked in order for this rule to take affect
+
+        1) Your piece must be on the 5th rank
+        2) Opposing piece must move two spaces with their pawn while you are on the 5th rank
+        3) Your piece must be directly next to the opposing pawn
+        4) No pieces can be behind the opposing piece
+        '''
+        pos = self.pos
+
+        if self.color == 'white':
+            if pos[0] == 3 and \
+               (pos[0], pos[1]+1) in loc_dict and \
+               name_dict[loc_dict[(pos[0], pos[1]+1)]].en_passant_flag and \
+               (pos[0]-1, pos[1]+1) not in loc_dict and \
+               name_dict[loc_dict[(pos[0], pos[1]+1)]].color == 'black': 
+
+                return {(pos[0]-1, pos[1]+1)}
+            
+            elif pos[0] == 3 and \
+               (pos[0], pos[1]-1) in loc_dict and \
+               name_dict[loc_dict[(pos[0], pos[1]-1)]].en_passant_flag and \
+               (pos[0]-1, pos[1]-1) not in loc_dict and \
+               name_dict[loc_dict[(pos[0], pos[1]-1)]].color == 'black': 
+
+               return {(pos[0]-1, pos[1]-1)}
+
+            else:
+                return set()
+        else:
+            if pos[0] == 4 and \
+               (pos[0], pos[1]+1) in loc_dict and \
+               name_dict[loc_dict[(pos[0], pos[1]+1)]].en_passant_flag and \
+               (pos[0]+1, pos[1]+1) not in loc_dict and \
+               name_dict[loc_dict[(pos[0], pos[1]+1)]].color == 'white': 
+
+                return {(pos[0]+1, pos[1]+1)}
+            
+            elif pos[0] == 4 and \
+               (pos[0], pos[1]-1) in loc_dict and \
+               name_dict[loc_dict[(pos[0], pos[1]-1)]].en_passant_flag and \
+               (pos[0]+1, pos[1]-1) not in loc_dict and \
+               name_dict[loc_dict[(pos[0], pos[1]-1)]].color == 'white': 
+
+               return {(pos[0]+1, pos[1]-1)}
+            
+            else:
+                return set()
+
 class Queen(Pieces):
     '''
         Place of the modern day Queen

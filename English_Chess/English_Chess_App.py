@@ -89,6 +89,9 @@ board = Board([wpawn0, wpawn1, wpawn2, wpawn3,
 high_squares = None
 start_pos = ()
 
+white_promotion = False
+black_promotion = False
+
 while running:
     for e in p.event.get():
         if e.type == p.QUIT:
@@ -184,6 +187,13 @@ while running:
                                     valid_moves |= {(0,6)}
                                 else:
                                     pass
+                        # En Passant
+                        elif piece_name[1] == 'p':
+                            en_passant_moves = board.name_obj_dict[piece_name].En_Passant(
+                                board.loc_names, board.name_obj_dict
+                            )
+
+                            valid_moves |= en_passant_moves
                         else:
                             pass
 
@@ -219,8 +229,46 @@ while running:
                             if piece_name[1] == 'p' and not board.name_obj_dict[piece_name].moved_two_spaces:
                                 if abs(board.name_obj_dict[piece_name].pos[0] - start_pos[0]) == 2:
                                     board.name_obj_dict[piece_name].moved_two_spaces = True
+                                    board.name_obj_dict[piece_name].en_passant_flag = True
                                 else:
                                     pass
+                            else:
+                                pass
+
+                            # En Passant Capture clean up
+                            if piece_name[1] == 'p':
+                                if board.name_obj_dict[piece_name].color == 'white':
+                                    if abs(start_pos[0]-col) + abs(start_pos[1]-row) == 2 and \
+                                        (col, row) not in board.black_piece_loc and \
+                                        start_pos[0] == 3:
+                                        
+                                        if start_pos[1] > row:
+                                            board.black_piece_loc.remove((start_pos[0],start_pos[1]-1))
+                                            board.name_obj_dict[board.loc_names[(start_pos[0], start_pos[1]-1)]].pos = None
+                                            board.black_name_obj_dict[board.loc_names[(start_pos[0], start_pos[1]-1)]].pos = None
+                                            del board.loc_names[(start_pos[0], start_pos[1]-1)]
+                                        else:
+                                            board.black_piece_loc.remove((start_pos[0],start_pos[1]+1))
+                                            board.name_obj_dict[board.loc_names[(start_pos[0], start_pos[1]+1)]].pos = None
+                                            board.black_name_obj_dict[board.loc_names[(start_pos[0], start_pos[1]+1)]].pos = None
+                                            del board.loc_names[(start_pos[0], start_pos[1]+1)]
+                                else:
+                                    if abs(start_pos[0]-col) + abs(start_pos[1]-row) == 2 and \
+                                    (col, row) not in board.white_piece_loc and \
+                                    start_pos[0] == 4:
+                                        
+                                        if start_pos[1] > row:
+                                            board.white_piece_loc.remove((start_pos[0],start_pos[1]-1))
+                                            board.name_obj_dict[board.loc_names[(start_pos[0], start_pos[1]-1)]].pos = None
+                                            board.white_name_obj_dict[board.loc_names[(start_pos[0], start_pos[1]-1)]].pos = None
+                                            del board.loc_names[(start_pos[0], start_pos[1]-1)]
+                                        else:
+                                            board.white_piece_loc.remove((start_pos[0],start_pos[1]+1))
+                                            board.name_obj_dict[board.loc_names[(start_pos[0], start_pos[1]+1)]].pos = None
+                                            board.white_name_obj_dict[board.loc_names[(start_pos[0], start_pos[1]+1)]].pos = None
+                                            del board.loc_names[(start_pos[0], start_pos[1]+1)]
+                                    else:
+                                        pass
                             else:
                                 pass
 
@@ -286,6 +334,13 @@ while running:
                             else:
                                 pass
 
+                            for i in board.name_obj_dict.values():
+                                if i.piece_name[:2] == 'bp' and num_turns % 2 == 0:
+                                    i.en_passant_flag = False
+                                elif i.piece_name[:2] == 'wp' and num_turns % 2 != 0:
+                                    i.en_passant_flag = False
+                                else:
+                                    continue
                             num_turns += 1
                         else:
                             break
