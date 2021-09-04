@@ -296,8 +296,7 @@ while running:
                                 break
                             else:
                                 pass
-
-                            print(white_check_count, black_check_count)
+                            
                             num_turns += 1
 
     if board.name_obj_dict['wN'].in_check:
