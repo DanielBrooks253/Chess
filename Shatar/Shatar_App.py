@@ -83,6 +83,16 @@ board = Board([wfu0,wfu1,wfu2,wfu3,wfu4,wfu5,wfu6,wfu7,
               HEIGHT,WIDTH,DIMENSION)
 
 high_squares = None
+shak_pieces = ['B', 'r0', 'r1', 'm0', 'm1']
+
+# In order for a player to win, they must check with a rook, wueen or knight at some point in their checking
+# sequence that leads up to checkmate. (Shak) If this does not happend, the game ends in a draw. (Even if the
+# other player is in checkmate). The final checkmate cannot be given by a knight, or it is a draw. 
+white_shak_flag = False
+white_check_count = 0 # Checking sequence for the white king
+
+black_shak_flag = False
+black_check_count = 0  # Checking sequence for the black king
 
 while running:
     for e in p.event.get():
@@ -180,6 +190,68 @@ while running:
                                 board.white_piece_loc
                             )
 
+                            if board.name_obj_dict['bN'].in_check:
+                                # White Pieces Checking
+                                black_check_count += 1 
+
+                                shak_moves = []
+                                for i in shak_pieces:
+                                    temp = board.name_obj_dict['w'+i].Available_Moves(
+                                        board.x_dim,
+                                        board.y_dim, 
+                                        board.white_piece_loc,
+                                        board.black_piece_loc
+                                    )
+                                    if temp is None:
+                                        continue
+                                    else:
+                                        shak_moves.append(temp)
+                                
+                                all_shak_moves = set().union(*shak_moves)
+
+                                 # Check to see if the king is neing checked by a shak piece
+                                if board.name_obj_dict['bN'].pos in all_shak_moves:
+                                    white_shak_flag = True
+                                elif black_check_count == 0:
+                                    white_shak_flag = False
+                                else:
+                                    pass
+                            elif num_turns % 2 == 0:
+                                black_check_count = 0
+                            else: 
+                                pass
+
+                            if board.name_obj_dict['wN'].in_check and num_turns % 2 != 0:
+                                # Black Pieces Checking
+                                white_check_count += 1
+
+                                shak_moves = []
+                                for i in shak_pieces:
+                                    temp = board.name_obj_dict['b'+i].Available_Moves(
+                                        board.x_dim,
+                                        board.y_dim, 
+                                        board.black_piece_loc,
+                                        board.white_piece_loc
+                                    )
+                                    if temp is None:
+                                        continue
+                                    else:
+                                        shak_moves.append(temp)
+                                
+                                all_shak_moves = set().union(*shak_moves)
+
+                                # Check to see if the king is neing checked by a shak piece
+                                if board.name_obj_dict['wN'].pos in all_shak_moves: 
+                                    black_shak_flag = True
+                                elif white_check_count == 0:
+                                    black_shak_flag = False
+                                else:
+                                    pass
+                            elif num_turns % 2 != 0:
+                                white_check_count = 0
+                            else:
+                                pass
+
                             # Number of pieces left 
                             if len(board.white_piece_loc) == 1 or len(board.black_piece_loc) == 1:
                                 text = 'Stalemate!! Draw Game'
@@ -190,17 +262,27 @@ while running:
                                 board.black_name_obj_dict,
                                 num_turns
                             ) and bnoyon.in_check:
-                                text = 'Checkmate!! White Wins'
-                                game_over = True
-                                break
+                                if not white_shak_flag or piece_name[1] == 'm':
+                                    text = 'Stalemate!! Draw Game'
+                                    game_over = True
+                                    break
+                                else:
+                                    text = 'Checkmate!! White Wins'
+                                    game_over = True
+                                    break
 
                             elif board.game_over_check(
                                 board.white_name_obj_dict,
                                 num_turns
                             ) and wnoyon.in_check:
-                                text = 'Checkmate!! Black Wins'
-                                game_over = True
-                                break
+                                if not black_shak_flag or piece_name[1] == 'm':
+                                    text = 'Stalemate!! Draw Game'
+                                    game_over = True
+                                    break
+                                else:
+                                    text = 'Checkmate!! Black Wins'
+                                    game_over = True
+                                    break
 
                             elif (board.game_over_check(
                                 board.black_name_obj_dict,
@@ -215,6 +297,7 @@ while running:
                             else:
                                 pass
 
+                            print(white_check_count, black_check_count)
                             num_turns += 1
 
     if board.name_obj_dict['wN'].in_check:
