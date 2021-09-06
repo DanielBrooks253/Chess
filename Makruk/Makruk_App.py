@@ -85,6 +85,7 @@ board = Board([wbia0,wbia1,wbia2,wbia3,wbia4,wbia5,wbia6,wbia7,
 high_squares = None
 stalemate_move_count = 0
 stalemate_moves = 0
+count = 0
 
 while running:
     for e in p.event.get():
@@ -184,13 +185,20 @@ while running:
 
                             total_pieces = len([i for i in board.name_obj_dict.values() if i.pos is not None])
 
-                            unpromoted_pawns = len([1 for name, obj in board.name_obj_dict.items()
-                                                          if name[1] == 'b' and 
-                                                            (obj.pos is None or not obj.promoted)])
+                            unpromoted_pawns = []
+                            for name, obj in board.name_obj_dict.items():
+                                if name[1] == 'b':
+                                    if obj.pos is not None:
+                                        unpromoted_pawns.append(1)
+                                    elif obj.promoted:
+                                        unpromoted_pawns.append(1)
+                                    else:
+                                        continue
+                                else:
+                                    continue
 
-                            print(total_pieces, unpromoted_pawns)
-
-                            if unpromoted_pawns == 0:
+                            if len(unpromoted_pawns) == 0:
+                                count += 1
                                 if num_turns % 2 == 0: # White Made move:
                                     if len(board.black_piece_loc) == 1:
                                         stalemate_moves = board.Stalemate_Moves(board.white_name_obj_dict) # Lone black king
@@ -230,14 +238,22 @@ while running:
                                 text = 'Checkmate!! Black Wins'
                                 game_over = True
                                 break
+                            
+                            elif stalemate_move_count == stalemate_moves:
+                                text = 'Stalemate!! Draw Game'
+                                game_over = True
+                                break
                             else:
                                 pass
                             
-                            if stalemate_moves != 0:
+                            if count == 1:
                                 screen = p.display.set_mode((WIDTH+128, HEIGHT))
                                 stalemate_move_count = total_pieces
                                 num_turns += 1
                             else:
+                                if stalemate_move_count > 0:
+                                    stalemate_move_count += 1
+
                                 num_turns += 1
 
     if board.name_obj_dict['wK'].in_check:
