@@ -1,7 +1,7 @@
 import pygame as p
 
 from Board import Board
-from Pieces import Noyon, Tereg, Teme, Mori, Fu, Bers
+from Pieces import Khun, Khon, Bia, Met, Ma, Rua
 
 p.init()
 
@@ -19,14 +19,14 @@ game_over = False
 text = ''
 num = 1
 
-for pieces in [('wf', 'citizen-w1'), ('wm', 'knight-w1'), ('wr', 'dabbaba-w1'), 
-               ('wt', 'camel-w1'),  ('wN', 'shah-w1'), ('wB', 'queen-w1'), 
-               ('bf', 'citizen-b1'), ('bm', 'knight-b1'), ('br', 'dabbaba-b1'), 
-               ('bN', 'shah-b1'), ('bB', 'queen-b1'), ('bt', 'camel-b1')]:
+for pieces in [('wb', 'piondames-w1'), ('wm', 'knight-w1'), ('wr', 'boat-w1'), 
+               ('wk', 'noble-w1'),  ('wK', 'grandferz2-w1'), ('wM', 'queen-w1'), 
+               ('bb', 'piondames-b1'), ('bm', 'knight-b1'), ('br', 'boat-b1'), 
+               ('bK', 'grandferz2-b1'), ('bM', 'queen-b1'), ('bk', 'noble-b1')]:
             IMAGES[pieces[0]] = p.transform.scale(p.image.load("Images/" + pieces[1] + ".jpg"), (int(SQ_SIZE*PCT_SHRINK), int(SQ_SIZE*PCT_SHRINK)))
 
 screen = p.display.set_mode((WIDTH, HEIGHT))
-p.display.set_caption('Shatar')
+p.display.set_caption('Makruk')
 
 clock = p.time.Clock()
 screen.fill(p.Color('white'))
@@ -34,65 +34,57 @@ running = True
 
 player_clicks = []
 
-wfu0 = Fu((6,0), piece_name = 'wf0', piece_image = IMAGES['wf'], color = 'white')
-wfu1 = Fu((6,1), piece_name = 'wf1', piece_image = IMAGES['wf'], color = 'white')
-wfu2 = Fu((6,2), piece_name = 'wf2', piece_image = IMAGES['wf'], color = 'white')
-wfu3 = Fu((6,3), piece_name = 'wf3', piece_image = IMAGES['wf'], color = 'white')
-wfu4 = Fu((6,4), piece_name = 'wf4', piece_image = IMAGES['wf'], color = 'white')
-wfu5 = Fu((6,5), piece_name = 'wf5', piece_image = IMAGES['wf'], color = 'white')
-wfu6 = Fu((6,6), piece_name = 'wf6', piece_image = IMAGES['wf'], color = 'white')
-wfu7 = Fu((6,7), piece_name = 'wf7', piece_image = IMAGES['wf'], color = 'white')
+wbia0 = Bia((5,0), piece_name = 'wb0', piece_image = IMAGES['wb'], color = 'white')
+wbia1 = Bia((5,1), piece_name = 'wb1', piece_image = IMAGES['wb'], color = 'white')
+wbia2 = Bia((5,2), piece_name = 'wb2', piece_image = IMAGES['wb'], color = 'white')
+wbia3 = Bia((5,3), piece_name = 'wb3', piece_image = IMAGES['wb'], color = 'white')
+wbia4 = Bia((5,4), piece_name = 'wb4', piece_image = IMAGES['wb'], color = 'white')
+wbia5 = Bia((5,5), piece_name = 'wb5', piece_image = IMAGES['wb'], color = 'white')
+wbia6 = Bia((5,6), piece_name = 'wb6', piece_image = IMAGES['wb'], color = 'white')
+wbia7 = Bia((5,7), piece_name = 'wb7', piece_image = IMAGES['wb'], color = 'white')
 
-bfu0 = Fu((1,0), piece_name = 'bf0', piece_image = IMAGES['bf'], color = 'black')
-bfu1 = Fu((1,1), piece_name = 'bf1', piece_image = IMAGES['bf'], color = 'black')
-bfu2 = Fu((1,2), piece_name = 'bf2', piece_image = IMAGES['bf'], color = 'black')
-bfu3 = Fu((1,3), piece_name = 'bf3', piece_image = IMAGES['bf'], color = 'black')
-bfu4 = Fu((1,4), piece_name = 'bf4', piece_image = IMAGES['bf'], color = 'black')
-bfu5 = Fu((1,5), piece_name = 'bf5', piece_image = IMAGES['bf'], color = 'black')
-bfu6 = Fu((1,6), piece_name = 'bf6', piece_image = IMAGES['bf'], color = 'black')
-bfu7 = Fu((1,7), piece_name = 'bf7', piece_image = IMAGES['bf'], color = 'black')
+bbia0 = Bia((2,0), piece_name = 'bb0', piece_image = IMAGES['bb'], color = 'black')
+bbia1 = Bia((2,1), piece_name = 'bb1', piece_image = IMAGES['bb'], color = 'black')
+bbia2 = Bia((2,2), piece_name = 'bb2', piece_image = IMAGES['bb'], color = 'black')
+bbia3 = Bia((2,3), piece_name = 'bb3', piece_image = IMAGES['bb'], color = 'black')
+bbia4 = Bia((2,4), piece_name = 'bb4', piece_image = IMAGES['bb'], color = 'black')
+bbia5 = Bia((2,5), piece_name = 'bb5', piece_image = IMAGES['bb'], color = 'black')
+bbia6 = Bia((2,6), piece_name = 'bb6', piece_image = IMAGES['bb'], color = 'black')
+bbia7 = Bia((2,7), piece_name = 'bb7', piece_image = IMAGES['bb'], color = 'black')
 
-wtereg0 = Tereg((7,0), piece_name = 'wr0', piece_image = IMAGES['wr'], color = 'white')
-wtereg1 = Tereg((7,7), piece_name = 'wr1', piece_image = IMAGES['wr'], color = 'white')
+wrua0 = Rua((7,0), piece_name = 'wr0', piece_image = IMAGES['wr'], color = 'white')
+wrua1 = Rua((7,7), piece_name = 'wr1', piece_image = IMAGES['wr'], color = 'white')
 
-btereg0 = Tereg((0,0), piece_name = 'br0', piece_image = IMAGES['br'], color = 'black')
-btereg1 = Tereg((0,7), piece_name = 'br1', piece_image = IMAGES['br'], color = 'black')
+brua0 = Rua((0,0), piece_name = 'br0', piece_image = IMAGES['br'], color = 'black')
+brua1 = Rua((0,7), piece_name = 'br1', piece_image = IMAGES['br'], color = 'black')
 
-wmori0 = Mori((7,1), piece_name = 'wm0', piece_image = IMAGES['wm'], color = 'white')
-wmori1 = Mori((7,6), piece_name = 'wm1', piece_image = IMAGES['wm'], color = 'white')
+wma0 = Ma((7,1), piece_name = 'wm0', piece_image = IMAGES['wm'], color = 'white')
+wma1 = Ma((7,6), piece_name = 'wm1', piece_image = IMAGES['wm'], color = 'white')
 
-bmori0 = Mori((0,1), piece_name = 'bk0', piece_image = IMAGES['bm'], color = 'black')
-bmori1 = Mori((0,6), piece_name = 'bk1', piece_image = IMAGES['bm'], color = 'black')
+bma0 = Ma((0,1), piece_name = 'bm0', piece_image = IMAGES['bm'], color = 'black')
+bma1 = Ma((0,6), piece_name = 'bm1', piece_image = IMAGES['bm'], color = 'black')
 
-wteme0 = Teme((7,2), piece_name = 'wt0', piece_image = IMAGES['wt'], color = 'white')
-wteme1 = Teme((7,5), piece_name = 'wt1', piece_image = IMAGES['wt'], color = 'white')
+wkhon0 = Khon((7,2), piece_name = 'wk0', piece_image = IMAGES['wk'], color = 'white')
+wkhon1 = Khon((7,5), piece_name = 'wk1', piece_image = IMAGES['wk'], color = 'white')
 
-bteme0 = Teme((0,2), piece_name = 'bt0', piece_image = IMAGES['bt'], color = 'black')
-bteme1 = Teme((0,5), piece_name = 'bt1', piece_image = IMAGES['bt'], color = 'black')
+bkhon0 = Khon((0,2), piece_name = 'bk0', piece_image = IMAGES['bk'], color = 'black')
+bkhon1 = Khon((0,5), piece_name = 'bk1', piece_image = IMAGES['bk'], color = 'black')
 
-wbers = Bers((7,3), piece_name = 'wB', piece_image = IMAGES['wB'], color = 'white')
-wnoyon = Noyon((7,4), piece_name = 'wN', piece_image = IMAGES['wN'], color = 'white')
+wmet = Met((7,3), piece_name = 'wM', piece_image = IMAGES['wM'], color = 'white')
+wkhun = Khun((7,4), piece_name = 'wK', piece_image = IMAGES['wK'], color = 'white')
 
-bbers = Bers((0,3), piece_name = 'bB', piece_image = IMAGES['bB'], color = 'black')
-bnoyon = Noyon((0,4), piece_name = 'bN', piece_image = IMAGES['bN'], color = 'black')
+bmet = Met((0,3), piece_name = 'bM', piece_image = IMAGES['bM'], color = 'black')
+bkhun = Khun((0,4), piece_name = 'bK', piece_image = IMAGES['bK'], color = 'black')
 
-board = Board([wfu0,wfu1,wfu2,wfu3,wfu4,wfu5,wfu6,wfu7,
-              wtereg0,wtereg1,wmori0,wmori1,wteme0,wteme1,wbers,wnoyon],
-              [bfu0,bfu1,bfu2,bfu3,bfu4,bfu5,bfu6,bfu7,
-              btereg0,btereg1,bmori0,bmori1,bteme0,bteme1,bbers,bnoyon],
-              HEIGHT,WIDTH,DIMENSION)
+board = Board([wbia0,wbia1,wbia2,wbia3,wbia4,wbia5,wbia6,wbia7,
+               wrua0, wrua1, wma0, wma1,wkhon0,wkhon1,wmet,wkhun],
+              [bbia0,bbia1,bbia2,bbia3,bbia4,bbia5,bbia6,bbia7,
+               brua0, brua1, bma0, bma1,bkhon0,bkhon1,bmet,bkhun],
+               HEIGHT,WIDTH,DIMENSION)
 
 high_squares = None
-shak_pieces = ['B', 'r0', 'r1', 'm0', 'm1']
-
-# In order for a player to win, they must check with a rook, wueen or knight at some point in their checking
-# sequence that leads up to checkmate. (Shak) If this does not happend, the game ends in a draw. (Even if the
-# other player is in checkmate). The final checkmate cannot be given by a knight, or it is a draw. 
-white_shak_flag = False
-white_check_count = 0 # Checking sequence for the white king
-
-black_shak_flag = False
-black_check_count = 0  # Checking sequence for the black king
+stalemate_move_count = 0
+stalemate_moves = 0
 
 while running:
     for e in p.event.get():
@@ -159,160 +151,110 @@ while running:
                                 (col,row),
                                 board)
 
-                            if piece_name[1] == 'f' and \
+                            if piece_name[1] == 'b' and \
                                board.name_obj_dict[piece_name].color == 'white' and \
-                               col == 0 and not board.name_obj_dict[piece_name].promoted:
+                               col == 2 and not board.name_obj_dict[piece_name].promoted:
 
                                board.name_obj_dict[piece_name].Promote_pawn()
-                               board.name_obj_dict[piece_name].piece_image = IMAGES['wB']
+                               board.name_obj_dict[piece_name].piece_image = IMAGES['wM']
                             
-                            elif piece_name[1] == 'f' and \
+                            elif piece_name[1] == 'b' and \
                                board.name_obj_dict[piece_name].color == 'black' and \
-                               col == 7 and not board.name_obj_dict[piece_name].promoted:
+                               col == 5 and not board.name_obj_dict[piece_name].promoted:
 
                                board.name_obj_dict[piece_name].Promote_pawn()
-                               board.name_obj_dict[piece_name].piece_image = IMAGES['bB']
+                               board.name_obj_dict[piece_name].piece_image = IMAGES['bM']
                             else:
                                 pass
 
                             player_clicks = []
                             high_squares = None
 
-                            board.name_obj_dict['bN'].in_check = board.name_obj_dict['bN'].check_check(
+                            board.name_obj_dict['bK'].in_check = board.name_obj_dict['bK'].check_check(
                                 board.white_name_obj_dict,
                                 board.white_piece_loc,
                                 board.black_piece_loc
                             )
 
-                            board.name_obj_dict['wN'].in_check = board.name_obj_dict['wN'].check_check(
+                            board.name_obj_dict['wK'].in_check = board.name_obj_dict['wK'].check_check(
                                 board.black_name_obj_dict,
                                 board.black_piece_loc,
                                 board.white_piece_loc
                             )
 
-                            if board.name_obj_dict['bN'].in_check:
-                                # White Pieces Checking
-                                black_check_count += 1 
+                            total_pieces = len([i for i in board.name_obj_dict.values() if i.pos is not None])
 
-                                shak_moves = []
-                                for i in shak_pieces:
-                                    temp = board.name_obj_dict['w'+i].Available_Moves(
-                                        board.x_dim,
-                                        board.y_dim, 
-                                        board.white_piece_loc,
-                                        board.black_piece_loc
-                                    )
-                                    if temp is None:
-                                        continue
+                            unpromoted_pawns = len([1 for name, obj in board.name_obj_dict.items()
+                                                          if name[1] == 'b' and 
+                                                            (obj.pos is None or not obj.promoted)])
+
+                            print(total_pieces, unpromoted_pawns)
+
+                            if unpromoted_pawns == 0:
+                                if num_turns % 2 == 0: # White Made move:
+                                    if len(board.black_piece_loc) == 1:
+                                        stalemate_moves = board.Stalemate_Moves(board.white_name_obj_dict) # Lone black king
                                     else:
-                                        shak_moves.append(temp)
-                                
-                                all_shak_moves = set().union(*shak_moves)
-
-                                 # Check to see if the king is neing checked by a shak piece
-                                if board.name_obj_dict['bN'].pos in all_shak_moves:
-                                    white_shak_flag = True
-                                elif black_check_count == 0:
-                                    white_shak_flag = False
+                                        stalemate_moves = 64
                                 else:
-                                    pass
-                            elif num_turns % 2 == 0:
-                                black_check_count = 0
-                            else: 
-                                pass
-
-                            if board.name_obj_dict['wN'].in_check and num_turns % 2 != 0:
-                                # Black Pieces Checking
-                                white_check_count += 1
-
-                                shak_moves = []
-                                for i in shak_pieces:
-                                    temp = board.name_obj_dict['b'+i].Available_Moves(
-                                        board.x_dim,
-                                        board.y_dim, 
-                                        board.black_piece_loc,
-                                        board.white_piece_loc
-                                    )
-                                    if temp is None:
-                                        continue
+                                    if len(board.white_piece_loc) == 1:
+                                        stalemate_moves = board.Stalemate_Moves(board.black_name_obj_dict) # Lone white king
                                     else:
-                                        shak_moves.append(temp)
-                                
-                                all_shak_moves = set().union(*shak_moves)
+                                        stalemate_moves = 64
 
-                                # Check to see if the king is neing checked by a shak piece
-                                if board.name_obj_dict['wN'].pos in all_shak_moves: 
-                                    black_shak_flag = True
-                                elif white_check_count == 0:
-                                    black_shak_flag = False
-                                else:
-                                    pass
-                            elif num_turns % 2 != 0:
-                                white_check_count = 0
-                            else:
-                                pass
+                            # Check to see if placing the piece cause checkmate or not
+                            elif board.game_over_check(
+                            board.black_name_obj_dict,
+                            num_turns
+                            ) and bkhun.in_check:
 
-                            # Number of pieces left 
-                            if len(board.white_piece_loc) == 1 or len(board.black_piece_loc) == 1:
+                                text = 'Checkmate!! White Wins'
+                                game_over = True
+                                break
+
+                            elif (board.game_over_check(
+                                board.black_name_obj_dict,
+                                num_turns
+                            ) or  board.game_over_check(
+                                board.white_name_obj_dict,
+                                num_turns)) and (not bkhun.in_check or not wkhun.in_check):
+
                                 text = 'Stalemate!! Draw Game'
                                 game_over = True
                                 break
 
                             elif board.game_over_check(
-                                board.black_name_obj_dict,
-                                num_turns
-                            ) and bnoyon.in_check:
-                                if not white_shak_flag or piece_name[1] == 'm':
-                                    text = 'Stalemate!! Draw Game'
-                                    game_over = True
-                                    break
-                                else:
-                                    text = 'Checkmate!! White Wins'
-                                    game_over = True
-                                    break
-
-                            elif board.game_over_check(
                                 board.white_name_obj_dict,
                                 num_turns
-                            ) and wnoyon.in_check:
-                                if not black_shak_flag or piece_name[1] == 'm':
-                                    text = 'Stalemate!! Draw Game'
-                                    game_over = True
-                                    break
-                                else:
-                                    text = 'Checkmate!! Black Wins'
-                                    game_over = True
-                                    break
-
-                            elif (board.game_over_check(
-                                board.black_name_obj_dict,
-                                num_turns
-                            ) or board.game_over_check(
-                                board.white_name_obj_dict,
-                                num_turns
-                            )) and (not bnoyon.in_check or not wnoyon.in_check):
-                                text = 'Stalemate!! Draw Game'
+                            ) and wkhun.in_check:
+                                text = 'Checkmate!! Black Wins'
                                 game_over = True
                                 break
                             else:
                                 pass
                             
-                            num_turns += 1
+                            if stalemate_moves != 0:
+                                screen = p.display.set_mode((WIDTH+128, HEIGHT))
+                                stalemate_move_count = total_pieces
+                                num_turns += 1
+                            else:
+                                num_turns += 1
 
-    if board.name_obj_dict['wN'].in_check:
+    if board.name_obj_dict['wK'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, 
-                                board.name_obj_dict['wN'].pos)
+                                board.name_obj_dict['wK'].pos, stalemate_move_count, stalemate_moves)
         clock.tick(MAX_FPS)
         p.display.flip()
 
-    elif board.name_obj_dict['bN'].in_check:
+    elif board.name_obj_dict['bK'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                                board.name_obj_dict['bN'].pos)
+                                board.name_obj_dict['bK'].pos, stalemate_move_count, stalemate_moves)
         clock.tick(MAX_FPS)
         p.display.flip()
 
     else:
-        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None)
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
+         None, stalemate_move_count, stalemate_moves)
 
         clock.tick(MAX_FPS)
         p.display.flip()

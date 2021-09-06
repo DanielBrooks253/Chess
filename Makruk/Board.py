@@ -162,7 +162,27 @@ class Board:
                 add_new_move = rm_old_move | {new_move}
 
                 self.black_piece_loc = add_new_move
-    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos):
+
+    def Stalemate_Moves(self, opp_pieces):
+        
+        rooks = [i for i in opp_pieces.values() if i.piece_name[1] == 'r']
+        bishops = [i for i in opp_pieces.values() if i.piece_name[1] == 'k']
+        knights = [i for i in opp_pieces.values() if i.piece_name[1] == 'm']
+
+        if len(rooks) == 2:
+            return 8
+        elif len(rooks) == 1:
+            return 16
+        elif len(bishops) == 2:
+            return 22
+        elif len(knights) == 2:
+            return 32
+        elif len(bishops) == 1:
+            return 44
+        else:
+            return 64
+
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, moves, total):
         '''
         Responsible for drawing the game board, pieces and end of game text
 
@@ -192,12 +212,42 @@ class Board:
             Board.drawPieces(self, screen, names_obj)
             Board.drawText(self, screen, text, num)
         else:
-            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj)
+            if moves != 0:
+                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj)
+                Board.StalemateCount(self, screen, moves, total)
+            else:
+                Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+                Board.drawPieces(self, screen, names_obj)
+
+    def StalemateCount(self, screen, moves, total):
+        p.draw.rect(screen, p.Color('wheat1'), p.Rect(512, 0, 128, 512))
+        p.draw.rect(screen, p.Color('black'), p.Rect(512, 0, 128, 512), 1)
+
+        font = p.font.SysFont('Comic Sans MS', 15, True, False)
+
+        textLocation_1 = p.Rect(516, 100, 64, 64)
+        textLocation_2 = p.Rect(570, 120, 64, 64)
+
+        textLocation_3 = p.Rect(550, 200, 64, 64)
+        textLocation_4 = p.Rect(570, 220, 64, 64)
+
+
+
+        textObject1 = font.render('Stalemate Count', 0, p.Color('black'))
+        textObject2 = font.render(str(total), 0, p.Color('black'))
+        textObject3 = font.render('Moves', 0, p.Color('black'))
+        textObject4 = font.render(str(moves), 0, p.Color('black'))
+
+        screen.blit(textObject1, textLocation_1)
+        screen.blit(textObject2, textLocation_2)
+        screen.blit(textObject3, textLocation_3)
+        screen.blit(textObject4, textLocation_4)
 
     def drawBoard(self, screen, high_squares, king_pos):
         # Red check; darkolivegreen moves
         # Draw the tiles on the board
+
         colors = [p.Color("wheat1"), p.Color("darkkhaki")]
 
         for r in range(self.x_dim):
