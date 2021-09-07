@@ -4,7 +4,7 @@ class Board:
     '''
         Class to define the chess board
     '''
-    def __init__(self, white_pieces, black_pieces, height, width, dimension, y_dim=8, x_dim=8):
+    def __init__(self, white_pieces, black_pieces, height, width, sq_size, y_dim, x_dim):
         '''
         Initializes the Board class
 
@@ -39,7 +39,7 @@ class Board:
 
         self.HEIGHT = height
         self.WIDTH = width
-        self.SQ_SIZE = width//dimension
+        self.SQ_SIZE = sq_size
     
     def game_over_check(self, color_name_obj, num_turns):
         '''
@@ -187,50 +187,89 @@ class Board:
 
         return: Null (Nothing)
         '''
-        if game_over:
-            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj)
-            Board.drawText(self, screen, text, num)
-        else:
-            Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
-            Board.drawPieces(self, screen, names_obj)
 
-    def drawBoard(self, screen, high_squares, king_pos):
-        # Red check; darkolivegreen moves
-        # Draw the tiles on the board
-        colors = [p.Color("wheat1"), p.Color("darkkhaki")]
+        Board.DrawBoard(self, screen)
 
+        # if game_over:
+        #     Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+        #     Board.drawPieces(self, screen, names_obj)
+        #     Board.drawText(self, screen, text, num)
+        # else:
+        #     Board.drawBoard(self, screen, high_squares, king_pos) # Draw board first so pieces do not get overwritten
+        #     Board.drawPieces(self, screen, names_obj)
+
+    def DrawBoard(self, screen):
         for r in range(self.x_dim):
             for c in range(self.y_dim):
-                p.draw.rect(screen, colors[(r+c)%2], 
-                   p.Rect(r*self.SQ_SIZE, c*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
-                p.draw.rect(screen, p.Color('black'),
-                   p.Rect((r*self.SQ_SIZE-1), (c*self.SQ_SIZE-1), 
-                           (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
+                if c == 5 or r == 0 or c == 0 or r == 9 or c == 10:
+                    continue
+                else:
+                    # p.draw.rect(screen, p.Color('wheat1'), 
+                    #         p.Rect(r*self.SQ_SIZE, c*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE),1)
+                    p.draw.rect(screen, p.Color('black'),
+                            p.Rect((r*self.SQ_SIZE-1), (c*self.SQ_SIZE-1), 
+                            (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
-        # Check to see if a place has been clicked 
-        # Highlight the space and the pieces moves in grey
-        if high_squares is not None:
-            if type(high_squares) is tuple: 
-                if high_squares in self.loc_names.keys() or high_squares[1] == 9 or high_squares[0] < 7:
-                    p.draw.rect(screen, p.Color('darkolivegreen'), 
-                        p.Rect(high_squares[1]*self.SQ_SIZE, high_squares[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
-                    p.draw.rect(screen, p.Color('black'),
-                        p.Rect((high_squares[1]*self.SQ_SIZE-1), (high_squares[0]*self.SQ_SIZE-1), 
-                                (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
-            else:
-                for i in high_squares:
-                    p.draw.rect(screen, p.Color('darkolivegreen'), 
-                       p.Rect(i[1]*self.SQ_SIZE, i[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
-                    p.draw.rect(screen, p.Color('black'),
-                       p.Rect((i[1]*self.SQ_SIZE-1), (i[0]*self.SQ_SIZE-1), 
-                               (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
-        if king_pos is not None:
-            p.draw.rect(screen, p.Color('red'), 
-                        p.Rect(king_pos[1]*self.SQ_SIZE, king_pos[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
-            p.draw.rect(screen, p.Color('black'),
-                        p.Rect((king_pos[1]*self.SQ_SIZE-1), (king_pos[0]*self.SQ_SIZE-1), 
-                           (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
+        p.draw.line(screen, p.Color('black'), (63, 320), (63, 384))
+        p.draw.line(screen, p.Color('black'), (575, 320), (575, 384))
+
+        # Fortess Lines
+        p.draw.line(screen, p.Color('black'), (256, 64), (384, 190))
+        p.draw.line(screen, p.Color('black'), (384, 64), (256, 190))
+
+        p.draw.line(screen, p.Color('black'), (256, 640), (384, 510))
+        p.draw.line(screen, p.Color('black'), (384, 640), (256, 510))
+
+
+
+    # def drawBoard(self, screen, high_squares, king_pos):
+    #     # Red check; darkolivegreen moves
+    #     # Draw the tiles on the board
+    #     colors = [p.Color("wheat1"), p.Color("wheat1")]
+
+    #     for r in range(self.x_dim):
+    #         for c in range(self.y_dim):
+    #             if c == 4 or r == 9 or r == 0 or c ==0 or c == 9:
+    #                 continue
+    #             else:
+    #                 p.draw.rect(screen, colors[(r+c)%2], 
+    #                 p.Rect(r*self.SQ_SIZE, c*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+    #                 p.draw.rect(screen, p.Color('black'),
+    #                 p.Rect((r*self.SQ_SIZE-1), (c*self.SQ_SIZE-1), 
+    #                         (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
+
+    #     p.draw.line(screen, p.Color('black'), (192, 0), (320, 128))
+    #     p.draw.line(screen, p.Color('black'), (320, 0), (192, 128))
+
+    #     p.draw.line(screen, p.Color('black'), (192, 576), (320, 448))
+    #     p.draw.line(screen, p.Color('black'), (320, 576), (192, 448))
+
+    #     # p.draw.rect(screen, p.Color('wheat1'), p.Rect(0, 0, 1000, 32))
+    #     # p.draw.rect(screen, p.Color('wheat1'), p.Rect(0, 968, 1000, 32))
+
+    #     # Check to see if a place has been clicked 
+    #     # Highlight the space and the pieces moves in grey
+    #     if high_squares is not None:
+    #         if type(high_squares) is tuple: 
+    #             if high_squares in self.loc_names.keys() or high_squares[1] == 9 or high_squares[0] < 7:
+    #                 p.draw.rect(screen, p.Color('darkolivegreen'), 
+    #                     p.Rect(high_squares[1]*self.SQ_SIZE, high_squares[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+    #                 p.draw.rect(screen, p.Color('black'),
+    #                     p.Rect((high_squares[1]*self.SQ_SIZE-1), (high_squares[0]*self.SQ_SIZE-1), 
+    #                             (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
+    #         else:
+    #             for i in high_squares:
+    #                 p.draw.rect(screen, p.Color('darkolivegreen'), 
+    #                    p.Rect(i[1]*self.SQ_SIZE, i[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+    #                 p.draw.rect(screen, p.Color('black'),
+    #                    p.Rect((i[1]*self.SQ_SIZE-1), (i[0]*self.SQ_SIZE-1), 
+    #                            (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
+    #     if king_pos is not None:
+    #         p.draw.rect(screen, p.Color('red'), 
+    #                     p.Rect(king_pos[1]*self.SQ_SIZE, king_pos[0]*self.SQ_SIZE, self.SQ_SIZE, self.SQ_SIZE))
+    #         p.draw.rect(screen, p.Color('black'),
+    #                     p.Rect((king_pos[1]*self.SQ_SIZE-1), (king_pos[0]*self.SQ_SIZE-1), 
+    #                        (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
     def drawPieces(self, screen, names_obj):
         '''
@@ -250,8 +289,15 @@ class Board:
             if piece.pos is None:
                 continue
             else:
+                if piece.color == 'white':
+                    x_adjust = -32
+                    y_adjust = 32
+                else:
+                    x_adjust = -32
+                    y_adjust = -32
+
                 screen.blit(piece.piece_image, 
-                    p.Rect(piece.pos[1]*self.SQ_SIZE+8, piece.pos[0]*self.SQ_SIZE+8, 
+                    p.Rect(piece.pos[1]*self.SQ_SIZE+8+x_adjust, piece.pos[0]*self.SQ_SIZE+8+y_adjust, 
                             self.SQ_SIZE, self.SQ_SIZE))
                 
     def drawText(self, screen, text, num):

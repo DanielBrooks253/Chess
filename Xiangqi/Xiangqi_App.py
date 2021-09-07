@@ -5,11 +5,12 @@ from Pieces import Chuh, Ma, JiangShuai, Shi, Shiang, Pao, PingTsuh
 
 p.init()
 
-WIDTH = 576
-HEIGHT = 576
-DIMENSION = 9
+WIDTH = 640
+HEIGHT = 704
+X_DIM = 10
+Y_DIM = 11
 MAX_FPS = 15
-SQ_SIZE = HEIGHT//DIMENSION
+SQ_SIZE = 64
 PCT_SHRINK = .75
 
 IMAGES = {}
@@ -29,7 +30,7 @@ screen = p.display.set_mode((WIDTH, HEIGHT))
 p.display.set_caption('Xiangqi')
 
 clock = p.time.Clock()
-screen.fill(p.Color('white'))
+screen.fill(p.Color('wheat1'))
 running = True
 player_clicks = []
 
@@ -84,8 +85,17 @@ board = Board([wpingtshuh0,wpingtshuh1,wpingtshuh2,wpingtshuh3,wpingtshuh4,
               [bpingtshuh0,bpingtshuh1,bpingtshuh2,bpingtshuh3,bpingtshuh4,
                bchuh0,bchuh1,bma0,bma1,bshi0,bshi1,
                bshiang0,bshiang1,bpao0,bpao1,bjiangshuai],
-              HEIGHT,WIDTH,DIMENSION)
+              HEIGHT,WIDTH,SQ_SIZE,Y_DIM,X_DIM)
 
 high_squares = None
 while running:
-    pass
+    for e in p.event.get():
+        if e.type == p.QUIT:
+            running = False
+
+    board.drawGameState(screen, board.name_obj_dict, False, text, num, None, None)
+
+    clock.tick(MAX_FPS)
+    p.display.flip()
+
+    
