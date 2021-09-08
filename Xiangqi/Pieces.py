@@ -1,6 +1,6 @@
 ###### Xiangqi (Chinese Chess) ######
 class Pieces:
-    def __init__(self, start_pos, piece_name, piece_image, color):
+    def __init__(self, start_pos, location_y, location_x, piece_name, piece_image, color):
         '''
         Initalize the pieces class
 
@@ -18,6 +18,9 @@ class Pieces:
         self.pos=start_pos
         self.piece_name=piece_name
         self.color = color.lower()
+
+        self.location_x = location_x
+        self.location_y = location_y
     
     def Make_Move(self, new_loc, board_obj):
         '''
@@ -242,7 +245,7 @@ class Ma(Pieces): # Xiangqi and Janggi Chess (Knight)
     def Get_Moves(self):
         return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([2,2,1,1,-2,-2,-1,-1], [1,-1,2,-2,1,-1,2,-2])])
 
-class JiangShuai(Pieces):
+class Jiang(Pieces):
     '''
         Modern Day King
 
@@ -289,7 +292,7 @@ class Pao(Pieces):
                                                                   list(zip([0,0,0,0,0,0,0,0,0], [1,2,3,4,5,6,7,8,9])) + \
                                                                   list(zip([0,0,0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7,-8,-9]))])
 
-class PingTsuh(Pieces):
+class Tsuh(Pieces):
     '''
         Modern day Pawn
 
@@ -298,9 +301,9 @@ class PingTsuh(Pieces):
         3) Once piece crosses the river; piece can move left and right
     '''
 
-    def __init__(self, start_pos, piece_name, piece_image, color='white', cross_river=False):
+    def __init__(self, start_pos, location_y, location_x, piece_name, piece_image, color='white', cross_river=False):
         self.cross_river = cross_river
-        super().__init__(start_pos, piece_name, piece_image, color)
+        super().__init__(start_pos, location_y, location_x, piece_name, piece_image, color)
 
     def Get_Moves(self):
 
@@ -314,3 +317,18 @@ class PingTsuh(Pieces):
                 return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([-1,1,0], [0,0,-1])])
             else:
                 return {(self.pos[0]-1, self.pos[1])}
+
+    def Promote_Pawn(self):
+        self.cross_river = True
+        
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+        all_moves = Tsuh.Get_Moves(self)
+        on_board = set(filter(lambda x: x[0] >= 0 and x[0] <= y_dim and x[1] >= 0 and x[1] <= x_dim, all_moves))
+
+        rm_same_color = on_board - same_color_locs
+
+        if len(rm_same_color) == 0:
+            return None
+        else:
+            return rm_same_color
+
