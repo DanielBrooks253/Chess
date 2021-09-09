@@ -1,7 +1,7 @@
 import pygame as p
 
 from Board import Board
-from Pieces import Chuh, Ma, Jiang, Shi, Shiang, Pao, Tsuh
+from Pieces import Tcha, Ma, Kuong, Syang, Pyeng, Sa, Hpo
 
 p.init()
 
@@ -22,43 +22,43 @@ game_over = False
 text = ''
 num = 1
 
-for pieces in [('wt', 'White-Solider'), ('wc', 'White-Chariot'), ('wm', 'White-Horse'), ('wJ', 'White-King'),
-               ('wS', 'White-Advisor'), ('ws', 'White-Elephant'), ('wp', 'White-Cannon'), ('bt', 'Black-Solider'), 
-               ('bc', 'Black-Chariot'), ('bm', 'Black-Horse'), ('bJ', 'Black-King'),
-               ('bS', 'Black-Advisor'), ('bs', 'Black-Elephant'), ('bp', 'Black-Cannon')]:
+for pieces in [('wp', 'White_Solider'), ('wt', 'White_Chariot'), ('wm', 'White_Knight'), ('wK', 'White_King'),
+               ('wS', 'White_Advisor'), ('ws', 'White_Elephant'), ('wh', 'White_Cannon'), ('bp', 'Black_Solider'), 
+               ('bt', 'Black_Chariot'), ('bm', 'Black_Knight'), ('bK', 'Black_King'),
+               ('bS', 'Black_Advisor'), ('bs', 'Black_Elephant'), ('bh', 'Black_Cannon')]:
    IMAGES[pieces[0]] = p.transform.scale(p.image.load("Images/" + pieces[1] + ".jpg"), (int(SQ_SIZE*PCT_SHRINK), int(SQ_SIZE*PCT_SHRINK))) 
 
 screen = p.display.set_mode((WIDTH, HEIGHT))
-p.display.set_caption('Xiangqi')
+p.display.set_caption('Janggi')
 
 clock = p.time.Clock()
 screen.fill(p.Color('wheat1'))
 running = True
 player_clicks = []
 
-wtsuh0 = Tsuh((6,0), location_y = (416,480), location_x = (32,96), piece_name = 'wt0', piece_image = IMAGES['wt'], color = 'white')
-wtsuh1 = Tsuh((6,2), location_y = (416,480), location_x = (160,224), piece_name = 'wt1', piece_image = IMAGES['wt'], color = 'white')
-wtsuh2 = Tsuh((6,4), location_y = (416,480), location_x = (288,352), piece_name = 'wt2', piece_image = IMAGES['wt'], color = 'white')
-wtsuh3 = Tsuh((6,6), location_y = (416,480), location_x = (416,480), piece_name = 'wt3', piece_image = IMAGES['wt'], color = 'white')
-wtsuh4 = Tsuh((6,8), location_y = (416,480), location_x = (544,608), piece_name = 'wt4', piece_image = IMAGES['wt'], color = 'white')
+wpyeng0 = Pyeng((6,0), location_y = (416,480), location_x = (32,96), piece_name = 'wp0', piece_image = IMAGES['wp'], color = 'white')
+wpyeng1 = Pyeng((6,2), location_y = (416,480), location_x = (160,224), piece_name = 'wp1', piece_image = IMAGES['wp'], color = 'white')
+wpyeng2 = Pyeng((6,4), location_y = (416,480), location_x = (288,352), piece_name = 'wp2', piece_image = IMAGES['wp'], color = 'white')
+wpyeng3 = Pyeng((6,6), location_y = (416,480), location_x = (416,480), piece_name = 'wp3', piece_image = IMAGES['wp'], color = 'white')
+wpyeng4 = Pyeng((6,8), location_y = (416,480), location_x = (544,608), piece_name = 'wp4', piece_image = IMAGES['wp'], color = 'white')
 
-btsuh0 = Tsuh((3,0), location_y = (224,288), location_x = (32,96), piece_name = 'bt0', piece_image = IMAGES['bt'], color = 'black')
-btsuh1 = Tsuh((3,2), location_y = (224,288), location_x = (160,224), piece_name = 'bt1', piece_image = IMAGES['bt'], color = 'black')
-btsuh2 = Tsuh((3,4), location_y = (224,288), location_x = (288,352), piece_name = 'bt2', piece_image = IMAGES['bt'], color = 'black')
-btsuh3 = Tsuh((3,6), location_y = (224,288), location_x = (416,480), piece_name = 'bt3', piece_image = IMAGES['bt'], color = 'black')
-btsuh4 = Tsuh((3,8), location_y = (224,288), location_x = (544,608), piece_name = 'bt4', piece_image = IMAGES['bt'], color = 'black')
+bpyeng0 = Pyeng((3,0), location_y = (224,288), location_x = (32,96), piece_name = 'bp0', piece_image = IMAGES['bp'], color = 'black')
+bpyeng1 = Pyeng((3,2), location_y = (224,288), location_x = (160,224), piece_name = 'bp1', piece_image = IMAGES['bp'], color = 'black')
+bpyeng2 = Pyeng((3,4), location_y = (224,288), location_x = (288,352), piece_name = 'bp2', piece_image = IMAGES['bp'], color = 'black')
+bpyeng3 = Pyeng((3,6), location_y = (224,288), location_x = (416,480), piece_name = 'bp3', piece_image = IMAGES['bp'], color = 'black')
+bpyeng4 = Pyeng((3,8), location_y = (224,288), location_x = (544,608), piece_name = 'bp4', piece_image = IMAGES['bp'], color = 'black')
 
-wpao0 = Pao((7,1), location_y = (480,544), location_x = (96,160), piece_name = 'wp0', piece_image = IMAGES['wp'], color = 'white')
-wpao1 = Pao((7,7), location_y = (480,544), location_x = (480,544), piece_name = 'wp1', piece_image = IMAGES['wp'], color = 'white')
+whpo0 = Hpo((7,1), location_y = (480,544), location_x = (96,160), piece_name = 'wh0', piece_image = IMAGES['wh'], color = 'white')
+whpo1 = Hpo((7,7), location_y = (480,544), location_x = (480,544), piece_name = 'wh1', piece_image = IMAGES['wh'], color = 'white')
 
-bpao0 = Pao((2,1), location_y = (160,224), location_x = (96,160), piece_name = 'bp0', piece_image = IMAGES['bp'], color = 'black')
-bpao1 = Pao((2,7), location_y = (160,224), location_x = (480,544), piece_name = 'bp1', piece_image = IMAGES['bp'], color = 'black')
+bhpo0 = Hpo((2,1), location_y = (160,224), location_x = (96,160), piece_name = 'bh0', piece_image = IMAGES['bh'], color = 'black')
+bhpo1 = Hpo((2,7), location_y = (160,224), location_x = (480,544), piece_name = 'bh1', piece_image = IMAGES['bh'], color = 'black')
 
-wchuh0 = Chuh((9,0), location_y = (608,672), location_x = (32,96), piece_name = 'wc0', piece_image = IMAGES['wc'], color = 'white')
-wchuh1 = Chuh((9,8), location_y = (608,672), location_x = (544,608), piece_name = 'wc1', piece_image = IMAGES['wc'], color = 'white')
+wtcha0 = Tcha((9,0), location_y = (608,672), location_x = (32,96), piece_name = 'wt0', piece_image = IMAGES['wt'], color = 'white')
+wtcha1 = Tcha((9,8), location_y = (608,672), location_x = (544,608), piece_name = 'wt1', piece_image = IMAGES['wt'], color = 'white')
 
-bchuh0 = Chuh((0,0), location_y = (32,96), location_x = (32,96), piece_name = 'bc0', piece_image = IMAGES['bc'], color = 'black')
-bchuh1 = Chuh((0,8), location_y = (32,96), location_x = (544,608), piece_name = 'bc1', piece_image = IMAGES['bc'], color = 'black')
+btcha0 = Tcha((0,0), location_y = (32,96), location_x = (32,96), piece_name = 'bt0', piece_image = IMAGES['bt'], color = 'black')
+btcha1 = Tcha((0,8), location_y = (32,96), location_x = (544,608), piece_name = 'bt1', piece_image = IMAGES['bt'], color = 'black')
 
 wma0 = Ma((9,1), location_y = (608,672), location_x = (96,160), piece_name = 'wm0', piece_image = IMAGES['wm'], color = 'white')
 wma1 = Ma((9,7), location_y = (608,672), location_x = (480,544), piece_name = 'wm1', piece_image = IMAGES['wm'], color = 'white')
@@ -66,27 +66,27 @@ wma1 = Ma((9,7), location_y = (608,672), location_x = (480,544), piece_name = 'w
 bma0 = Ma((0,1), location_y = (32,96), location_x = (96,160), piece_name = 'bm0', piece_image = IMAGES['bm'], color = 'black')
 bma1 = Ma((0,7), location_y = (32,96), location_x = (480,544), piece_name = 'bm1', piece_image = IMAGES['bm'], color = 'black')
 
-wshiang0 = Shiang((9,2), location_y = (608,672), location_x = (160,224), piece_name = 'ws0', piece_image = IMAGES['ws'], color = 'white')
-wshiang1 = Shiang((9,6), location_y = (608,672), location_x = (416,480), piece_name = 'ws1', piece_image = IMAGES['ws'], color = 'white')
+wsyang0 = Syang((9,2), location_y = (608,672), location_x = (160,224), piece_name = 'ws0', piece_image = IMAGES['ws'], color = 'white')
+wsyang1 = Syang((9,6), location_y = (608,672), location_x = (416,480), piece_name = 'ws1', piece_image = IMAGES['ws'], color = 'white')
 
-bshiang0 = Shiang((0,2), location_y = (32,96), location_x = (160,224), piece_name = 'bs0', piece_image = IMAGES['bs'], color = 'black')
-bshiang1 = Shiang((0,6), location_y = (32,96), location_x = (416,480), piece_name = 'bs1', piece_image = IMAGES['bs'], color = 'black')
+bsyang0 = Syang((0,2), location_y = (32,96), location_x = (160,224), piece_name = 'bs0', piece_image = IMAGES['bs'], color = 'black')
+bsyang1 = Syang((0,6), location_y = (32,96), location_x = (416,480), piece_name = 'bs1', piece_image = IMAGES['bs'], color = 'black')
 
-wshi0 = Shi((9,3), location_y = (608,672), location_x = (224,288), piece_name = 'wS0', piece_image = IMAGES['wS'], color = "white")
-wshi1 = Shi((9,5), location_y = (608,672), location_x = (352,416), piece_name = 'wS1', piece_image = IMAGES['wS'], color = "white")
+wsa0 = Sa((9,3), location_y = (608,672), location_x = (224,288), piece_name = 'wS0', piece_image = IMAGES['wS'], color = "white")
+wsa1 = Sa((9,5), location_y = (608,672), location_x = (352,416), piece_name = 'wS1', piece_image = IMAGES['wS'], color = "white")
 
-bshi0 = Shi((0,3), location_y = (32,96), location_x = (224,288), piece_name = 'bS0', piece_image = IMAGES['bS'], color = "black")
-bshi1 = Shi((0,5), location_y = (32,96), location_x = (352,416), piece_name = 'bS1', piece_image = IMAGES['bS'], color = "black")
+bsa0 = Sa((0,3), location_y = (32,96), location_x = (224,288), piece_name = 'bS0', piece_image = IMAGES['bS'], color = "black")
+bsa1 = Sa((0,5), location_y = (32,96), location_x = (352,416), piece_name = 'bS1', piece_image = IMAGES['bS'], color = "black")
 
-wjiang = Jiang((9,4), location_y = (608,672), location_x = (288,352), piece_name = 'wJ', piece_image = IMAGES['wJ'], color = 'white')
-bjiang = Jiang((0,4), location_y = (32,96), location_x = (288,352), piece_name = 'bJ', piece_image = IMAGES['bJ'], color = 'black')
+wkuong = Kuong((8,4), location_y = (608,672), location_x = (288,352), piece_name = 'wK', piece_image = IMAGES['wK'], color = 'white')
+bkuong = Kuong((1,4), location_y = (32,96), location_x = (288,352), piece_name = 'bK', piece_image = IMAGES['bK'], color = 'black')
 
-board = Board([wtsuh0, wtsuh1, wtsuh2, wtsuh3, wtsuh4,
-               wchuh0,wchuh1,wma0,wma1,wshiang0,wshiang1,
-               wshi0,wshi1,wjiang,wpao0,wpao1],
-               [btsuh0, btsuh1, btsuh2, btsuh3, btsuh4,
-               bchuh0,bchuh1,bma0,bma1,bshiang0,bshiang1,
-               bshi0,bshi1,bjiang,bpao0,bpao1],
+board = Board([wpyeng0, wpyeng1, wpyeng2, wpyeng3, wpyeng4,
+               wtcha0,wtcha1,wma0,wma1,wsyang0,wsyang1,
+               wsa0,wsa1,wkuong,whpo0,whpo1],
+               [bpyeng0, bpyeng1, bpyeng2, bpyeng3, bpyeng4,
+               btcha0,btcha1,bma0,bma1,bsyang0,bsyang1,
+               bsa0,bsa1,bkuong,bhpo0,bhpo1],
                HEIGHT,WIDTH,SQ_SIZE,Y_DIM,X_DIM)
 
 high_squares = None
@@ -161,25 +161,16 @@ while running:
                             board
                         )
 
-                        if piece_name[1] == 't':
-                            if (num_turns % 2 == 0 and col == 4) or (num_turns % 2 != 0 and col == 5) and \
-                                not board.name_obj_dict[piece_name].cross_river:
-                                board.name_obj_dict[piece_name].Promote_Pawn()
-                            else:
-                                pass
-                        else:
-                            pass
-
                         player_clicks = []
                         high_squares = None
 
-                        board.name_obj_dict['bJ'].in_check = board.name_obj_dict['bJ'].check_check(
+                        board.name_obj_dict['bK'].in_check = board.name_obj_dict['bK'].check_check(
                                 board.white_name_obj_dict,
                                 board.white_piece_loc,
                                 board.black_piece_loc
                             )
 
-                        board.name_obj_dict['wJ'].in_check = board.name_obj_dict['wJ'].check_check(
+                        board.name_obj_dict['wK'].in_check = board.name_obj_dict['wK'].check_check(
                             board.black_name_obj_dict,
                             board.black_piece_loc,
                             board.white_piece_loc
@@ -189,7 +180,7 @@ while running:
                         if board.game_over_check(
                         board.black_name_obj_dict,
                         num_turns
-                        ) and bjiang.in_check:
+                        ) and bkuong.in_check:
 
                             text = 'Checkmate!! White Wins'
                             game_over = True
@@ -200,7 +191,7 @@ while running:
                             num_turns
                         ) or  board.game_over_check(
                             board.white_name_obj_dict,
-                            num_turns)) and (not bjiang.in_check or not wjiang.in_check):
+                            num_turns)) and (not bkuong.in_check or not wkuong.in_check):
 
                             text = 'Stalemate!! Draw Game'
                             game_over = True
@@ -209,7 +200,7 @@ while running:
                         elif board.game_over_check(
                             board.white_name_obj_dict,
                             num_turns
-                        ) and wjiang.in_check:
+                        ) and wkuong.in_check:
                             text = 'Checkmate!! Black Wins'
                             game_over = True
                             break
@@ -221,15 +212,15 @@ while running:
 
 
 
-    if board.name_obj_dict['wJ'].in_check:
+    if board.name_obj_dict['wK'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, 
-                                board.name_obj_dict['wJ'].pos, board.loc_names.keys())
+                                board.name_obj_dict['wK'].pos, board.loc_names.keys())
         clock.tick(MAX_FPS)
         p.display.flip()
 
-    elif board.name_obj_dict['bJ'].in_check:
+    elif board.name_obj_dict['bK'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                                board.name_obj_dict['bJ'].pos, board.loc_names.keys())
+                                board.name_obj_dict['bK'].pos, board.loc_names.keys())
         clock.tick(MAX_FPS)
         p.display.flip()
 

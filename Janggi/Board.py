@@ -207,7 +207,7 @@ class Board:
         for r in range(self.x_dim):
             for c in range(self.y_dim):
                 # Add border around the playing field and for the river
-                if c == 5 or r == 0 or c == 0 or r == 9 or c == 10:
+                if r == 0 or c == 0 or r == 9 or c == 10:
                     p.draw.rect(screen, p.Color('wheat1'),
                             p.Rect((r*self.SQ_SIZE), (c*self.SQ_SIZE), 
                             (self.SQ_SIZE), (self.SQ_SIZE)))
