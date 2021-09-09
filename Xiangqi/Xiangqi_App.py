@@ -149,14 +149,93 @@ while running:
                     high_squares = {(col, row)} | valid_moves
 
             else:
-                print(player_clicks, (col, row))
                 if (col, row) in player_clicks:
                     player_clicks = []
                     high_squares = None
+                else:
+                    if moves is None:
+                        break
+                    elif (col, row) in moves:
+                        board.name_obj_dict[piece_name].Make_Move(
+                            (col, row),
+                            board
+                        )
 
-    board.drawGameState(screen, board.name_obj_dict, False, text, num, high_squares, None)
+                        if piece_name[1] == 't':
+                            if (num_turns % 2 == 0 and col == 4) or (num_turns % 2 != 0 and col == 5):
+                                board.name_obj_dict[piece_name].Promote_Pawn()
+                            else:
+                                pass
+                        else:
+                            pass
 
-    clock.tick(MAX_FPS)
-    p.display.flip()
+                        player_clicks = []
+                        high_squares = None
+
+                        board.name_obj_dict['bJ'].in_check = board.name_obj_dict['bJ'].check_check(
+                                board.white_name_obj_dict,
+                                board.white_piece_loc,
+                                board.black_piece_loc
+                            )
+
+                        board.name_obj_dict['wJ'].in_check = board.name_obj_dict['wJ'].check_check(
+                            board.black_name_obj_dict,
+                            board.black_piece_loc,
+                            board.white_piece_loc
+                        )
+
+                        # Check to see if placing the piece cause checkmate or not
+                        if board.game_over_check(
+                        board.black_name_obj_dict,
+                        num_turns
+                        ) and bjiang.in_check:
+
+                            text = 'Checkmate!! White Wins'
+                            game_over = True
+                            break
+
+                        elif (board.game_over_check(
+                            board.black_name_obj_dict,
+                            num_turns
+                        ) or  board.game_over_check(
+                            board.white_name_obj_dict,
+                            num_turns)) and (not bjiang.in_check or not wjiang.in_check):
+
+                            text = 'Stalemate!! Draw Game'
+                            game_over = True
+                            break
+
+                        elif board.game_over_check(
+                            board.white_name_obj_dict,
+                            num_turns
+                        ) and wjiang.in_check:
+                            text = 'Checkmate!! Black Wins'
+                            game_over = True
+                            break
+                        else:
+                            pass
+                        
+                        num_turns += 1
+
+
+
+
+    if board.name_obj_dict['wJ'].in_check:
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, 
+                                board.name_obj_dict['wJ'].pos)
+        clock.tick(MAX_FPS)
+        p.display.flip()
+
+    elif board.name_obj_dict['bJ'].in_check:
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
+                                board.name_obj_dict['bJ'].pos)
+        clock.tick(MAX_FPS)
+        p.display.flip()
+
+    else:
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None)
+
+        clock.tick(MAX_FPS)
+        p.display.flip()
 
     

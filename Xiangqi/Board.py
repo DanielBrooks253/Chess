@@ -168,6 +168,7 @@ class Board:
                 add_new_move = rm_old_move | {new_move}
 
                 self.black_piece_loc = add_new_move
+                
     def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos):
         '''
         Responsible for drawing the game board, pieces and end of game text
@@ -229,7 +230,7 @@ class Board:
                                    self.SQ_SIZE, self.SQ_SIZE))
                     p.draw.rect(screen, p.Color('black'),
                            p.Rect(i[1]*self.SQ_SIZE+32, i[0]*self.SQ_SIZE+32, 
-                                   self.SQ_SIZE, self.SQ_SIZE))
+                                   self.SQ_SIZE, self.SQ_SIZE),1)
 
         p.draw.line(screen, p.Color('black'), (63, 320), (63, 384))
         p.draw.line(screen, p.Color('black'), (575, 320), (575, 384))
