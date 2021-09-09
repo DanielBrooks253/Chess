@@ -169,7 +169,7 @@ class Board:
 
                 self.black_piece_loc = add_new_move
                 
-    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos):
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, piece_locs):
         '''
         Responsible for drawing the game board, pieces and end of game text
 
@@ -195,13 +195,15 @@ class Board:
         return: Null (Nothing)
         '''
         if game_over:
-            pass
+            Board.DrawBoard(self, screen, high_squares, king_pos, piece_locs)
+            Board.drawPieces(self, screen, names_obj)
+            Board.drawText(self, screen, text, num)
         else:
-            Board.DrawBoard(self, screen, high_squares)
+            Board.DrawBoard(self, screen, high_squares, king_pos, piece_locs)
             Board.drawPieces(self, screen, names_obj)
 
 
-    def DrawBoard(self, screen, high_squares):
+    def DrawBoard(self, screen, high_squares, king_pos, piece_locs):
         for r in range(self.x_dim):
             for c in range(self.y_dim):
                 # Add border around the playing field and for the river
@@ -225,12 +227,22 @@ class Board:
                                    self.SQ_SIZE, self.SQ_SIZE))
             else:
                 for i in high_squares:
-                    p.draw.rect(screen, p.Color('darkolivegreen'),
-                           p.Rect(i[1]*self.SQ_SIZE+32, i[0]*self.SQ_SIZE+32, 
-                                   self.SQ_SIZE, self.SQ_SIZE))
-                    p.draw.rect(screen, p.Color('black'),
-                           p.Rect(i[1]*self.SQ_SIZE+32, i[0]*self.SQ_SIZE+32, 
-                                   self.SQ_SIZE, self.SQ_SIZE),1)
+                    if i in piece_locs:
+                        p.draw.rect(screen, p.Color('darkolivegreen'),
+                            p.Rect(i[1]*self.SQ_SIZE+32, i[0]*self.SQ_SIZE+32, 
+                                    self.SQ_SIZE, self.SQ_SIZE))
+                        p.draw.rect(screen, p.Color('black'),
+                            p.Rect(i[1]*self.SQ_SIZE+32, i[0]*self.SQ_SIZE+32, 
+                                    self.SQ_SIZE, self.SQ_SIZE),1)
+                    else:
+                        p.draw.circle(screen, p.Color('red'), (i[1]*64+64,i[0]*64+64), 8)
+
+        if king_pos is not None:
+            p.draw.rect(screen, p.Color('red'), 
+                        p.Rect(king_pos[1]*self.SQ_SIZE+32, king_pos[0]*self.SQ_SIZE+32, self.SQ_SIZE, self.SQ_SIZE))
+            p.draw.rect(screen, p.Color('black'),
+                        p.Rect((king_pos[1]*self.SQ_SIZE+32-1), (king_pos[0]*self.SQ_SIZE+32-1), 
+                           (self.SQ_SIZE+1), (self.SQ_SIZE+1)),1)
 
         p.draw.line(screen, p.Color('black'), (63, 320), (63, 384))
         p.draw.line(screen, p.Color('black'), (575, 320), (575, 384))

@@ -162,7 +162,8 @@ while running:
                         )
 
                         if piece_name[1] == 't':
-                            if (num_turns % 2 == 0 and col == 4) or (num_turns % 2 != 0 and col == 5):
+                            if (num_turns % 2 == 0 and col == 4) or (num_turns % 2 != 0 and col == 5) and \
+                                not board.name_obj_dict[piece_name].cross_river:
                                 board.name_obj_dict[piece_name].Promote_Pawn()
                             else:
                                 pass
@@ -222,18 +223,19 @@ while running:
 
     if board.name_obj_dict['wJ'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, 
-                                board.name_obj_dict['wJ'].pos)
+                                board.name_obj_dict['wJ'].pos, board.loc_names.keys())
         clock.tick(MAX_FPS)
         p.display.flip()
 
     elif board.name_obj_dict['bJ'].in_check:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares,
-                                board.name_obj_dict['bJ'].pos)
+                                board.name_obj_dict['bJ'].pos, board.loc_names.keys())
         clock.tick(MAX_FPS)
         p.display.flip()
 
     else:
-        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, None)
+        board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, 
+                            None, board.loc_names.keys())
 
         clock.tick(MAX_FPS)
         p.display.flip()

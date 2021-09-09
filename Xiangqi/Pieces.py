@@ -131,6 +131,16 @@ class Pieces:
                 else:
                     pass
 
+                # Kings cannot directly face each other without another piece between them
+                all_pieces_file = [locs[1] for locs in black_loc_copy|white_loc_copy]
+                pieces_on_king_file = list(filter(lambda x: x == name_obj_copy['wJ'].pos[1], all_pieces_file))
+
+                if name_obj_copy['wJ'].pos[1] == name_obj_copy['bJ'].pos[1] and \
+                    len(pieces_on_king_file) < 3: 
+                    checks |= {i}
+                else:
+                    pass
+
                 # Reset all of the original positions for the different 
                 # scenarios
                 if self.piece_name == 'wJ':
@@ -201,6 +211,16 @@ class Pieces:
                 else:
                     pass
 
+                # Kings cannot directly face each other without another piece between them
+                all_pieces_file = [locs[1] for locs in black_loc_copy|white_loc_copy]
+                pieces_on_king_file = list(filter(lambda x: x == name_obj_copy['bJ'].pos[1], all_pieces_file))
+
+                if name_obj_copy['wJ'].pos[1] == name_obj_copy['bJ'].pos[1] and \
+                    len(pieces_on_king_file) < 3: 
+                    checks |= {i}
+                else:
+                    pass
+
                 if self.piece_name == 'bJ':
                     self.pos = old_move
 
@@ -231,27 +251,18 @@ class Chuh(Pieces):
         Has the same movement as the modern day rooks
     '''
 
-    def Get_Moves(self):
-        return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in list(zip([1,2,3,4,5,6,7,8], [0,0,0,0,0,0,0,0])) + \
-                                                                  list(zip([-1,-2,-3,-4,-5,-6,-7,-8], [0,0,0,0,0,0,0,0])) + \
-                                                                  list(zip([0,0,0,0,0,0,0,0,0], [1,2,3,4,5,6,7,8,9])) + \
-                                                                  list(zip([0,0,0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7,-8,-9]))])
-
     def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
-        all_moves = Chuh.Get_Moves(self)
-        orth_moves_beyond_pieces = Chuh.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
-
-        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+        all_moves = Chuh.Get_Moves(self, same_color_locs, opp_color_locs)
+        on_board = set(filter(lambda x: x[0]<=y_dim and x[1]<=x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
-        rm_over_pieces = rm_same_color - orth_moves_beyond_pieces
 
-        if len(rm_over_pieces) == 0:
+        if len(rm_same_color) == 0:
             return None
         else:
-            return rm_over_pieces
+            return rm_same_color
 
-    def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim):
+    def Get_Moves(self, same_color_locs, opp_color_locs):
         '''
         Rooks cannot jump over other pieces, therefore the moves the rook can make is limited
         by the closest piece in each direction orthogonally.
@@ -269,7 +280,6 @@ class Chuh(Pieces):
         :return (set): all of the moves the rook cannot take due to there being a 
             piece in the way. Used to filter all of the available moves.
         '''
-        # Get the locations pf all the pieces on the board
         combine_locs = same_color_locs | opp_color_locs
         combine_locs = list(filter(None, combine_locs))
 
@@ -279,6 +289,18 @@ class Chuh(Pieces):
         same_color_down = False
         same_color_left = False
         same_color_right = False
+
+        all_right = set()
+        all_down= set()
+        all_left = set()
+        all_up = set()
+
+        # Calculate all of the diagonal squares in the 4 directions
+        for i in range(1,11):
+            all_right |= {((self.pos[0]), (self.pos[1]+i))}
+            all_left |= {((self.pos[0]), (self.pos[1]-i))}
+            all_down |= {((self.pos[0]+i), (self.pos[1]))}
+            all_up |= {((self.pos[0]-i), (self.pos[1]))}
 
         # Get a list of pieces that are ont he same file as the current piece
         closest_up = list(filter(lambda x: x[1] == self.pos[1] and x[0] < self.pos[0], combine_locs))
@@ -298,39 +320,45 @@ class Chuh(Pieces):
         if len({closest_left} & same_color_locs) != 0: same_color_left = True
         if len({closest_right} & same_color_locs) != 0: same_color_right = True
 
-        # If the closest piece is of the same color, you can move to the 
-        # space one unit before. If it is of a different color, you can move
-        # onto the same piece and capture.
-        if same_color_up and closest_up is not None:
-            up_no = set(zip(range(closest_up[0], -1, -1), [closest_up[1]]*(closest_up[0]+1)))
-        elif not same_color_up and closest_up is not None:
-            up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*(closest_up[0]+1)))
-        else:
-            up_no = set()
 
         if same_color_down and closest_down is not None:
-            down_no = set(zip(range((closest_down[0]), y_dim), [closest_down[1]] * (((y_dim-1) - closest_down[0]) + closest_down[0]+1)))
+            distance = abs(closest_down[0] - self.pos[0])
+            down = set([(self.pos[0]+i, self.pos[1]) for i in range(1, distance)])
         elif not same_color_down and closest_down is not None:
-            down_no = set(zip(range((closest_down[0]+1), y_dim), [closest_down[1]] * ((y_dim - closest_down[0]) + closest_down[0]+1)))
+            distance = abs(closest_down[0] - self.pos[0])
+            down = set([(self.pos[0]+i, self.pos[1]) for i in range(1, distance+1)])
         else:
-            down_no = set()
-
+            down = all_down
+            
+        if same_color_up and closest_up is not None:
+            distance = abs(closest_up[0] - self.pos[0])
+            up = set([(self.pos[0]-i, self.pos[1]) for i in range(1, distance)])
+        elif not same_color_up and closest_up is not None:
+            distance = abs(closest_up[0] - self.pos[0])
+            up = set([(self.pos[0]-i, self.pos[1]) for i in range(1, distance+1)])
+        else:
+            up = all_up
+            
         if same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]]*(closest_left[1]+1), range((closest_left[1]), -1, -1)))
+            distance = abs(closest_left[1] - self.pos[1])
+            left = set([(self.pos[0], self.pos[1]-i) for i in range(1, distance)])
         elif not same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]]*(closest_left[1]+1), range((closest_left[1]-1), -1, -1)))
+            distance = abs(closest_left[1] - self.pos[1])
+            left = set([(self.pos[0], self.pos[1]-i) for i in range(1, distance+1)])
         else:
-            left_no = set()
-
+            left = all_left
+            
         if same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * (((x_dim-1)-closest_right[1]+1) + closest_right[1]), range((closest_right[1]), x_dim)))
+            distance = abs(closest_right[1] - self.pos[1])
+            right = set([(self.pos[0], self.pos[1]+i) for i in range(1, distance)])
         elif not same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * ((x_dim-closest_right[1]+1) + closest_right[1]), range((closest_right[1]+1), x_dim)))
+            distance = abs(closest_right[1] - self.pos[1])
+            right = set([(self.pos[0], self.pos[1]+i) for i in range(1, distance+1)])
         else:
-            right_no = set()
+            right = all_right
 
-        # Return the union of the four directions
-        return up_no|down_no|left_no|right_no
+
+        return up|down|left|right
 
 class Ma(Pieces): # Xiangqi and Janggi Chess (Knight)
     '''
@@ -339,11 +367,41 @@ class Ma(Pieces): # Xiangqi and Janggi Chess (Knight)
         1) Cannot jump over pieces
     '''
 
-    def Get_Moves(self):
-        return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in zip([2,2,1,1,-2,-2,-1,-1], [1,-1,2,-2,1,-1,2,-2])])
+    def Get_Moves(self, opp_color_locs, same_color_locs):
+        all_locs = opp_color_locs|same_color_locs
+        moves = set()
+
+        # Right = y = 2x or y = 1/2x
+        # Left = y = -2x or y = -1/2x
+
+        # Looking down
+        if (self.pos[0]+1, self.pos[1]) not in all_locs:
+            moves |= set([(self.pos[0]+y, self.pos[1]+x) for y,x in zip([2,2], [1,-1])])
+        else:
+            pass
+        
+        # Looking Up
+        if (self.pos[0]-1, self.pos[1]) not in all_locs:
+            moves |= set([(self.pos[0]+y, self.pos[1]+x) for y,x in zip([-2,-2], [1,-1])])
+        else:
+            pass
+
+        # Looking Right
+        if (self.pos[0], self.pos[1]+1) not in all_locs:
+            moves |= set([(self.pos[0]+y, self.pos[1]+x) for y,x in zip([1,-1], [2,2])])
+        else:
+            pass
+
+        # Looking Left
+        if (self.pos[0], self.pos[1]-1) not in all_locs:
+            moves |= set([(self.pos[0]+y, self.pos[1]+x) for y,x in zip([1,-1], [-2,-2])])
+        else:
+            pass
+
+        return moves
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
-        all_moves = Ma.Get_Moves(self)
+        all_moves = Ma.Get_Moves(self, opp_color_locs, same_color_locs)
         on_board = set(filter(lambda x: x[0] >= 0 and x[0] <= y_dim and x[1] >= 0 and x[1] <= x_dim, all_moves))
 
         rm_same_color = on_board - same_color_locs
@@ -382,6 +440,7 @@ class Jiang(Pieces):
             x_dim_2 = 5
 
         all_moves = Jiang.Get_Moves(self)
+        # Bounded to the fortress
         on_board = set(filter(lambda x: x[0] >= y_dim_1 and x[0] <= y_dim_2 and x[1] >= x_dim_1 and x[1] <= x_dim_2, all_moves))
 
         rm_same_color = on_board - same_color_locs
@@ -427,6 +486,8 @@ class Shi(Pieces):
             x_dim_2 = 5
 
         all_moves = Shi.Get_Moves(self)
+
+        # Bounded to the fortress
         on_board = set(filter(lambda x: x[0] >= y_dim_1 and x[0] <= y_dim_2 and x[1] >= x_dim_1 and x[1] <= x_dim_2, all_moves))
 
         rm_same_color = on_board - same_color_locs
@@ -444,12 +505,50 @@ class Shiang(Pieces):
         2) Can be blocked if an enemy piece is one space diagonal from piece
     '''
 
-    def Get_Moves(self):
-        return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([2,2,-2,-2], [2,-2,2,-2])]) 
+    def Get_Moves(self, opp_color_locs, same_color_locs):
+        all_locs = opp_color_locs|same_color_locs
+        moves = set()
+
+        # Right = y = 2x or y = 1/2x
+        # Left = y = -2x or y = -1/2x
+
+        # Looking down
+        if (self.pos[0]+1, self.pos[1]+1) not in all_locs:
+            moves |= {(self.pos[0]+2, self.pos[1]+2)}
+        else:
+            pass
+        
+        # Looking Up
+        if (self.pos[0]-1, self.pos[1]+1) not in all_locs:
+            moves |= {(self.pos[0]-2, self.pos[1]+2)}
+        else:
+            pass
+
+        # Looking Right
+        if (self.pos[0]-1, self.pos[1]-1) not in all_locs:
+            moves |= {(self.pos[0]-2, self.pos[1]-2)}
+        else:
+            pass
+
+        # Looking Left
+        if (self.pos[0]+1, self.pos[1]-1) not in all_locs:
+            moves |= {(self.pos[0]+2, self.pos[1]-2)}
+        else:
+            pass
+
+        return moves 
 
     def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
-        all_moves = Shiang.Get_Moves(self)
-        on_board = set(filter(lambda x: x[0] >= 0 and x[0] <= y_dim and x[1] >= 0 and x[1] <= x_dim, all_moves))
+
+        all_moves = Shiang.Get_Moves(self, opp_color_locs, same_color_locs)
+        # Elephants cannot cross the river
+        if self.color == 'white':
+            y_dim = 5
+            on_board = set(filter(lambda x: x[0] >= 0 and x[0] >= y_dim and x[1] >= 0 and x[1] <= x_dim, all_moves))
+        else:
+            y_dim = 4
+            on_board = set(filter(lambda x: x[0] >= 0 and x[0] <= y_dim and x[1] >= 0 and x[1] <= x_dim, all_moves))
+            
 
         rm_same_color = on_board - same_color_locs
 
@@ -464,27 +563,18 @@ class Pao(Pieces):
         2) Captures by jumping over a piece (enemy or friendly)
     '''
 
-    def Get_Moves(self):
-        return set([((self.pos[0]+y), (self.pos[1]+x)) for x,y in list(zip([1,2,3,4,5,6,7,8], [0,0,0,0,0,0,0,0])) + \
-                                                                  list(zip([-1,-2,-3,-4,-5,-6,-7,-8], [0,0,0,0,0,0,0,0])) + \
-                                                                  list(zip([0,0,0,0,0,0,0,0,0], [1,2,3,4,5,6,7,8,9])) + \
-                                                                  list(zip([0,0,0,0,0,0,0,0,0], [-1,-2,-3,-4,-5,-6,-7,-8,-9]))])
-
     def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
-        all_moves = Pao.Get_Moves(self)
-        orth_moves_beyond_pieces = Pao.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
-
-        on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+        all_moves = Pao.Get_Moves(self, same_color_locs, opp_color_locs)
+        on_board = set(filter(lambda x: x[0]<=y_dim and x[1]<=x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
-        rm_over_pieces = rm_same_color - orth_moves_beyond_pieces
 
-        if len(rm_over_pieces) == 0:
+        if len(rm_same_color) == 0:
             return None
         else:
-            return rm_over_pieces
+            return rm_same_color
 
-    def Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim):
+    def Get_Moves(self, same_color_locs, opp_color_locs):
         '''
         Rooks cannot jump over other pieces, therefore the moves the rook can make is limited
         by the closest piece in each direction orthogonally.
@@ -502,16 +592,20 @@ class Pao(Pieces):
         :return (set): all of the moves the rook cannot take due to there being a 
             piece in the way. Used to filter all of the available moves.
         '''
-        # Get the locations pf all the pieces on the board
         combine_locs = same_color_locs | opp_color_locs
         combine_locs = list(filter(None, combine_locs))
 
-        # Set flags for the orthogonal locations to see if the same color
-        # piece is closest in any of the four directions
-        same_color_up = False
-        same_color_down = False
-        same_color_left = False
-        same_color_right = False
+        all_right = set()
+        all_down= set()
+        all_left = set()
+        all_up = set()
+
+        # Calculate all of the diagonal squares in the 4 directions
+        for i in range(1,11):
+            all_right |= {((self.pos[0]), (self.pos[1]+i))}
+            all_left |= {((self.pos[0]), (self.pos[1]-i))}
+            all_down |= {((self.pos[0]+i), (self.pos[1]))}
+            all_up |= {((self.pos[0]-i), (self.pos[1]))}
 
         # Get a list of pieces that are ont he same file as the current piece
         closest_up = list(filter(lambda x: x[1] == self.pos[1] and x[0] < self.pos[0], combine_locs))
@@ -520,50 +614,88 @@ class Pao(Pieces):
         closest_right = list(filter(lambda x: x[0] == self.pos[0] and x[1] > self.pos[1], combine_locs))
 
         # Find the closest piece out of the list of same file candidates
-        closest_up = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
-        closest_down = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]
-        closest_left = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]
-        closest_right = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[0]
+        closest_up_1 = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
+        closest_down_1 = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]
+        closest_left_1 = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]
+        closest_right_1 = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[0]
 
-        # Check to see if the closest piece is the same color or not as the current peice
-        if len({closest_up} & same_color_locs) != 0: same_color_up = True
-        if len({closest_down} & same_color_locs) != 0: same_color_down = True
-        if len({closest_left} & same_color_locs) != 0: same_color_left = True
-        if len({closest_right} & same_color_locs) != 0: same_color_right = True
-
-        # If the closest piece is of the same color, you can move to the 
-        # space one unit before. If it is of a different color, you can move
-        # onto the same piece and capture.
-        if same_color_up and closest_up is not None:
-            up_no = set(zip(range(closest_up[0], -1, -1), [closest_up[1]]*(closest_up[0]+1)))
-        elif not same_color_up and closest_up is not None:
-            up_no = set(zip(range(closest_up[0]-1, -1, -1), [closest_up[1]]*(closest_up[0]+1)))
+        if len(closest_up) == 1:
+            closest_up_beyond = closest_up_1
         else:
-            up_no = set()
+            closest_up_beyond = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[1]
 
-        if same_color_down and closest_down is not None:
-            down_no = set(zip(range((closest_down[0]), y_dim), [closest_down[1]] * (((y_dim-1) - closest_down[0]) + closest_down[0]+1)))
-        elif not same_color_down and closest_down is not None:
-            down_no = set(zip(range((closest_down[0]+1), y_dim), [closest_down[1]] * ((y_dim - closest_down[0]) + closest_down[0]+1)))
+        if len(closest_down) == 1:
+            closest_down_beyond = closest_down_1
         else:
-            down_no = set()
+            closest_down_beyond = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[1]
 
-        if same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]]*(closest_left[1]+1), range((closest_left[1]), -1, -1)))
-        elif not same_color_left and closest_left is not None:
-            left_no = set(zip([closest_left[0]]*(closest_left[1]+1), range((closest_left[1]-1), -1, -1)))
+        if len(closest_left) == 1:
+            closest_left_beyond = closest_left_1
         else:
-            left_no = set()
-
-        if same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * (((x_dim-1)-closest_right[1]+1) + closest_right[1]), range((closest_right[1]), x_dim)))
-        elif not same_color_right and closest_right is not None:
-            right_no = set(zip([closest_right[0]] * ((x_dim-closest_right[1]+1) + closest_right[1]), range((closest_right[1]+1), x_dim)))
+            closest_left_beyond = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[1]
+        
+        if len(closest_right) == 1:
+            closest_right_beyond = closest_right_1
         else:
-            right_no = set()
+            closest_right_beyond = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[1]
 
-        # Return the union of the four directions
-        return up_no|down_no|left_no|right_no
+        if closest_up_1 is not None:
+            distance = abs(closest_up_1[0] - self.pos[0])
+            up = set([(self.pos[0]-i, self.pos[1]) for i in range(1, distance)])
+
+            if closest_up_1 == closest_up_beyond:
+                pass
+            else:
+                if closest_up_beyond in same_color_locs:
+                    pass
+                else:
+                    up |= {closest_up_beyond}
+        else:
+            up = all_up
+        
+        if closest_down_1 is not None:
+            distance = abs(closest_down_1[0] - self.pos[0])
+            down = set([(self.pos[0]+i, self.pos[1]) for i in range(1, distance)])
+
+            if closest_down_1 == closest_down_beyond:
+                pass
+            else:
+                if closest_down_beyond in same_color_locs:
+                    pass
+                else:
+                    down |= {closest_down_beyond}
+        else:
+            down = all_down
+
+        if closest_left_1 is not None:
+            distance = abs(closest_left_1[1] - self.pos[1])
+            left = set([(self.pos[0], self.pos[1]-i) for i in range(1, distance)])
+
+            if closest_left_1 == closest_left_beyond:
+                pass
+            else:
+                if closest_left_beyond in same_color_locs:
+                    pass
+                else:
+                    left |= {closest_left_beyond}
+        else:
+            left = all_left
+
+        if closest_right_1 is not None:
+            distance = abs(closest_right_1[1] - self.pos[1])
+            right = set([(self.pos[0], self.pos[1]+i) for i in range(1, distance)])
+
+            if closest_right_1 == closest_right_beyond:
+                pass
+            else:
+                if closest_right_beyond in same_color_locs:
+                    pass
+                else:
+                    right |= {closest_right_beyond}
+        else:
+            right = all_right
+
+        return up|down|left|right
 
 class Tsuh(Pieces):
     '''
