@@ -171,7 +171,8 @@ class Board:
 
                 self.black_piece_loc = add_new_move
                 
-    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, piece_locs):
+    def drawGameState(self, screen, names_obj, game_over, text, num, high_squares, king_pos, piece_locs,
+                      start_flag_white, start_flag_black):
         '''
         Responsible for drawing the game board, pieces and end of game text
 
@@ -201,9 +202,13 @@ class Board:
             Board.drawPieces(self, screen, names_obj)
             Board.drawText(self, screen, text, num)
         else:
-            Board.DrawBoard(self, screen, high_squares, king_pos, piece_locs)
-            Board.drawPieces(self, screen, names_obj)
-
+            if start_flag_white or start_flag_black:
+                Board.DrawBoard(self, screen, high_squares, king_pos, piece_locs)
+                Board.drawPieces(self, screen, names_obj)
+                Board.drawMessgaeBox(self, screen)
+            else:
+                Board.DrawBoard(self, screen, high_squares, king_pos, piece_locs)
+                Board.drawPieces(self, screen, names_obj)
 
     def DrawBoard(self, screen, high_squares, king_pos, piece_locs):
         for r in range(self.x_dim):
@@ -314,6 +319,42 @@ class Board:
 
         textObject = font.render(text, 0, p.Color('gray2'))
         screen.blit(textObject, textLocation.move(2,2))
+
+    def drawMessgaeBox(self, screen):
+        '''
+        Draw the promotion message box. Asking the player if they want to promote a pawn 
+            or not
+
+        :param screen (object): Screen object
+        :param black_promote (Bool): Flag to determine if black can promote or not
+            Determines where the message boax will be placed on the screen
+
+        :return NULL (Nothing)
+        '''
+        font = p.font.SysFont('Comic Sans MS', 18, True, False)
+
+        text_1 = 'Would You like to Switch Knight and Elephant?'
+        
+        textObject_1 = font.render(text_1, 0, p.Color('black'))
+
+        textObject_3 = font.render('Yes!', 0, p.Color('black'))
+        textObject_4 = font.render('No! ', 0, p.Color('black'))
+
+        textLocation_1 = p.Rect(100, 300, 100, 18)
+
+        yesLocation = p.Rect(235, 350, 50, 30)
+        noLocation = p.Rect(365, 350, 50, 30)
+
+        p.draw.rect(screen, p.Color('wheat1'), p.Rect(90, 290, 420, 100))
+
+        # Yes and No Buttons
+        p.draw.rect(screen, p.Color('black'), p.Rect(230, 350, 50, 30), 1)
+        p.draw.rect(screen, p.Color('black'), p.Rect(355, 350, 50, 30), 1)
+
+        screen.blit(textObject_1, textLocation_1)
+
+        screen.blit(textObject_3, yesLocation)
+        screen.blit(textObject_4, noLocation)
 
 
     

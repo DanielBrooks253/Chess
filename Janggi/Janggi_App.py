@@ -92,11 +92,29 @@ board = Board([wpyeng0, wpyeng1, wpyeng2, wpyeng3, wpyeng4,
 high_squares = None
 piece_name = None
 
+start_flag_white = True
+start_flag_black = True
+
+start_flag_white_count = 0
+start_flag_black_count = 0
+
 while running:
     for e in p.event.get():
         if e.type == p.QUIT:
             running = False                
-                    
+
+        if start_flag_white or start_flag_black:
+            if num_turns % 2 == 0:
+                if start_flag_white_count == 0:
+                    high_squares = {wma0.pos, wsyang0.pos}
+                else:
+                    high_squares = {wma1.pos, wsyang1.pos}
+            else:
+                if start_flag_black_count == 0:
+                    high_squares = {bma0.pos, bsyang0.pos}
+                else:
+                    high_squares = {bma1.pos, bsyang1.pos}
+
         if e.type == p.MOUSEBUTTONDOWN:
             location = p.mouse.get_pos()
             raw_row = location[0]
@@ -104,6 +122,47 @@ while running:
 
             col, row = board.Convert_Pxl_To_Coord(raw_col, raw_row)
             cannon_locs = {whpo1.pos, whpo0.pos, bhpo1.pos, bhpo0.pos}
+
+            if (start_flag_white or start_flag_black) and 235 <= raw_row <= 285 and 350 <= raw_col <= 380:
+                if num_turns % 2 == 0:
+                    if start_flag_white_count == 0:
+                        start_flag_white_count += 1
+                        wma0.pos, wsyang0.pos = wsyang0.pos, wma0.pos
+                    else:
+                        num_turns += 1
+                        wma1.pos, wsyang1.pos = wsyang1.pos, wma1.pos
+                        start_flag_white = False
+                        high_squares = None
+                else:
+                    if start_flag_black_count == 0:
+                        start_flag_black_count += 1
+                        bma0.pos, bsyang0.pos = bsyang0.pos, bma0.pos
+                    else:
+                        num_turns += 1
+                        bma1.pos, bsyang1.pos = bsyang1.pos, bma1.pos
+                        start_flag_black = False
+                        high_squares = None
+
+            elif (start_flag_white or start_flag_black) and 365 <= raw_row <= 415 and 350 <= raw_col <= 380:
+                if num_turns % 2 == 0:
+                    if start_flag_white_count == 0:
+                        start_flag_white_count += 1
+                    else:
+                        num_turns += 1
+                        start_flag_white = False
+                        high_squares = None
+                else:
+                    if start_flag_black_count == 0:
+                        start_flag_black_count += 1
+                    else:
+                        num_turns += 1
+                        start_flag_black = False
+                        high_squares = None
+
+            elif not(start_flag_white or start_flag_black):
+                pass
+            else:
+                continue
 
             if len(player_clicks) == 0:
                 if (col, row) not in board.loc_names.keys():
@@ -236,7 +295,8 @@ while running:
 
     else:
         board.drawGameState(screen, board.name_obj_dict, game_over, text, num, high_squares, 
-                            None, board.loc_names.keys())
+                            None, board.loc_names.keys(), start_flag_white,
+                            start_flag_black)
 
         clock.tick(MAX_FPS)
         p.display.flip()
