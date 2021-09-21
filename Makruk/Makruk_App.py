@@ -83,7 +83,7 @@ board = Board([wbia0,wbia1,wbia2,wbia3,wbia4,wbia5,wbia6,wbia7,
                HEIGHT,WIDTH,DIMENSION)
 
 high_squares = None
-stalemate_move_count = 0
+stalemate_move_count = -1
 stalemate_moves = 0
 count = 0
 

@@ -56,7 +56,7 @@ class Pieces:
         self.location_y = (self.pos[0]*64+32, self.pos[0]*64+64)
         self.location_x = (self.pos[1]*64+32, self.pos[1]*64+64)
     
-    def avail_move_check_check(self, available_moves, board_obj):
+    def avail_move_check_check(self, available_moves, board_obj, cannon_locs):
         '''
         This is used to filter out any moves that would result in a check for your king
 
@@ -125,7 +125,8 @@ class Pieces:
                 if name_obj_copy['wK'].check_check(
                     black_name_obj_copy,
                     black_loc_copy,
-                    white_loc_copy):
+                    white_loc_copy, 
+                    cannon_locs):
 
                     checks |= {i}
                 else:
@@ -205,7 +206,8 @@ class Pieces:
                 if name_obj_copy['bK'].check_check(
                     white_name_obj_copy,
                     white_loc_copy,
-                    black_loc_copy):
+                    black_loc_copy, 
+                    cannon_locs):
 
                     checks |= {i}
                 else:
@@ -251,7 +253,7 @@ class Tcha(Pieces):
         Has the same movement as the modern day rooks
     '''
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs, cannon_locs):
         all_moves = Tcha.Get_Moves(self, same_color_locs, opp_color_locs)
         on_board = set(filter(lambda x: x[0]<=y_dim and x[1]<=x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
@@ -400,7 +402,7 @@ class Ma(Pieces): # Xiangqi and Janggi Chess (Knight)
 
         return moves
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs, cannon_locs):
         all_moves = Ma.Get_Moves(self, opp_color_locs, same_color_locs)
         on_board = set(filter(lambda x: x[0] >= 0 and x[0] <= y_dim and x[1] >= 0 and x[1] <= x_dim, all_moves))
 
@@ -427,7 +429,7 @@ class Kuong(Pieces):
     def Get_Moves(self):
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,1,-1,1,1,-1,-1], [1,-1,0,0,1,-1,1,-1])])
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs, cannon_locs):
         if self.color == 'white':
             y_dim_1 = 7
             y_dim_2 = 9
@@ -450,11 +452,11 @@ class Kuong(Pieces):
         else:
             return rm_same_color
 
-    def check_check(self, opp_objs, same_locs, opp_locs):
+    def check_check(self, opp_objs, same_locs, opp_locs, cannon_locs):
         '''
             See if the king is in check or not
         '''
-        opp_moves = list(filter(None, [None if i.pos is None else i.Available_Moves(8, 8, same_locs, opp_locs) 
+        opp_moves = list(filter(None, [None if i.pos is None else i.Available_Moves(8, 8, same_locs, opp_locs, cannon_locs) 
                      for i in opp_objs.values()]))
 
         if self.pos in set().union(*opp_moves):
@@ -473,7 +475,7 @@ class Sa(Pieces):
     def Get_Moves(self):
         return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([0,0,1,-1,1,1,-1,-1], [1,-1,0,0,1,-1,1,-1])])
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs, cannon_locs):
         if self.color == 'white':
             y_dim_1 = 7
             y_dim_2 = 9
@@ -567,7 +569,7 @@ class Syang(Pieces):
 
         return moves 
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs, cannon_locs):
 
         all_moves = Syang.Get_Moves(self, opp_color_locs, same_color_locs)
         on_board = set(filter(lambda x: x[0] >= 0 and x[0] <= y_dim and x[1] >= 0 and x[1] <= x_dim, all_moves))
@@ -585,8 +587,8 @@ class Hpo(Pieces):
         2) Captures by jumping over a piece (enemy or friendly)
     '''
 
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
-        all_moves = Hpo.Get_Moves(self, same_color_locs, opp_color_locs)
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs, cannon_locs):
+        all_moves = Hpo.Get_Moves(self, same_color_locs, opp_color_locs, cannon_locs)
         on_board = set(filter(lambda x: x[0]<=y_dim and x[1]<=x_dim and x[1]>=0 and x[0]>=0, all_moves))
 
         rm_same_color = on_board - same_color_locs
@@ -596,7 +598,7 @@ class Hpo(Pieces):
         else:
             return rm_same_color
 
-    def Get_Moves(self, same_color_locs, opp_color_locs):
+    def Get_Moves(self, same_color_locs, opp_color_locs, cannon_locs):
         '''
         Rooks cannot jump over other pieces, therefore the moves the rook can make is limited
         by the closest piece in each direction orthogonally.
@@ -614,20 +616,11 @@ class Hpo(Pieces):
         :return (set): all of the moves the rook cannot take due to there being a 
             piece in the way. Used to filter all of the available moves.
         '''
+        def distance_calc(first, second):
+            return abs(first - second)
+
         combine_locs = same_color_locs | opp_color_locs
         combine_locs = list(filter(None, combine_locs))
-
-        all_right = set()
-        all_down= set()
-        all_left = set()
-        all_up = set()
-
-        # Calculate all of the diagonal squares in the 4 directions
-        for i in range(1,11):
-            all_right |= {((self.pos[0]), (self.pos[1]+i))}
-            all_left |= {((self.pos[0]), (self.pos[1]-i))}
-            all_down |= {((self.pos[0]+i), (self.pos[1]))}
-            all_up |= {((self.pos[0]-i), (self.pos[1]))}
 
         # Get a list of pieces that are ont he same file as the current piece
         closest_up = list(filter(lambda x: x[1] == self.pos[1] and x[0] < self.pos[0], combine_locs))
@@ -636,86 +629,70 @@ class Hpo(Pieces):
         closest_right = list(filter(lambda x: x[0] == self.pos[0] and x[1] > self.pos[1], combine_locs))
 
         # Find the closest piece out of the list of same file candidates
-        closest_up_1 = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[0]
-        closest_down_1 = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[0]
-        closest_left_1 = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[0]
-        closest_right_1 = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[0]
+        sort_up = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))
+        sort_down = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))
+        sort_left = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))
+        sort_right = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))
 
-        if len(closest_up) == 1:
-            closest_up_beyond = closest_up_1
+        if sort_up is None:
+            up = set()
         else:
-            closest_up_beyond = None if len(closest_up) == 0 else (sorted(closest_up, key=lambda y:y[0], reverse=True))[1]
-
-        if len(closest_down) == 1:
-            closest_down_beyond = closest_down_1
-        else:
-            closest_down_beyond = None if len(closest_down) == 0 else (sorted(closest_down, key=lambda y:y[0]))[1]
-
-        if len(closest_left) == 1:
-            closest_left_beyond = closest_left_1
-        else:
-            closest_left_beyond = None if len(closest_left) == 0 else (sorted(closest_left, key=lambda y:y[1], reverse=True))[1]
-        
-        if len(closest_right) == 1:
-            closest_right_beyond = closest_right_1
-        else:
-            closest_right_beyond = None if len(closest_right) == 0 else (sorted(closest_right, key=lambda y:y[1]))[1]
-
-        if closest_up_1 is not None:
-            distance = abs(closest_up_1[0] - closest_up_beyond[0])
-            up = set([(closest_up_1[0]-i, closest_up_1[1]) for i in range(1, distance)])
-
-            if closest_up_1 == closest_up_beyond:
-                pass
+            if len(sort_up) > 1:
+                first = sort_up[0]
+                second = sort_up[1]
             else:
-                if closest_up_beyond in same_color_locs:
-                    pass
-                else:
-                    up |= {closest_up_beyond}
-        else:
-            up = all_up
-        
-        if closest_down_1 is not None:
-            distance = abs(closest_down_1[0] - closest_down_beyond[0])
-            down = set([(closest_down_1[0]+i, closest_down_1[1]) for i in range(1, distance)])
+                first = sort_up[0]
+                second = [0,sort_up[0][1]]
 
-            if closest_down_1 == closest_down_beyond:
-                pass
+            if first in cannon_locs:
+                up = set()
             else:
-                if closest_down_beyond in same_color_locs:
-                    pass
-                else:
-                    down |= {closest_down_beyond}
+                up = set([(first[0]-i, first[1]) for i in range(1, (distance_calc(first[0], second[0])+1))])
+
+        if sort_down is None:
+            down = set()
         else:
-            down = all_down
-
-        if closest_left_1 is not None:
-            distance = abs(closest_left_1[1] - closest_left_beyond[1])
-            left = set([(closest_left_1[0], closest_left_1[1]-i) for i in range(1, distance)])
-
-            if closest_left_1 == closest_left_beyond:
-                pass
+            if len(sort_down) > 1:
+                first = sort_down[0]
+                second = sort_down[1]
             else:
-                if closest_left_beyond in same_color_locs:
-                    pass
-                else:
-                    left |= {closest_left_beyond}
-        else:
-            left = all_left
+                first = sort_down[0]
+                second = [9,sort_down[0][1]]
 
-        if closest_right_1 is not None:
-            distance = abs(closest_right_1[1] - closest_right_beyond[1])
-            right = set([(closest_right_1[0], closest_right_1[1]+i) for i in range(1, distance)])
-
-            if closest_right_1 == closest_right_beyond:
-                pass
+            if first in cannon_locs:
+                down = set()
             else:
-                if closest_right_beyond in same_color_locs:
-                    pass
-                else:
-                    right |= {closest_right_beyond}
+                down = set([(first[0]+i, first[1]) for i in range(1, (distance_calc(first[0], second[0])+1))])
+
+        if sort_left is None:
+            left = set()
         else:
-            right = all_right
+            if len(sort_left) > 1:
+                first = sort_left[0]
+                second = sort_left[1]
+            else:
+                first = sort_left[0]
+                second = [sort_left[0][0], 0]
+
+            if first in cannon_locs:
+                left = set()
+            else:
+                left = set([(first[0], first[1]-i) for i in range(1, (distance_calc(first[1], second[1])+1))])
+
+        if sort_right is None:
+            right = set()
+        else:
+            if len(sort_right) > 1:
+                first = sort_right[0]
+                second = sort_right[1]
+            else:
+                first = sort_right[0]
+                second = [sort_right[0][0], 8]
+
+            if first in cannon_locs:
+                right = set()
+            else:
+                right = set([(first[0], first[1]+i) for i in range(1, (distance_calc(first[1], second[1])+1))])
 
         return up|down|left|right
 
@@ -735,7 +712,7 @@ class Pyeng(Pieces):
         else:
             return set([(self.pos[0]+y, self.pos[1]+x) for x,y in zip([-1,1,0], [0,0,-1])])
         
-    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs):
+    def Available_Moves(self, y_dim, x_dim, same_color_locs, opp_color_locs, cannon_locs):
         all_moves = Pyeng.Get_Moves(self)
         on_board = set(filter(lambda x: x[0] >= 0 and x[0] <= y_dim and x[1] >= 0 and x[1] <= x_dim, all_moves))
 

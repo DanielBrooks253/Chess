@@ -47,7 +47,7 @@ class Board:
         '''
         return ((y-32)//64, (x-32)//64)    
     
-    def game_over_check(self, color_name_obj, num_turns):
+    def game_over_check(self, color_name_obj, num_turns, cannon_locs):
         '''
         Checks to see if the game is over (No available moves)
 
@@ -77,13 +77,14 @@ class Board:
                         self.x_dim,
                         self.y_dim,
                         self.black_piece_loc,
-                        self.white_piece_loc
+                        self.white_piece_loc, 
+                        cannon_locs
                     )
                 
                     if moves is None:
                         continue
                     else:
-                        invalid_moves = i.avail_move_check_check(moves, self)
+                        invalid_moves = i.avail_move_check_check(moves, self, cannon_locs)
 
                     # Check if the pieces have any available moves to get out
                     # of check. If there are you are not in checkmate; break
@@ -99,13 +100,14 @@ class Board:
                         self.x_dim,
                         self.y_dim,
                         self.white_piece_loc,
-                        self.black_piece_loc
+                        self.black_piece_loc, 
+                        cannon_locs
                     )
                     
                     if moves is None:
                         continue
                     else:
-                        invalid_moves = i.avail_move_check_check(moves, self)
+                        invalid_moves = i.avail_move_check_check(moves, self, cannon_locs)
 
                     if len(moves - invalid_moves) != 0:
                         return False

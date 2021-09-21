@@ -103,6 +103,7 @@ while running:
             raw_col = location[1]
 
             col, row = board.Convert_Pxl_To_Coord(raw_col, raw_row)
+            cannon_locs = {whpo1.pos, whpo0.pos, bhpo1.pos, bhpo0.pos}
 
             if len(player_clicks) == 0:
                 if (col, row) not in board.loc_names.keys():
@@ -116,7 +117,8 @@ while running:
                             Y_BOARD_DIM,
                             X_BOARD_DIM,
                             board.white_piece_loc,
-                            board.black_piece_loc
+                            board.black_piece_loc,
+                            cannon_locs
                         )
                     elif board.name_obj_dict[piece_name].color == 'black' and \
                         num_turns % 2 != 0:
@@ -124,7 +126,8 @@ while running:
                             Y_BOARD_DIM,
                             X_BOARD_DIM,
                             board.black_piece_loc,
-                            board.white_piece_loc
+                            board.white_piece_loc,
+                            cannon_locs
                         )
                     else:
                         break
@@ -134,10 +137,14 @@ while running:
                     high_squares = ((col, row))
                 else:
                     invalid_moves = board.name_obj_dict[piece_name].avail_move_check_check(
-                            moves, board
+                            moves, board, cannon_locs
                         )
 
-                    valid_moves = moves - invalid_moves
+                    if piece_name[1] == 'h':
+                        rm_cannon = moves - cannon_locs
+                        valid_moves = rm_cannon - invalid_moves
+                    else:
+                        valid_moves = moves - invalid_moves
 
                     if len(valid_moves) == 0:
                         moves = None
@@ -167,19 +174,22 @@ while running:
                         board.name_obj_dict['bK'].in_check = board.name_obj_dict['bK'].check_check(
                                 board.white_name_obj_dict,
                                 board.white_piece_loc,
-                                board.black_piece_loc
+                                board.black_piece_loc, 
+                                cannon_locs
                             )
 
                         board.name_obj_dict['wK'].in_check = board.name_obj_dict['wK'].check_check(
                             board.black_name_obj_dict,
                             board.black_piece_loc,
-                            board.white_piece_loc
+                            board.white_piece_loc,
+                            cannon_locs
                         )
 
                         # Check to see if placing the piece cause checkmate or not
                         if board.game_over_check(
                         board.black_name_obj_dict,
-                        num_turns
+                        num_turns, cannon_locs
+
                         ) and bkuong.in_check:
 
                             text = 'Checkmate!! White Wins'
@@ -188,10 +198,10 @@ while running:
 
                         elif (board.game_over_check(
                             board.black_name_obj_dict,
-                            num_turns
+                            num_turns, cannon_locs
                         ) or  board.game_over_check(
                             board.white_name_obj_dict,
-                            num_turns)) and (not bkuong.in_check or not wkuong.in_check):
+                            num_turns, cannon_locs)) and (not bkuong.in_check or not wkuong.in_check):
 
                             text = 'Stalemate!! Draw Game'
                             game_over = True
@@ -199,7 +209,7 @@ while running:
 
                         elif board.game_over_check(
                             board.white_name_obj_dict,
-                            num_turns
+                            num_turns, cannon_locs
                         ) and wkuong.in_check:
                             text = 'Checkmate!! Black Wins'
                             game_over = True
