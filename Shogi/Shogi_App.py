@@ -394,23 +394,23 @@ while running:
             # make the move and update everything
             elif (col, row) in moves or white_promotion or black_promotion:
               if white_promotion:
-                if 150 <= raw_row <= 200 and 350 <= raw_col <= 380:
+                if 155 <= raw_row <= 205 and 350 <= raw_col <= 380:
                   board.name_obj_dict[piece_name].promoted = True
                   board.name_obj_dict[piece_name].promotion_count = 0
                   white_promotion = False
-                elif 275 <= raw_row <= 325 and 350 <= raw_col <= 380:
+                elif 285 <= raw_row <= 335 and 350 <= raw_col <= 380:
                   white_promotion = False
                 else:
-                  pass
+                  continue
               elif black_promotion:
-                if 150 <= raw_row <= 200 and 90 <= raw_col <= 120:
+                if 155 <= raw_row <= 205 and 90 <= raw_col <= 120:
                   board.name_obj_dict[piece_name].promoted = True
                   board.name_obj_dict[piece_name].promotion_count = 0
                   black_promotion = False
-                elif 275 <= raw_row <= 325 and 90 <= raw_col <= 120:
+                elif 285 <= raw_row <= 335 and 90 <= raw_col <= 120:
                   black_promotion = False
                 else:
-                  pass
+                  continue
               else:
                 board.name_obj_dict[piece_name].Make_Move(
                   (col, row),

@@ -47,10 +47,10 @@ class Board:
                                           'hisha':[0, images['Rook']], 'kyosha':[0, images['Lance']],
                                           'keima':[0, images['Knight']], 'ginsho':[0, images['Silver_General']], 
                                           'kinsho':[0, images['Gold_General']]}
-        self.black_capture_counts_dict = {'fuhyo':[0, images['Pawn']], 'kaku': [0, images['Bishop']], 
-                                          'hisha':[0, images['Rook']], 'kyosha':[0, images['Lance']],
-                                          'keima':[0, images['Knight']], 'ginsho':[0, images['Silver_General']], 
-                                          'kinsho':[0, images['Gold_General']]}
+        self.black_capture_counts_dict = {'fuhyo':[0, p.transform.rotate(images['Pawn'], 180)], 'kaku': [0, p.transform.rotate(images['Bishop'],180)], 
+                                          'hisha':[0, p.transform.rotate(images['Rook'], 180)], 'kyosha':[0, p.transform.rotate(images['Lance'],180)],
+                                          'keima':[0, p.transform.rotate(images['Knight'],180)], 'ginsho':[0, p.transform.rotate(images['Silver_General'],180)], 
+                                          'kinsho':[0, p.transform.rotate(images['Gold_General'],180)]}
     
     def game_over_check(self, color_name_obj, num_turns):
         '''
