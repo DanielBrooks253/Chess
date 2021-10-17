@@ -1,5 +1,5 @@
 class Pieces:
-    def __init__(self, start_pos, piece_name, piece_image, color):
+    def __init__(self, start_pos, piece_name, piece_image, color, piece_value):
         '''
         Initalize the pieces class
 
@@ -17,6 +17,7 @@ class Pieces:
         self.pos=start_pos
         self.piece_name=piece_name
         self.color = color.lower()
+        self.value = piece_value
     
     def Make_Move(self, new_loc, board_obj):
         '''
@@ -221,11 +222,11 @@ class Pieces:
             return checks
     
 class King(Pieces):
-    def __init__(self, start_pos, piece_name, piece_image, color):
+    def __init__(self, start_pos, piece_name, piece_image, color, piece_value):
 
         self.in_check = False
         self.has_moved = False
-        super().__init__(start_pos, piece_name, piece_image, color)
+        super().__init__(start_pos, piece_name, piece_image, color, piece_value)
     
     def Get_Moves(self):
         '''
@@ -273,9 +274,9 @@ class Rook(Pieces):
     '''
         Has the same movement as the modern day rook
     '''
-    def __init__(self, start_pos, piece_name, piece_image, color):
+    def __init__(self, start_pos, piece_name, piece_image, color, piece_value):
         self.has_moved = False
-        super().__init__(start_pos, piece_name, piece_image, color)
+        super().__init__(start_pos, piece_name, piece_image, color, piece_value)
     
 
     def Get_Moves(self):
@@ -426,7 +427,7 @@ class Pawn(Pieces):
         Can caputre diagonally
     '''
 
-    def __init__(self, start_pos, piece_name, piece_image, color):
+    def __init__(self, start_pos, piece_name, piece_image, color, piece_value):
 
         self.has_moved = False
         self.en_passant_flag = False
@@ -435,7 +436,7 @@ class Pawn(Pieces):
         self.move_count = 0
         self.promoted_name = None
 
-        super().__init__(start_pos, piece_name, piece_image, color)
+        super().__init__(start_pos, piece_name, piece_image, color, piece_value)
 
     def Get_Moves(self, same_color_locs, opp_color_locs):
         ''' 
@@ -606,12 +607,15 @@ class Queen(Pieces):
         '''
         all_moves = Queen.Get_Moves(self)
         orth_moves = Queen.Get_Orthogonal_Pieces(self, same_color_locs, opp_color_locs, y_dim, x_dim)
+
         on_board = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, all_moves))
+        on_board_diag = set(filter(lambda x: x[0]<y_dim and x[1]<x_dim and x[1]>=0 and x[0]>=0, 
+                            Queen.Get_Diagonal_Moves(self, same_color_locs, opp_color_locs)))
 
         rm_same_color = on_board - same_color_locs
         rm_orth_pieces = rm_same_color - orth_moves
 
-        add_diag = rm_orth_pieces | Queen.Get_Diagonal_Moves(self, same_color_locs, opp_color_locs)
+        add_diag = rm_orth_pieces | on_board_diag
         
         if len(add_diag) == 0:
             return None

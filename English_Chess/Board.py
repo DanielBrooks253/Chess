@@ -4,7 +4,7 @@ class Board:
     '''
         Class to define the chess board
     '''
-    def __init__(self, white_pieces, black_pieces, height, width, dimension, y_dim=8, x_dim=8):
+    def __init__(self, white_pieces, black_pieces, height, width, dimension, algorithm_depth=2, AI_color = 'black', y_dim=8, x_dim=8):
         '''
         Initializes the Board class
 
@@ -40,6 +40,274 @@ class Board:
         self.HEIGHT = height
         self.WIDTH = width
         self.SQ_SIZE = width//dimension
+
+        self.depth = algorithm_depth
+        self.AI_color = AI_color
+
+    def scoreState(self):
+        """Gives the score of the board to the AI at the lowest depth.
+
+        Returns:
+            score [int]: The score of the current board.
+        """
+        score = 0
+        for objs in self.name_obj_dict.values():
+            if objs.pos is None:
+                continue
+            else:
+                if objs.color != self.AI_color:
+                    pts = -objs.value
+                else:
+                    pts = objs.value
+
+                score += pts
+        
+        return score
+
+
+    def MinMax_Algorithm(self, depth, AI_Move):
+        output = [None, None]
+        capture_piece = None
+
+        if depth == 0:
+            return Board.scoreState(self)
+
+        if self.AI_color == 'black': # AI playing the black pieces
+            if AI_Move:
+                maxScore = -1000 # Default maximum score
+                # Get all the moves for each of the given objects
+                # For the black pieces
+                for piece, obj in self.black_name_obj_dict.items(): 
+                    if obj.pos is None:
+                        continue
+                    else:
+                        current_pos = obj.pos
+
+                    all_moves = obj.Available_Moves(
+                        self.x_dim, 
+                        self.y_dim,
+                        self.black_piece_loc,
+                        self.white_piece_loc)
+                    
+                    if all_moves is None:
+                        continue
+                    else:
+                        # Removes all moves that lead into check 
+                        # or do not get you out of check
+                        invalid_moves = obj.avail_move_check_check(all_moves, self)
+
+                        valid_moves = all_moves - invalid_moves
+
+                        # Loops through all of the available moves for the given piece
+                        for moves in valid_moves:
+                            # Check to see if move resulted in capture or not
+                            if moves in self.loc_names.keys():
+                                capture_piece_loc = moves
+                                capture_piece = self.loc_names[moves]
+                            else:
+                                pass
+
+                            # Acutally makes the move on the board
+                            obj.Make_Move(
+                                moves,
+                                self
+                            )
+                            # Recursivly calls function with but at a lower depth
+                            # and switches turns to the other color
+                            score = Board.MinMax_Algorithm(self, depth-1, False)
+
+                            # When it is your turn, you are trying to maximize your score.
+                            # Keeps moves and piece name of scores that are larger than the 
+                            # current largest score.
+                            if score > maxScore:
+                                output = [piece, moves]
+                                maxScore = score
+                            else:
+                                pass
+
+                            # Undoes the moves that were used for scoring
+                            new_current_pos = obj.pos
+
+                            if new_current_pos is None:
+                                self.loc_names[current_pos] = obj.piece_name
+
+                                self.black_name_obj_dict[piece].pos = current_pos
+                                self.black_piece_loc |= {current_pos}
+                                self.name_obj_dict[piece].pos = current_pos
+                            else:
+                                obj.Make_Move(current_pos, self)
+
+                            # Undo any catpures that were made without moving a piece
+                            if capture_piece is not None:
+                                self.loc_names[capture_piece_loc] = capture_piece
+
+                                self.white_name_obj_dict[capture_piece].pos = capture_piece_loc
+                                self.white_piece_loc |= {capture_piece_loc}
+                                self.name_obj_dict[capture_piece].pos = capture_piece_loc
+
+                                capture_piece = None
+
+            else:
+                minScore = 1000
+                for piece, obj in self.white_name_obj_dict.items():
+                    if obj.pos is None:
+                        continue
+                    else:
+                        current_pos = obj.pos
+
+                    all_moves = obj.Available_Moves(
+                        self.x_dim, 
+                        self.y_dim,
+                        self.white_piece_loc,
+                        self.black_piece_loc)
+
+                    if all_moves is None:
+                        continue
+                    else:
+                        invalid_moves = obj.avail_move_check_check(all_moves, self)
+
+                        valid_moves = all_moves - invalid_moves
+
+                        for moves in valid_moves:
+                            # Check to see if move resulted in capture or not
+                            if moves in self.loc_names.keys():
+                                capture_piece_loc = moves
+                                capture_piece = self.loc_names[moves]
+                            else:
+                                pass
+
+                            obj.Make_Move(
+                                moves,
+                                self
+                            )
+
+                            score = Board.MinMax_Algorithm(self, depth-1, True)
+                            
+                            if score < minScore:
+                                output = [piece, moves]
+                                minScore = score
+                            else:
+                                pass
+
+                            new_current_pos = obj.pos
+                        
+                            if new_current_pos is None:
+                                self.loc_names[current_pos] = obj.piece_name
+
+                                self.white_name_obj_dict[piece].pos = current_pos
+                                self.white_piece_loc |= {current_pos}
+                                self.name_obj_dict[piece].pos = current_pos
+                            else:
+                                obj.Make_Move(current_pos, self)
+
+                            # Undo any catpures that were made without moving a piece
+                            if capture_piece is not None:
+                                self.loc_names[capture_piece_loc] = capture_piece
+
+                                self.black_name_obj_dict[capture_piece].pos = capture_piece_loc
+                                self.black_piece_loc |= {capture_piece_loc}
+                                self.name_obj_dict[capture_piece].pos = capture_piece_loc
+
+                                capture_piece = None
+
+
+            # returns the piece name and the best move
+            if depth == self.depth:
+                return output
+            else:
+                return score
+
+        else: # AI is playing the white pieces
+            if AI_Move:
+                maxScore = -1000
+                for piece, obj in self.white_name_obj_dict.items():
+                    if obj.pos is None:
+                        continue
+                    else:
+                        current_pos = obj.pos
+
+                    all_moves = obj.Available_Moves(
+                        self.x_dim, 
+                        self.y_dim,
+                        self.white_piece_loc,
+                        self.black_piece_loc)
+
+                    if all_moves is None:
+                        continue
+                    else:
+                        invalid_moves = obj.avail_move_check_check(all_moves, self)
+
+                        valid_moves = all_moves - invalid_moves
+
+                        for moves in valid_moves:
+                            # Check to see if move resulted in capture or not
+                            if moves in self.loc_names.keys():
+                                capture_piece_loc = moves
+                                capture_piece = self.loc_names[moves]
+                            else:
+                                pass
+
+                            obj.Make_Move(
+                                moves,
+                                self
+                            )
+                            score = Board.MinMax_Algorithm(self, depth-1, False)
+                            if score > maxScore:
+                                output = [piece, moves]
+                                maxScore = score
+                            else:
+                                pass
+
+                            obj.Make_Move(current_pos, self)
+
+                            if depth == self.depth and capture_piece is not None:
+                                self.loc_names[capture_piece_loc] = capture_piece
+
+                                self.black_name_obj_dict[capture_piece].pos = capture_piece_loc
+                                self.black_piece_loc |= {capture_piece_loc}
+                                self.name_obj_dict[capture_piece].pos = capture_piece_loc
+
+                                capture_piece = None
+
+            else:
+                minScore = 1000
+                for piece, obj in self.black_name_obj_dict.items():
+                    if obj.pos is None:
+                        continue
+                    else:
+                        current_pos = obj.pos
+
+                    all_moves = obj.Available_Moves(
+                        self.x_dim, 
+                        self.y_dim,
+                        self.black_piece_loc,
+                        self.white_piece_loc)
+
+                    if all_moves is None:
+                        continue
+                    else:
+                        invalid_moves = obj.avail_move_check_check(all_moves, self)
+
+                        valid_moves = all_moves - invalid_moves
+
+                        for moves in valid_moves:
+                            obj.Make_Move(
+                                moves,
+                                self
+                            )
+                            score = Board.MinMax_Algorithm(self, depth-1, True)
+                            if score < minScore:
+                                output = [piece, moves]
+                                minScore = score
+                            else:
+                                pass
+
+                            obj.Make_Move(current_pos, self)
+
+            if depth == self.depth:
+                return output
+            else:
+                return score
     
     def game_over_check(self, color_name_obj, num_turns):
         '''
